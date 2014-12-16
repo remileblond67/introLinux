@@ -1,0 +1,17 @@
+\begin{table}[htbp]
+  \begin{center}
+  \begin{tabular}{|c|l|p{8cm}|}
+  \hline
+  Commande & Syntaxe & Description\\
+  \hline
+\com{ps} & \com{ps} & Permet de consulter la liste des processus en cours. Par défaut, seuls les processus lancés depuis l'interpréteur de commande courant sont listés. L'option '-edf' permet de retourner la liste exhaustive des processus actifs dans le système. \\
+\com{kill} & \com{kill} -signal pid & Permet de demander l'arrêt de l'exécution d'un processus. L'option '-9' est plus violente et force l'arrêt immédiat du processus, sans passer par la procédure de sortie éventuellement prévue dans le programme. Cette option est à utiliser lorsque le processus ne répond pas à la première "sommation".\\
+\com{jobs} & \com{jobs} & Permet de consulter la liste des travaux lancés en arrière plan depuis l'interpréteur de commande courant. \\
+\com{top} & \com{top} & Application permettant de surveiller en temps réel l'activité du système (processus actifs, utilisation mémoire et processeur... ). \\
+  \hline
+  \end{tabular}
+
+  \caption{Commandes de gestion des processus}
+  \label{tab:cmd_manip_proc}
+  \end{center}
+\end{table}

@@ -1,0 +1,175 @@
+% CNAM Strasbourg
+% Rémi LEBLOND
+% -----------------------------------
+% Année scolaire 2003-2004
+% Linux TMRI 1 : Examen de rattrapage
+% -----------------------------------
+\documentclass[french,12pt,a4paper]{exam}
+\usepackage[T1]{fontenc}
+\usepackage{babel, indentfirst}
+\usepackage[xdvi]{graphicx}
+\usepackage{latexsym}
+\usepackage{tabularx}
+\usepackage{amsmath}
+
+\newcommand{\remarque}[2]
+{
+  \begin{center}
+    \fbox{\parbox{\textwidth}{\textit{#1} :
+
+    #2
+
+    }}
+  \end{center}
+
+}
+
+\newcommand{\ouinon}{\choix{Oui}, \choix{Non}}
+
+\newcommand{\choix}[1]{#1 $\Box$}
+
+\newcommand{\lignesoul}{\hbox to \linewidth {\enspace\hrulefill}}
+
+\newcommand{\ligne}[2]{\hbox to #1cm {#2 \enspace\hrulefill}}
+
+\newcommand{\lignes}{
+  \lignesoul
+  \lignesoul
+  \lignesoul
+  \lignesoul
+  \lignesoul
+  \lignesoul
+  \lignesoul
+  \lignesoul
+  \lignesoul
+  \lignesoul
+  \lignesoul
+  \lignesoul
+  \lignesoul
+  \lignesoul
+  \lignesoul
+  \lignesoul
+}
+
+\newcommand{\choixrep}{\\
+  \choix{/bin}, \choix{/boot}, \choix{/dev}, \choix{/etc},
+  \choix{/home}, \choix{/lib}, \choix{/mnt}, \choix{/opt},
+  \choix{/proc}, \choix{/sbin}, \choix{/tmp}, \choix{/root},
+  \choix{/usr}, \choix{/var} }
+
+%\boxedpoints
+\pointsinmargin
+
+\title{ \input{titre} \\ --- \\ Examen de rattrapage}
+\date{13 septembre 2003}
+
+\header{TMRI Systèmes en réseau}
+       {Examen de rattrapage}
+       {24 septembre 2004}
+
+\author{Rémi LEBLOND}
+\runningheadrule
+\firstpagefooter{}
+                {Attention, document sur \numpages\ pages}
+                {}
+\runningfooter{Rémi LEBLOND}
+              {Page \thepage\ sur \numpages}
+              {CNAM Strasbourg}
+\pointname{pt}
+\marginpointname{pt}
+
+\begin{document}
+\maketitle
+
+\ligne{10}{Nom : } \ligne{10}{Prénom : }
+
+\remarque{Principe de notation}{Ce questionnaire est composé de
+  \numquestions\ questions représentant \numpoints\ points.  Les
+  points affectés à chaque réponse sont indiqués dans la marge
+  gauche.}
+      
+\remarque{Remarque}{Vous pouvez répondre directement sur ce document
+  et/ou sur une copie séparée. Dans tous les cas, vous devrez joindre
+  ce document à votre rendu final.}
+
+
+%---------------------------------------------------------------
+%                        Début des questions 
+%---------------------------------------------------------------
+
+\section{Définitions}
+
+Expliquez les termes suivants et illustrez les à l'aide d'exemples :
+
+\begin{questions}
+  \addpoints
+  
+  \question[3] Code source, binaire. Insistez sur la différence entre
+  le code source et le binaire.
+  
+  \lignes
+  
+  \question[3] Logiciel libre. Définissez cette notion en insistant
+  sur les principales différences avec un freeware.
+  
+  \lignes
+
+  \question[3] Noyau d'un système. Définissez cette notion et expliquez
+  également son rôle en vous appuyant sur l'exemple de Linux.
+
+  \lignes
+
+\end{questions}
+
+
+\section{Arborescence des répertoires de Linux}
+\remarque{Attention}{Prenez garde à bien cocher la case correspondant
+  à votre choix (la case située à droite de la réponse correcte.)}
+
+\begin{questions}
+  
+  \question[1] Dans quel répertoire trouve-t-on le noyau et les
+  fichiers nécessaires au démarrage du système ? \choixrep
+  
+  \question[1] Dans quel répertoire sont regroupés les fichiers de
+  paramétrage du système ?  \choixrep
+  
+  \question[1] Dans quel répertoire sont généralement stockées les
+  données manipulées (modifiées) par les applications ?  \choixrep
+  
+  \question[1] Dans quel répertoire sont représentés les différents
+  périphériques du système (CD-ROM, ports série... ) ?  \choixrep
+  
+  \question[1] Dans quel répertoire sont stockés les répertoires
+  personnels des utilisateurs du systèmes ? \choixrep
+  
+  \question[1] Où est stocké le répertoire personnel de
+  l'administrateur du système ? \choixrep
+  
+\end{questions}
+
+\section{Droits d'accès aux fichiers}
+
+\begin{questions}
+  
+  \question[2] Citez les droits élémentaires pouvant être affectés aux
+  fichiers de Linux (avec leur abréviation et leur signification pour
+  les fichiers normaux et les répertoires) ?\\
+  \ligne{1}{} \ligne{3}{} \ligne{5}{} \ligne{5}{}\\
+  \ligne{1}{} \ligne{3}{} \ligne{5}{} \ligne{5}{}\\
+  \ligne{1}{} \ligne{3}{} \ligne{5}{} \ligne{5}{}\\
+  \ligne{1}{} \ligne{3}{} \ligne{5}{} \ligne{5}{}\\
+  \ligne{1}{} \ligne{3}{} \ligne{5}{} \ligne{5}{}\\
+  
+  \question[3] On désire créer un répertoire \verb'/var/tmri' dans
+  lequel tous les membres d'un groupe 'tmri' devront pouvoir stocker
+  des informations. Les autres utilisateurs du système ne devront pas
+  pouvoir accéder à ce répertoire. Indiquez les différentes opérations
+  nécessaires à la mise en oeuvre de cette solution, en indiquant la
+  syntaxe complète des commandes utilisées.
+  
+  \lignes
+
+\end{questions}
+
+\end{document}

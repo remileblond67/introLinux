@@ -1,0 +1,220 @@
+% CNAM Strasbourg
+% Rémi LEBLOND
+% -----------------------------------
+% Année scolaire 2002-2003
+% Linux TMRI 1 : Examen de rattrapage
+% -----------------------------------
+\documentclass[french,12pt,a4paper]{exam}
+\usepackage[T1]{fontenc}
+\usepackage{babel, indentfirst}
+\usepackage[xdvi]{graphicx}
+\usepackage{latexsym}
+\usepackage{tabularx}
+\usepackage{amsmath}
+
+\newcommand{\remarque}[2]
+{
+  \begin{center}
+    \fbox{\parbox{\textwidth}{\textit{#1} :
+
+    #2
+
+    }}
+  \end{center}
+
+}
+
+\newcommand{\ouinon}{\choix{Oui}, \choix{Non}}
+
+\newcommand{\choix}[1]{#1 $\Box$}
+
+\newcommand{\lignesoul}{\hbox to \linewidth {\enspace\hrulefill}}
+
+\newcommand{\ligne}[2]{\hbox to #1cm {#2 \enspace\hrulefill}}
+
+\newcommand{\lignes}{
+  \lignesoul
+  \lignesoul
+  \lignesoul
+  \lignesoul
+  \lignesoul
+  \lignesoul
+  \lignesoul
+  \lignesoul
+  \lignesoul
+  \lignesoul
+  \lignesoul
+  \lignesoul
+  \lignesoul
+  \lignesoul
+  \lignesoul
+  \lignesoul
+}
+
+\newcommand{\choixrep}{\\
+  \choix{/bin}, \choix{/boot}, \choix{/dev}, \choix{/etc},
+  \choix{/home}, \choix{/lib}, \choix{/mnt}, \choix{/opt},
+  \choix{/proc}, \choix{/sbin}, \choix{/tmp}, \choix{/root},
+  \choix{/usr}, \choix{/var} }
+
+%\boxedpoints
+\pointsinmargin
+
+\title{ \input{titre} \\ --- \\ Examen de rattrapage}
+\date{13 septembre 2003}
+
+\header{TMRI Systèmes en réseau}
+       {Examen de rattrapage}
+       {13 septembre 2003}
+
+\author{Rémi LEBLOND}
+\runningheadrule
+\firstpagefooter{}
+                {Attention, document sur \numpages\ pages}
+                {}
+\runningfooter{Rémi LEBLOND}
+              {Page \thepage\ sur \numpages}
+              {CNAM Strasbourg}
+\pointname{pt}
+\marginpointname{pt}
+
+\begin{document}
+\maketitle
+
+\ligne{10}{Nom : } \ligne{10}{Prénom : }
+
+\remarque{Principe de notation}{Ce questionnaire est composé de
+  \numquestions\ questions représentant \numpoints\ points.  Les
+  points affectés à chaque réponse sont indiqués dans la marge
+  gauche.}
+      
+\remarque{Remarque}{Vous pouvez répondre directement sur ce document
+  et/ou sur une copie séparée. Dans tous les cas, vous devrez joindre
+  ce document à votre rendu final.}
+
+
+%---------------------------------------------------------------
+%                        Début des questions 
+%---------------------------------------------------------------
+
+\section{Définitions}
+
+Expliquer les termes suivants et illustrer les à l'aide d'exemples :
+
+\begin{questions}
+  \addpoints
+  
+  \question[1] Code source, binaire. Insister sur la différence entre
+  le code source et le binaire.
+  
+  \lignes
+  
+  \question[1] Logiciel libre. Principales différences avec un
+  freeware.
+  
+  \lignes
+
+\end{questions}
+
+
+\section{Arborescence des répertoires de Linux}
+\remarque{Attention}{Prenez garde à bien cocher la case correspondant
+  à votre choix (la case située à droite de la réponse correcte.)}
+
+\begin{questions}
+  
+  \question[1] Dans quel répertoire sont regroupés les fichiers de
+  paramétrage du système ?  \choixrep
+  
+  \question[1] Dans quel répertoire sont regroupés les répertoires
+  personnels des utilisateurs du système ?  \choixrep
+  
+  \question[1] Dans quel répertoire sont généralement stockés les
+  fichiers de paramétrage des applications ?  \choixrep
+  
+  \question[1] Dans quel répertoire sont généralement stockées les
+  données manipulées (modifiées) par les applications ?  \choixrep
+  
+  \question[1] Dans quel répertoire sont représentés les différents
+  périphériques du système (CD-ROM, ports série... ) ?  \choixrep
+  
+  \question[1] Dans quel répertoire peut-on obtenir des informations
+  sur l'état courant du système (utilisation mémoire, de la CPU, liste
+  et caractéristiques des processus en cours d'exécution... ) ?
+  \choixrep
+  
+  \question[1] Par convention, dans quel répertoire monte-t-on les
+  systèmes de fichiers utilisés occasionnellement (périphériques
+  amovibles - lecteur de disquette, de CD-ROM - ou systèmes de
+  fichiers d'autres systèmes).  \choixrep
+
+\end{questions}
+
+\section{Droits d'accès aux fichiers}
+
+\begin{questions}
+  
+  \question[2] Citez les droits élémentaires pouvant être affectés aux
+  fichiers de Linux (avec leur abréviation et leur signification pour
+  les fichiers normaux et les répertoires) ?\\
+  \ligne{1}{} \ligne{3}{} \ligne{5}{} \ligne{5}{}\\
+  \ligne{1}{} \ligne{3}{} \ligne{5}{} \ligne{5}{}\\
+  \ligne{1}{} \ligne{3}{} \ligne{5}{} \ligne{5}{}\\
+  \ligne{1}{} \ligne{3}{} \ligne{5}{} \ligne{5}{}\\
+  \ligne{1}{} \ligne{3}{} \ligne{5}{} \ligne{5}{}\\
+  
+  \question[5] On désire créer un répertoire \verb'/var/tmri' dans
+  lequel tous les membres d'un groupe 'tmri' devront pouvoir stocker
+  des informations. Les autres utilisateurs du système ne devront pas
+  pouvoir accéder à ce répertoire. Indiquez les différentes opérations
+  nécessaires à la mise en oeuvre de cette solution, en indiquant la
+  syntaxe complète des commandes utilisées.
+  
+  \lignes
+
+\end{questions}
+
+\section{Cas pratique}
+
+Vous êtes responsable informatique d'une société désirant mettre en
+place un serveur offrant les services suivants à des machines
+fonctionnant indifféremment sous Windows NT ou Linux :
+
+\begin{itemize}
+\item l'authentification des utilisateurs : un même utilisateur,
+  déclaré sur le serveur, doit pouvoir se connecter indifféremment et
+  avec le même mot de passe, sur un poste Linux ou Windows NT.
+  
+\item le partage de fichiers : chaque poste client, quel que soit le
+  système sur lequel il tourne (Linux ou Windows NT), doit pouvoir
+  stocker, modifier et lire, en fonction de ses droits, des fichiers
+  placés sur ce serveur,
+  
+\item la résolution des noms de machine : le serveur à mettre en place
+  doit permettre de traduire un nom de machine en adresse IP et
+  vice-versa,
+  
+\item le partage de pages Web, dans le cadre d'un Intranet : le
+  serveur doit permettre la publication de quelques pages Web
+  statiques présentant l'activité de l'entreprise et de pages propres
+  à chaque utilisateur, leur permettant de présenter leurs travaux.
+  
+\item le partage de la connexion internet : le serveur doit permettre
+  à chaque utilisateur d'accéder à internet via un unique point
+  d'accès internet.
+\end{itemize}
+
+\begin{questions}
+  \question[3] Proposez une solution basée exclusivement sur Linux et
+  répondant à ce besoin. Vous indiquerez les différents services à
+  implémenter sur le serveur et décrirez succinctement les grands
+  principes de leur configuration.
+  
+  \question[1] Pour faire face plus facilement à une augmentation de
+  la charge, proposez une répartition de ces services sur plusieurs
+  serveurs.
+
+\end{questions}
+
+\end{document}
+

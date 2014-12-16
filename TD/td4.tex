@@ -1,0 +1,107 @@
+\documentclass[french,12pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage{babel, indentfirst}
+\usepackage[xdvi]{graphicx}
+\usepackage{latexsym}
+\usepackage{tabularx}
+\usepackage{makeidx}
+\usepackage{times}
+\usepackage{color}
+\usepackage[ps2pdf]{hyperref}
+
+\author{Rémi LEBLOND}
+\title{TD 4 : Gestion avancée des droits d'accès}
+
+\begin{document}
+
+\maketitle
+
+\section{But de l'exercice :}
+
+En partant des éléments mis en place lors du premier TD, nous souhaitons
+créer un nouveau groupe disposant uniquement d'un droit de
+consultation sur les données du projet.
+
+Ce groupe, dénommé ``cnam\_consult'', se compose des utilisateurs
+``util\_cnam4'' et ``util\_cnam5''. Le répertoire ``/var/cnam''
+accueillera l'ensemble des projets réalisés dans le cadre du cnam. Le
+groupe ``cnam\_consult'' pourra éventuellement, par la suite, disposer
+d'un droit de consultation sur ceux-ci.
+
+Vous devez décrire et mettre en oeuvre l'ensemble des manipulations à
+réaliser pour mettre en oeuvre ces droits d'accès.
+
+A votre avis, en quoi cet exercice montre-t-il qu'il est préférable,
+avec un système Linux, de bien réfléchir à la politique de définition
+des droits d'accès avant de la mettre en oeuvre ?
+
+
+\textit{NB : Pour répondre aux contraintes liées à ce nouveau besoin,
+  le répertoire du projet devra être déplacé de /var/projet\_cnam vers
+  /var/cnam/projet.}
+
+
+\section{Solution :}
+
+\begin{itemize}
+\item Créer le groupe ``cnam\_consult'' à l'aide de la commande
+  suivante :
+
+\begin{verbatim}
+groupadd cnam_consult
+\end{verbatim}
+  
+\item Créer les utilisateurs ``util\_cnam4'' et ``util\_cnam5'' à
+  l'aide des commandes suivantes :
+\begin{verbatim}
+adduser util_cnam4
+adduser util_cnam5
+\end{verbatim}
+  
+\item Déplacer les données du répertoire ``/var/projet\_cnam'' vers
+  ``/var/cnam/projet'', à l'aide, par exemple, des commandes suivantes
+  :
+
+\begin{verbatim}
+mkdir /var/cnam
+mv /var/projet_cnam /var/cnam/projet
+\end{verbatim}
+  
+\item Affecter le répertoire /var/cnam au groupe ``cnam\_consult'', à
+  l'aide de la commande suivante :
+\begin{verbatim}
+chgrp cnam_consult /var/cnam
+\end{verbatim}
+  
+\item Affecter le répertoire /var/cnam/projet au groupe
+  ``projet\_cnam'', à l'aide de la commande suivante :
+\begin{verbatim}
+chgrp projet_cnam /var/cnam/projet
+\end{verbatim}
+  
+\item Modifier la matrice de droits du répertoire ``/var/cnam'' afin
+  de ne permettre l'accès qu'aux membres du groupe, à l'aide de la
+  commande suivante :
+\begin{verbatim}
+chmod 750 /var/cnam
+\end{verbatim}
+  
+\item Modifier la matrice de droits du répertoire ``/var/cnam'' afin
+  de permettre la consultation par les utilisateurs étrangers, à l'aide
+  de la commande suivante :
+\begin{verbatim}
+chmod 775 /var/cnam/projet
+\end{verbatim}
+  
+\item Ajouter les membre du groupe ``cnam\_projet'' dans le groupe
+  ``cnam\_consult'', en modifiant le fichier ``/etc/group'' ou à
+  l'aide des commandes suivantes :
+\begin{verbatim}
+usermod -G cnam_consult util_cnam1
+usermod -G cnam_consult util_cnam2
+usermod -G cnam_consult util_cnam3
+\end{verbatim}
+\end{itemize}
+
+\end{document}
+

@@ -1,0 +1,820 @@
+%###############
+% INTRODUCTION #
+%###############
+\chapter{Introduction}
+
+\resumchap{Dans ce chapitre, nous introduirons la notion de logiciel
+  libre, nous aborderons ensuite le système Linux sous un angle
+  historique, puis technique. A l'issue de ce chapitre, nous devrions
+  avoir une vision globale de Linux nous permettant d'aborder
+  la manipulation du système.}
+
+
+\section{Qu'est-ce qu'un logiciel libre ?}
+
+\subsection{Introduction} 
+
+Il est difficile de parler du système Linux sans aborder une de ses
+principales caractéristiques : il s'agit d'un logiciel libre. Mais
+qu'entend-on par logiciel libre ?
+
+Dans cette section, nous introduirons la notion de logiciel libre afin
+de bien comprendre son esprit et les possibilités qu'elle offre à ses
+utilisateurs.
+
+\subsection{L'importance du code source}
+
+Pour comprendre le concept de logiciel libre, il faut d'abord
+comprendre ce qu'est un logiciel (ou encore un programme, ou une
+application).
+
+Du point de vue de l'utilisateur, un logiciel est souvent vu comme une
+application qui répond à l'un de ses besoins (traitement de textes,
+programme de dessin, jeu, etc...  ).  Nous l'envisageons sous une
+perspective un peu plus large, prenant en compte son mode
+d'élaboration, pour nous permettre d'évaluer les libertés que nous
+pouvons prendre à son égard.
+
+Pour créer un logiciel, un programmeur l'écrit dans un langage de
+programmation (C\index{C}, Perl\index{Perl}, Python\index{Python},
+Java\index{Java}, ...) compréhensible et utilisable par les
+programmeurs. Un outil appelé compilateur\index{compilateur} permet
+ensuite de convertir ce langage en un code binaire (dit langage
+machine) qui est le seul que puisse interpréter un ordinateur.
+
+Le logiciel dans sa forme compréhensible par les programmeurs est
+appelé ``code source''\index{Code source}, et dans sa version en
+langage machine ``binaire''\index{Binaire}. Le passage du code source
+au binaire est réalisé à l'aide d'un compilateur.
+
+\imagelarg{compilation.eps}
+          {Processus de création d'une application}
+          {fig:creat_appli}
+
+Si le code source est facilement compréhensible par un humain (pour
+peu qu'il connaisse le langage utilisé), le binaire n'est réellement
+exploitable que par une machine. Ainsi, s'il est très difficile de
+comprendre les rouages d'un logiciel si on ne dispose que du fichier
+binaire, l'analyse du code source dévoile tous les mécanismes mis en
+oeuvre par le logiciel\footnote{Ce qui explique que bien des éditeurs
+  de logiciel soient opposés à la divulgation des codes sources de
+  leurs applications, au titre compréhensible de la protection de
+  leurs ``secrets de fabrication''.}.
+
+Le code source est donc essentiel en matière de logiciel, car sa
+connaissance permet d'examiner le fonctionnement d'une application et
+éventuellement de l'améliorer ou d'en corriger les bogues. C'est
+aussi, par exemple, le garant de l'absence de porte dérobée
+compromettant la sécurité d'un système informatique ou de
+fonctionnalité malicieuse. \cite{APRIL}
+
+
+
+\subsection{Les libertés apportées aux utilisateurs de logiciels libres}
+
+Un logiciel libre est un logiciel garantissant un certain nombre de
+libertés à ses utilisateurs. Nous allons procéder par analogie en
+comparant le code source d'un logiciel à une recette de cuisine.
+
+Imaginons que vous vous trouvez dans un restaurant et que vous mangez
+un excellent plat. Peut-être aurez vous l'envie de pouvoir le cuisiner
+chez vous pour vos amis ?
+
+C'est impossible si vous n'avez pas la recette du plat. Vous pouvez
+toujours le manger dans le restaurant, mais même si vous connaissez le
+goût, vous ne savez comment le reproduire. La liberté d'échanger des
+recettes de cuisines est essentielle pour les cuisiniers comme pour
+les simples gourmets.
+
+En informatique, il en va de même pour un un logiciel. Le code source
+est la recette, le binaire est le plat déjà cuisiné. La plupart des
+logiciels dits logiciels propriétaires sont distribués sans leur code
+source, et il est interdit d'essayer de comprendre leur
+fonctionnement. Il est interdit de les partager avec vos amis, et il
+est interdit d'essayer de les modifier pour les adapter à vos besoins.
+
+A l'opposé un logiciel libre garantit aux utilisateurs quatre libertés
+:
+
+\begin{itemize}
+\item la liberté d'\textbf{utiliser le logiciel}, pour quelque usage
+  que ce soit,
+\item la liberté d'\textbf{étudier le fonctionnement} du programme, et
+  de l'adapter à vos propres besoins,
+\item la liberté de \textbf{redistribuer des copies} de façon à
+  pouvoir aider votre voisin,
+\item la liberté d'\textbf{améliorer le programme}, et de diffuser vos
+  améliorations au public, de façon à ce que l'ensemble de la
+  communauté en tire avantage.
+\end{itemize}
+  
+Ce sont ces libertés fondamentales à l'utilisation de l'informatique,
+à la création et au partage des informations, que
+l'APRIL\index{APRIL}\footnote{APRIL : Agence pour la Promotion de
+  l'informatique Libre} entend protéger et développer. Les logiciels
+libres sont avant tout porteurs de liberté de partage et d'accès à la
+connaissance.
+  
+Elles sont bien sûr essentielles aux informaticiens, mais aussi aux
+utilisateurs, pour lesquelles elles garantissent la capacité de
+maîtriser les outils et les informations sans risque de dépendance
+vis-à-vis d'un quelconque éditeur de logiciels.
+  
+Les logiciels libres ont connu un succès planétaire grâce à l'effort
+de développement entrepris voilà plus de 15 ans dans le cadre du
+projet GNU\index{GNU}.
+
+\image{opensource-110x95.eps}
+      {Logo des applications Open Source}
+      {fig:logo_os}
+
+\subsection{La FSF et le projet GNU - La licence GPL}
+\index{FSF}
+
+\subsubsection{La création de la FSF}
+
+Richard STALLMAN\index{STALLMAN Richard}, considéré par tous comme le
+père des logiciels libres a commencé à penser au logiciel libre
+lorsqu'il travaillait au laboratoire d'intelligence artificielle au
+MIT dans les années 1980.
+
+En 1983, Richard M. STALLMAN initie le projet GNU (GNU est un jeu de
+mots récursif signifiant GNU's Not Unix). Ce projet vise à concevoir
+un système d'exploitation complet et entièrement libre. Ce système
+sera compatible avec UNIX, mais sera différent car il n'exploitera pas
+les sources originales d'AT\&T\index{AT\&T}. Pour soutenir le
+développement du projet GNU, la Free Software Foundation
+(http://www.fsf.org) est créée en 1985.\index{Free Software
+  Foundation}
+
+\image{gnu-head.eps}
+      {Logo du projet GNU}
+      {img:gnu}
+
+
+\subsubsection{La base légale : la GPL}
+
+Pour valider ce système, une base légale est nécessaire. Cette base
+légale, créée de toutes pièces, est la licence GNU GPL\index{GPL}
+(pour GNU General Public License\index{GNU General Public License}).
+La GNU GPL est la licence des logiciels libres par
+excellence\index{Licence GPL}. Elle détermine des conditions de
+distribution qui garantissent les libertés de l'utilisateur. Un
+programme protégé par la GPL est libre, mais la GPL impose aussi que
+tout travail dérivé de ce logiciel reste libre. On peut estimer à
+plus de 70\% le nombre de logiciels libres qui son protégés par la GNU
+GPL. \cite{APRIL} 
+
+Il faut distinguer les logiciels libres de logiciels du domaine public
+(freeware\index{Freeware}). En effet, les logiciels libres sont
+systématiquement livrés avec leur code source, qu'il est possible de
+modifier à condition de redistribuer les sources modifiées. Cette
+obligation n'existe pas pour les logiciels du domaine public, dont
+seule la version binaire est gratuite.
+
+L'utilisation de logiciels du domaine publique pour un usage
+professionnel est stratégiquement risquée car il est impossible de
+s'assurer que les mises à jour ultérieures du logiciel resteront
+gratuites. On peut ainsi imaginer un éditeur distribuant gratuitement
+son logiciel pour faciliter sa diffusion et, une fois le marché acquit
+ferait payer les nouvelles versions\footnote{Ceci est une simple
+  supposition, nous savons bien que le marché de l'informatique n'est
+  pas aussi perfide...}.
+
+Ce scénario est impossible avec des logiciels libres exploitant la
+licence GPL, car cette dernière oblige chaque contributeur à diffuser
+librement les sources de toute adaptation d'un logiciel libre. Même si
+une nouvelle version devenait propriétaire, ce qui est tout à fait
+envisageable\footnote{Le propriétaire d'un programme peut changer à
+  tout moment la licence le protégeant. Par contre, la licence GPL
+  interdit l'intégration de code protégé par la GPL dans des
+  programmes ne répondant pas à cette licence.}, il serait toujours
+possible de poursuivre le développement de l'application dans sa
+version ``libre'' à partir des sources de l'avant dernière version
+(qui était libre).
+
+Pendant longtemps, la validité juridique de la licence GPL, véritable
+clef de voûte d'un grand nombre de logiciels libres (dont Linux), est
+restée une inconnue, faute d'avoir été éprouvée devant la justice.
+Depuis peu cependant, cette dernière semble se préciser. Ainsi, en
+Allemagne, le tribunal de Munich a déclaré en juillet 2004, à
+l'occasion d'un procès en appel, que les principales clauses de la GPL
+étaient valides au regard de des lois allemandes sur les droits
+d'auteur et les contrats. En France, la législation relative à la
+protection des logiciels, basée exclusivement sur le droit d'auteur,
+entraîne actuellement une petite polémique sur la validité de la
+licence GPL et, notamment, sur la session des droits en dehors de tout
+contrat. C'est la raison pour laquelle lusieurs organismes français
+ont proposé en juin 2004 de régler ce problème à l'aide d'une nouvelle
+licence. Ainsi, le CNRS, le CEA et l'INRIA se sont associés pour
+élaborer ensemble une licence de logiciel libre conforme au droit
+français. Cette licence est intitulée CeCILL (Ce : CEA, C : CNRS, I :
+INRIA, LL : Logiciel Libre)\index{CeCILL}. La FSF, qui n'a pas été
+associée à ce travail, affirme de son côté qu'une nouvelle licence est
+inutile et qu'une simple traduction de la GPL réglerait le problème.
+
+Il existe d'autres licences qualifiées de libres, bien que souvent
+moins contraignantes quant à la divulgation des sources :
+\begin{enumerate}
+\item la licence BSD\index{BSD (licence)},
+\item la licence Mozilla\index{Mozilla (licence)}... ),
+\item ...
+\end{enumerate}
+
+\subsubsection{Logiciel libre et activité commerciale}
+
+
+Bien que cela puisse paraître contradictoire, il est tout à fait
+possible de commercialiser une solution exploitant la licence GPL, à
+condition de rendre disponibles les sources des programmes. Par
+exemple, si une société A développe une solution basée sur un logiciel
+libre adapté par ses soins, il peut la commercialiser et en tirer des
+bénéfices financiers. Par contre, elle est tenue de rendre les sources
+de ses adaptations disponibles gratuitement.  De ce fait, une société
+concurrente B peut reprendre ces sources, les modifier et les
+commercialiser à son tour. La société A peut alors se sentir lésée par
+cette divulgation de son travail, mais comme la société B est aussi
+tenue de publier les sources de ses modifications, elle peut à son
+tour profiter des améliorations apportées pour les intégrer à son
+offre. De plus, la société A n'est plus contrainte d'assurer seule la
+maintenance et l'évolution de sa solution, elle est désormais aidée
+par la société B. Pour que ce modèle soit rentable, il faut bien
+entendu que la société A garde une plus value par rapport à la société
+B, autre que le code source de sa solution.
+
+Ce fonctionnement nous oblige à revoir notre façon d'envisager
+l'approche commerciale de l'industrie informatique. La plus value
+d'une entreprise choisissant de commercialiser du logiciel libre ne
+réside plus dans la rétention du code source de ses programmes,
+jusqu'alors considéré comme le patrimoine le plus précieux de
+l'éditeur. L'enjeu se situe sur le service rendu à ses clients afin de
+proposer les solutions les plus adaptées en se basant sur un ensemble
+de briques de bases puisées parmi les logiciels libres.
+
+Cette approche permet d'optimiser le travail des différents acteurs
+qui, au lieu de redévelopper maintes fois le même code source, peuvent
+s'appuyer sur un travail existant en l'améliorant si besoin, pour le
+plus grand bien de la communauté. A titre d'exemple, essayez
+d'imaginer les ressources financières et humaines qui ont été
+gaspillées à développer les fonctionnalités communes des différents
+traitements de texte que nous avons connu jusqu'à présent. N'aurait-il
+pas été plus fructueux de capitaliser ce travail dans le développement
+d'une solution libre ?
+
+Bien évidement, cette réflexion ne convient pas du tout à des acteurs
+ayant réussi à verrouiller un marché autour d'une situation de monopole
+comme l'a fait Microsoft\index{Microsoft} dans le domaine de la
+bureautique. Le logiciel libre est aussi une solution permettant
+d'éviter ce genre de situation. Il constitue en ce sens un garde-fou
+précieux pour le futur.
+
+D'une autre façon, une entreprise ayant développé une application pour
+ses besoins internes peut trouver un intérêt évident à publier les
+sources de cette dernière sous une licence GPL. En effet, si la
+solution proposée est adoptée par d'autres utilisateurs, l'ensemble de
+ces derniers peut collaborer à la maintenance et l'évolution de
+l'application et, ainsi, se partager les coûts inhérents.
+
+
+
+\section{Concepts de base de Linux}
+
+\subsection{Origines : Le système UNIX}
+
+Linux est le noyau d'un système d'exploitation libre de type Unix,
+écrit initialement par Linus Torvalds en 1991 et auquel un grand
+nombre de programmeurs ont contribué par Internet depuis. \cite{GICL}
+
+Les origines de tous les systèmes Unix remontent à la première version
+d'un système d'exploitation expérimental développé par Denis Ritchie
+\index{Ritchie Denis} et Ken Thompson \index{Thompson Ken} dans les
+laboratoires AT\&T's Bell\index{AT\&T's Bell} Laboratories en 1969.
+Ce système a avant tout été développé par des programmeurs, pour des
+programmeurs, et reprenait un certain nombre de concepts qui avaient
+été développés auparavant pour le système d'exploitation
+Multics\index{Multics} (abréviation de ``Multiplexed Information and
+Computing Service''), dont le rôle était de fournir des services
+informatiques centralisés à un grand nombre de personnes.  Multics n'a
+jamais réellement vu le jour car il était trop ambitieux par rapport
+aux moyens de l'époque, en revanche, le système Unix initial a
+engendré un grand nombre d'autres systèmes plus ou moins compatibles,
+du fait notamment de son mode de distribution original.
+
+Pour l'anecdote, la dénomination ``Unix'' provient de la contraction
+de ``Unics''\index{Unics} (abréviation de ``Uniplexed Information and
+Computing Service''), terme forgé ironiquement pour bien signaler
+qu'Unix était une version allégée de ce que Multics aurait dû être.
+
+Unix a été développé en utilisant le langage de programmation
+C\index{C (langage)}. Ce langage a la particularité d'être
+portable\footnote{Un programme est dit portable s'il peut s'exécuter,
+  moyennant de faibles adaptations, sur différents environnements.}
+sur un grand nombre d'architectures différentes, ce que ne permet pas
+l'utilisation d'un langage de programmation de bas niveau comme
+l'assembleur\index{Assembleur}\footnote{L'assembleur est un langage de
+  programmation très proche du langage machine, il décompose finement
+  chaque opération, ce qui le rend difficilement lisible. Un programme
+  en assembleur est fortement lié à l'architecture de la machine pour
+  laquelle il est écrit. Il permet donc de réaliser des programmes
+  fortement optimisés mais très peu portables. Lorsque l'on utilise un
+  langage de programmation plus évolué, comme le langage C, le
+  programme est généralement transformé automatiquement en assembleur
+  lors de la compilation. Le même programme C peut donc être
+  facilement transformé en différents programmes assembleurs adaptés à
+  de diverses architectures, simplement en utilisant des compilateurs
+  différents.}, alors largement utilisé pour la réalisation de
+systèmes d'exploitation.  La particularité d'Unix, comparé à d'autres
+systèmes comme Windows par exemple, tient du fait qu'il a été
+développé puis distribué sous la forme de code source et de
+spécifications\footnote{L'utilisation du code source d'AT\&T
+  nécessitait le payement d'une licence}. A partir de ce code source,
+chaque éditeur pouvait mettre au point sa propre version d'Unix, afin
+de l'adapter à son besoin. Ce mode de distribution a permis une rapide
+expansion d'Unix, puisque chaque constructeur s'est empressé de porter
+Unix sur ses machines, ce que n'aurait pas pu faire AT\&T\footnote{En
+  tout cas, pas aussi rapidement et, certainement, pas aussi bien,
+  puisque chaque constructeur est le mieux placé pour adapter un
+  système sur ses machines.}. Il n'existe donc pas une unique version
+d'Unix, mais toute une famille de systèmes Unix. L'utilisation du
+langage C donna à Unix une de ses caractéristiques les plus
+importantes : son universalité. Unix n'a, aujourd'hui encore, pas
+d'équivalent dans ce domaine et il y a fort peu de familles
+d'ordinateurs ne disposant pas d'au moins une version
+d'Unix\footnote{Ce qui est loin d'être le cas de Windows, qui ne
+  fonctionne réellement que sur des architectures de type PC.}.
+
+Il existe différentes versions commerciales d'Unix, il faut signaler
+que seules celles qui sont positionnées dans le haut de gammes
+survivent à la confrontation avec Linux :
+\begin{description}
+\item[Solaris] : L'Unix de Sun, \index{Solaris}
+\item[AIX] : L'Unix d'IBM, \index{AIX}
+\item[HP/UX] : L'Unix de Hewlett Packard,\index{HP/UX}
+\item[QNX] : Un Unix destiné aux systèmes embarqués,\index{QNX}
+\item[IRIX] : L'Unix destiné aux stations Silicon Graphics,\index{IRIX}
+\item[SCO Unix] : Un Unix bas de gamme pour PC (qui souffre
+  actuellement de la concurrence de Linux).\index{SCO Unix}
+\end{description}
+
+Il existe aussi différentes versions non commerciales d'Unix (hormis Linux) :
+\begin{description}
+\item[FreeBSD] une variante libre de l'Unix BSD,\index{FreeBSD}
+\item[Minix] basé sur une architecture à micro noyau et uniquement
+  destiné à l'étude des systèmes d'exploitation. Du fait de ses
+  importantes limitations, ce système ne peut pas être utilisé en
+  production.\index{Minix}
+\end{description}
+
+L'inconvénient du mode de distribution d'Unix est la divergence des
+solutions proposées par les différents fournisseurs. Ainsi, même s'ils
+exploitent des racines communes, les différentes améliorations
+apportées par les distributeurs de systèmes Unix ont aboutis à des
+systèmes de moins en moins compatibles.
+
+Pour éviter une trop grande divergence, les différents fournisseurs de
+systèmes Unix se sont récemment accordés pour définir l'ensemble des
+fonctionnalités que tous les systèmes Unix doivent supporter, et ce
+afin de résoudre les problèmes engendrés par les incompatibilités
+existantes entre ces différents systèmes. Unix est donc un terme
+générique pour représenter l'ensemble de tous ces systèmes, dont Linux
+fait partie.
+
+Linux apparaît aujourd'hui comme un Unix universel que tout le monde
+appelait de ses voeux, par contre, il risque aussi de subir la même
+dérive que les systèmes Unix si l'on y prend pas garde.
+
+\subsection{Le système Linux}
+
+\image{tux-large.eps}
+      {Tux\index{Tux} : La ``mascotte'' de Linux}
+      {img:tux}
+
+Bien que compatible avec les dernières spécifications Unix, Linux ne
+contient pas une ligne du code source du système Unix original, ce qui
+en fait ce que l'on appelle un clone\footnote{Et évite le payement de
+  la licence AT\&T.}. Cela dit, il s'agit réellement d'un système Unix
+à part entière. En tant que tel, il dispose des fonctionnalités
+fournies par les systèmes Unix : il est multitâche, multi-utilisateur
+et orienté réseau.  Vous aurez donc, avec Linux, un système fiable,
+fonctionnel et performant.
+
+Installé sur un poste de travail, Linux vous permettra de réaliser les
+opérations les plus classiques, comme effectuer un travail
+bureautique, naviguer sur Internet, réaliser l'acquisition, la capture
+et le retraitement d'images, réaliser des animations 3D ou encore
+programmer\footnote{Créé par des programmeurs passionnés, Linux offre
+  un choix unique d'outils de développement}. C'est toutefois installé
+sur un serveur que Linux révèle toute sa puissance : c'est un système
+fiable, qui peut fonctionner plusieurs mois en continu. En temps que
+système Unix, il s'intègre parfaitement dans un réseau et il permet de
+faire fonctionner un grand nombre d'outils très performants et
+disponibles gratuitement (base de données, serveur Web, serveur
+d'applications, serveur de messagerie, serveur d'authentification...
+). Enfin, il s'intègre parfaitement dans un environnement Windows dans
+lequel il peut remplacer avantageusement un serveur Windows NT. De
+plus, contrairement à l'installation de Linux sur les postes clients,
+son installation sur un serveur n'est pas ressentie
+directement\footnote{Un indice tout de même : Si vous remplacez un
+  serveur Windows par un serveur Linux, les utilisateurs se rendrons
+  peut-être compte que ce dernier plante moins souvent... } par les
+utilisateurs, ce qui permet une migration en douceur et évite de se
+confronter à un problème culturel (surtout lié à l'utilisation de la
+suite bureautique Office de Microsoft).
+
+
+
+
+\subsection{Historique du projet Linux}
+
+\subsubsection{1991 : une naissance dans l'anonymat}
+
+\image{Torvalds.eps}
+      {Linus TORVLADS}
+      {img:linus}
+
+Linus Torvalds, étudiant à l'université d'Helsinki (Finlande) installe
+le système Minix\index{Minix}\footnote{Minix est un petit Unix développé par M.
+  TANNENBAUM dans un but éducatif et pouvant fonctionner sur tout PC
+  équipé au minimum de processeurs Intel 8086.} sur son i386. Le
+système s'avérant trop limité pour lui, il décide d'aller plus loin
+sur la base de ce qui existe. Linux (Linus' Unix, l'Unix de Linus)
+0.0.1 est né au mois d'août 1991. Afin de poursuivre les
+développements, Linus lance un appel à contribution sur le forum de
+discussion \texttt{comp.os.minix} en ces termes :
+
+
+\begin{verbatim}
+  Bonjour à tous les utilisateurs de minix.
+  
+  Je développe un système d'exploitation (gratuit) (c'est juste un
+  passe-temps, je ne prétends pas à un système aussi important et
+  professionnel que GNU) pour les clones AT 386(486).
+\end{verbatim}
+
+
+Dépendant au départ du système Minix, Linux devient autonome le 5
+octobre 1991, lors de la sortie officielle de la version 0.0.2. Cette
+version permet de faire tourner quelques applications GNU (logiciels
+libres) essentielles comme le compilateur \com{gcc}\footnote{gcc : GNU
+  cross compilator.} ou le shell \com{bash}. Linus prend la décision
+de mettre le code source sous licence GPL : tout le monde peut alors
+participer au développement de Linux. C'est certainement une des
+principales clefs du succès de Linux...
+
+Une maîtrise originale de l'ensemble du développement en permet
+l'accès au plus grand nombre, sans aucune restriction de contenu.
+Ainsi, nul cahier des charges, nulle équipe isolée (et restreinte) de
+développeurs : ce sont les échanges d'idées et de bouts de codes qui
+vont améliorer le système. Afin de garder l'homogénéité globale du
+système, Linus se charge de valider les apports réalisés par les
+contributeurs du projet. C'est donc lui qui valide la sortie de chaque
+nouvelle version du noyau\footnote{Aujourd'hui ce mode de validation
+  semble arriver à un point de saturation, Linus TORVALDS n'ayant plus
+  suffisamment de disponibilité pour valider efficacement toutes les
+  modifications apportées au noyau par les nombreux contributeurs (ce
+  n'est qu'un homme après tout).}.
+
+C'est de là qu'est né le succès actuel de Linux. En effet, l'apport
+constant des développeurs toujours plus nombreux, avec leurs
+améliorations ou leurs idées nouvelles, permet à Linux d'être toujours
+plus proche des besoins de ses utilisateurs. \cite{2LIN}
+
+
+\subsubsection{Lien avec le projet GNU}
+
+Un des objectifs du projet GNU est le développement d'un système
+complet basé sur Unix. Pour cela, vu l'ampleur de la tâche à
+accomplir, les développeurs GNU se ont commencé à développer les
+outils périphériques (compilateurs, éditeurs de texte, client
+réseau...  ) en se basant sur des systèmes Unix existants (FreeBSD ou
+Minix le plus souvent), l'étape suivante étant le développement du
+noyau du système.
+
+Il existe depuis longtemps un projet GNU visant à réaliser un système
+complet architecturé autour du micro-noyau Mach\footnote{Ce micro
+  noyau est aussi utilisé pour des systèmes comme MacOsX.}\index{Mach}
+: Ce projet très ambitieux s'appelle Hurd\footnote{`Hurd' stands for `Hird of Unix-Replacing Daemons'. And, then, `Hird' stands for `Hurd of Interfaces Representing Depth'. We have here, to my knowledge, the first software to be named by a pair of mutually recursive acronyms.}\index{Hurd} et il commence
+seulement aujourd'hui à devenir exploitable. Le projet Hurd a été
+rattrapé par le développement du noyau Linux qui, associé aux outils
+GNU, constitue le premier système d'exploitation entièrement libre. On
+parle donc couramment de système GNU/Linux.
+
+
+
+\subsubsection{1991-1994 : un développement original}
+
+
+Le développement anarchique de Linux ne lui permet pas, au départ, de
+devenir un système compétitif face aux autres systèmes du marché. Son
+principal point faible réside dans son système de fichiers hérité de
+Minix.  Seule l'intégration à Linux du Second Extended Filesystem
+(ext2fs)\index{ext2 (système de fichier)}, conçu par Rémi
+CARD\index{Rémi CARD} à partir du système de fichiers du système Unix
+BSD\index{BSD}, permet d'en faire un système fiable.
+Ext2fs\index{Ext2fs} offre enfin les performances et les services de
+systèmes de fichiers professionnels. Il devient naturellement un
+standard.  La présence dans le processus de développement de
+développeurs venant de nombreux horizons permet à Linux d'exister sur
+de nombreuses plates-formes (Mac, Atari, Amiga, Alpha) autres que sa
+plate-forme d'origine (Intel). Petit à petit, Linux devient un système
+Unix complet compatible avec les autres systèmes Unix, offrant
+toujours plus de services de qualité professionnelle au plus grand
+nombre. \cite{2LIN}
+
+
+
+
+\subsubsection{1995 : une année charnière}
+
+
+L'explosion d'Internet\index{Internet} donne un second souffle au
+développement de Linux : non seulement pour permettre à la communauté
+des développeurs de Linux de continuer à s'étendre, mais aussi et
+surtout pour donner à Linux une existence réelle sur le marché des
+systèmes d'exploitation.  Ainsi, ses qualités d'OS libre (et gratuit),
+robuste et performant font qu'il est choisi par de plus en plus de
+fournisseurs d'accès à Internet. Il est ainsi devenu aujourd'hui le
+leader sur le marché de l'hébergement de sites Web.
+
+Parallèlement, l'apparition et le développement de sociétés privées
+telles que RedHat\index{RedHat}, Caldera\index{Caldera} ou VA
+Linux\index{VA Linux} donne une envergure jusqu'alors inconnue à Linux
+: les distributions deviennent de plus en plus conviviales et simples
+à installer, et des services professionnels sont mis en place pour
+faciliter l'implantation de Linux dans les entreprises. \cite{2LIN}
+
+
+
+
+\subsubsection{1996 : l'année du décollage}
+
+
+\begin{itemize}
+\item RedHat Linux\index{RedHat Linux} est élu meilleur OS par InfoWorld,
+\item Linux commence à faire parler de lui dans les média,
+\item Netscape\index{Netscape} et Corel\index{Corel} commencent à
+  distribuer des versions Linux de leurs produits,
+\item Début de la guerre anti-Microsoft menée par Netscape,
+\item Échec d'OS/2 Warp\index{OS/2 Warp} d'IBM (Linux semble alors
+  constituer la seule alternative crédible à l'hégémonie de Windows
+  dans le domaine des systèmes pour PC),
+\item Les administrateurs système se familiarisent avec Linux,
+\item Début du projet KDE\index{KDE}\footnote{KDE : Killer Desktop
+    Environment.} : on commence à développer des projets conviviaux
+  pour le grand public. \cite{2LIN}
+\end{itemize}
+
+
+
+\subsubsection{1997 : une reconnaissance "professionnelle"}
+
+\begin{itemize}
+\item Des clusters\index{Cluster} (grappes) d'ordinateurs sous Linux
+  sont utilisés pour les effets spéciaux de Titanic ou du Pic de
+  Dante,
+\item Linux est utilisé pour le système de tri de courrier de la poste
+  américaine,
+\item Linux fait son apparition dans les systèmes
+  embarqués\index{Systèmes embarqués} (téléphones cellulaires,
+  navettes spatiales),
+\item Linux s'impose dans les milieux scientifiques et professionnels
+  spécialisés. \cite{2LIN}
+\end{itemize}
+
+
+
+\subsubsection{1998 : Linux aux portes du grand public}
+
+\begin{itemize}
+\item Oracle\index{Oracle}, Sun\index{Sun} ou Informix\index{Informix}
+  adoptent Linux et fournissent des versions de leurs produits phare
+  adaptées pour ce système\footnote{Ces versions sont généralement
+    vendues moins chères que pour les autres plates-formes.},
+\item De grandes sociétés commencent à déployer Linux sur une partie
+  de leur parc informatique (France Télécom, Cisco),
+\item Linux commence à faire peur aux éditeurs d'autres systèmes
+  d'exploitation (documents d'Halloween de Microsoft\footnote{Il
+    s'agit d'un mail interne de la société Microsoft faisant part de
+    son inquiétude vis à vis de l'essor de Linux et précisant sa
+    stratégie de lutte contre les logiciels libres. Ce document avait
+    alors été intercepté et largement diffusé sur Internet.}),
+\item Linux est présent sur 25\% des serveurs
+  d'entreprises. \cite{2LIN}
+\end{itemize}
+
+
+
+
+\subsubsection{1999 : la reconnaissance du marché des entreprises et des marchés financiers}
+
+\begin{itemize}
+\item Linux est présent sur 35\% des serveurs d'entreprises,
+\item Les salons Linux se multiplient (LinuxExpo\index{LinuxExpo},
+  EuroLinux\index{EuroLinux}... ),
+\item Début de la médiatisation de Linux dans les média traditionnels
+  (télévision, radio),
+\item Linux est largement présenté comme une alternative au système
+  Windows de Microsoft dans le domaine des serveurs,
+\item Multiplication des revues spécialisées,
+\item Entrée en bourse de certains des principaux acteurs de Linux
+  (RedHat, VA Linux). \cite{2LIN}
+\end{itemize}
+
+Le système GNU/Linux est aujourd'hui réputé pour sa fiabilité et sa
+robustesse. Ceci est dû en partie à la liberté des logiciels qui le
+composent : l'accès aux sources permettant de corriger très facilement
+et rapidement une erreur de programmation.
+
+GNU/Linux est aujourd'hui utilisé aussi bien par les entreprises que
+par les utilisateurs finaux (on estime actuellement le nombre
+d'utilisateurs à plusieurs dizaines de millions).
+
+Les plus grandes sociétés informatiques (IBM, Sun, HP, ...)
+conscientes des qualités des logiciels libres existants, rejoignent le
+nombre des partisans de ce système, et contribuent à son
+développement. \cite{APRIL}
+
+
+\section{Les distributions de Linux}
+
+\subsection{Installation et configuration manuelle}
+
+Initialement, l'installation de Linux était une opération fastidieuse
+et relativement compliquée (comparée à celle d'un système Windows, par
+exemple) et l'usage d'un système Unix ``brut'' n'est pas à la portée
+de tout le monde.  Traditionnellement, pour installer un système
+Linux, il fallait récupérer sur internet les codes sources, les
+compiler sur sa machine et assembler le tout manuellement. La
+complexité de ces opérations est telle qu'elle réservait
+l'installation de Linux à des experts.
+
+Linux doit en grande partie sa réputation de système complexe à
+installer à cette époque que certains qualifient avec nostalgie
+``d'héroïque''. Heureusement, les choses se sont grandement
+simplifiées depuis.
+
+\subsection{Les distributions}
+
+Pour faciliter l'installation et l'utilisation de systèmes Linux, on a
+vu apparaître des ``distributions''\index{Distribution}, intégrant
+dans un environnement homogène l'ensemble des outils nécessaires à une
+utilisation courante et automatisant au maximum l'installation et le
+paramétrage du système. Ces distributions facilitent grandement
+l'installation de Linux et leur qualité s'est grandement accrue ces
+derniers temps, au point que n'importe qui peut aujourd'hui installer
+un système Linux viable sans trop de problème.
+
+La plupart des distributions de linux sont l'oeuvre de sociétés
+commerciales, ce qui peut sembler en contradiction avec la notion de
+logiciel libre. Il faut souligner que la licence GPL n'interdit pas la
+vente de logiciels libres, par contre elle oblige de rendre publiques
+et librement utilisables le code source de tout logiciel basé sur un
+logiciel libre. Voici les principales distributions qu'il est possible
+de rencontrer :
+
+\begin{description}
+\item[RedHat] est l'une des distributions les plus connues dans le
+  milieu professionnel (au moins aux USA), même si ce n'est pas la
+  plus standard. C'est la première distribution dont l'entreprise a
+  été introduite en bourse. Un grand nombre de logiciel est disponible
+  prêt à l'emploi pour cette version de Linux.
+  \index{RedHat}
+  
+\item[Mandrake] est une distribution française, certainement la
+  version la plus diffusée en France. Très agréable à utiliser,
+  surtout sur un poste client, elle est très bien traduite en Français
+  et bénéficie de mises à jours très régulières. Cette réactivité est
+  peut-être même un défaut de cette distribution dans le cadre d'un
+  usage professionnel. Il est en effet difficile de suivre le rythme
+  de mise à jour imposé et la migration d'une version à l'autre est
+  souvent problématique\footnote{Des régressions ont même été
+    constatées lors du lancement de versions majeures, du fait de
+    l'introduction hâtive d'outils non stabilisés (comme le
+    compilateur gcc 3.0 dans la Mandrake 8.0, par exemple). Mandrake a
+    tenu compte de ses erreurs et a mis en place des procédures de
+    tests plus rigoureuses pour la version 9 de sa distribution.}. Il
+  faut signaler que la société Mandrake a été placé en redressement
+  judiciaire en janvier 2003 et qu'elle en est ressortie en mars 2004.
+  Aujourd'hui, l'entreprise semble être repartie sur des bases saines.
+  \index{Mandrake}
+
+\item[Suse] est une distribution allemande. Une des distributions les
+  plus utilisées en Europe (surtout en Allemagne, où Linux est très
+  populaire). Très complète en terme de nombre de logiciels
+  disponibles, elle a connu récemment des problèmes financiers (qui
+  semblent depuis être résolus, notamment grâce à l'appui de certains
+  gros acteurs du marché informatique).
+  \index{Suse}
+
+\item[Debian] est complète, puissante et disponible sur un grand
+  nombre de plates-formes. Cette distribution est reconnue pour sa
+  stabilité et la rigueur des tests d'intégration (chaque modification
+  est soigneusement réceptionnée et testée sur l'ensemble des
+  plates-formes supportées avant d'être intégrée). De ce fait, ses mises
+  à jour sont relativement rares mais chacune d'elle peut être
+  utilisée avec sérénité dès sa sortie. Ce rythme de mise à jour
+  s'adapte bien à un usage professionnel, d'autant plus que, du fait
+  de la rigueur des tests de non régression, le passage d'une version
+  à une autre ne pose généralement pas de difficultés. C'est une des
+  distribution favorite des utilisateurs avancés de Linux, par contre,
+  son installation reste relativement complexe.
+  \index{Debian}
+
+\item[SlackWare] est une des premières distributions de Linux. Elle
+  bénéficie d'une forte expérience mais peut paraître relativement
+  rustique. C'est la distribution des nostalgiques du Linux de la
+  première heure.
+  \index{SlackWare}
+  
+\item[Lindows OS], comme son nom l'indique, se positionne en
+  concurrence de Windows pour le poste client. Il a été annoncé à
+  grand renfort de polémiques comme étant un système révolutionnaire,
+  capable de faire tourner indifféremment des applications Windows ou
+  Linux. Le plus grand coup de pousse médiatique a été apporté par
+  Microsoft lui même\footnote{Les deux éditeurs sont d'ailleurs
+    presque voisins.} lorsqu'il a porté plainte contre l'éditeur pour
+  violation de sa marque déposée "Windows" susceptible d'induire le
+  consommateur en erreur.  Tout ce battage médiatique s'est calmé
+  depuis la sortie commerciale de la distribution : En fait de système
+  révolutionnaire, il s'agit d'une distribution classique\footnote{Et
+    très pauvre en matière d'applications fournies, d'ailleurs...}
+  destinée au poste de travail, dont le ``look'n feel'' est très
+  largement inspiré de celui de Windows. Elle utilise l'émulateur Wine
+  pour faire fonctionner les applications Windows, ce que propose la
+  quasi totalité des distributions Linux. Cette déception n'empêche
+  pas Lindows de s'améliorer progressivement et de marquer des points
+  sur le plan commercial. La chaîne de distribution Woolmark propose,
+  par exemple, des PC bas de gamme équipés de ce Lindows en lieu et
+  place de Windows. Une version spécifique va même être lancée pour
+  concurrencer l'édition Tablet PC de Windows XP.
+  \index{Lindows OS}
+
+\item[Corel-Linux] était proposée comme une alternative à Windows pour
+  les postes clients (pas pour les serveurs). Elle privilégiait donc
+  la facilité d'utilisation et d'installation. Corel a abandonné le
+  développement des distributions Linux pour se recentrer sur son
+  coeur de métier, à savoir l'édition de logiciels.
+  \index{Corel-Linux}
+
+\end{description}
+
+Les distributions actuelles éprouvent encore quelques difficultés pour
+optimiser les périphériques exotiques, et souvent seules les
+fonctionnalités de base sont correctement configurées après une
+installation classique. Les outils de configuration des distributions
+vous permettront sans doute de configurer votre système de base
+simplement, mais pour aller au-delà, il faudra sans doute intervenir
+manuellement.
+
+Néanmoins, il faut reconnaître que celui qui installe Linux à partir
+d'une distribution récente sur un ordinateur assez vieux (c'est-à-dire
+un ordinateur qui ne dispose pas des derniers périphériques et cartes
+graphiques à la mode), ou dont les constituants sont de marque
+courante, obtient rapidement un système fonctionnel et capable de
+réaliser la plupart des opérations qu'il désire. En particulier, celui
+qui utilise son ordinateur dans un cadre professionnel (pour écrire
+des lettres, les imprimer, naviguer sur Internet pour récupérer des
+informations, programmer... ) peut parfaitement se contenter de
+l'installation par défaut. Ce problème de configuration apparaît
+principalement pour les particuliers, qui souvent disposent de
+machines hétéroclites et absolument non standards (carte son, cartes
+vidéo... ).
+
+\subsection{Standardisation des distributions}
+
+Pour faire le poids vis à vis des autres Unix et de Red Hat, plusieurs
+éditeurs de distributions Linux ont signé un accord visant à
+développer un OS commun pour les serveurs.
+\index{United Linux}
+
+Il s'agit des éditeurs suivants :
+\begin{itemize}
+\item Suse Linux,
+\item Caldera,
+\item Turbolinux
+\item Conectiva.
+\end{itemize}
+
+Si chaque distributeur proposera une distribution quelque peu
+différente, le coeur de l'OS, c'est-à-dire la version du noyau Linux
+retenue, ainsi que les applications de base, formeront un standard
+commun pour l'industrie, espèrent les quatre entreprises.
+
+Concrètement, les prochaines distributions pour serveurs de Caldera,
+Turbolinux, Suse et Conectiva seront estampillées "United Linux".
+Elles posséderont un CD commun intégrant le noyau, les librairies et
+les modules d'installation.
+
+La création de ce label commun a pour but de faire tomber les deux
+principales critiques formulées par les entreprises à l'encontre de
+Linux :
+\begin{itemize}
+\item le manque de certification pour développer des applications
+  professionnelles compatibles,
+\item la fragmentation du code des composants de base.
+\end{itemize}
+
+But moins avouable de ce regroupement, elle permet de profiter de
+l'implantation complémentaire des participants sur différents marchés
+pour concurencer l'actuel leader des distributions Linux : RedHat.
+

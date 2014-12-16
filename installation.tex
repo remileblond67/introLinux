@@ -1,0 +1,599 @@
+\chapter{Installation de Linux}
+
+\resumchap{Dans cette partie, nous allons apprendre à installer Linux sur
+  une machine de type PC faisant également fonctionner le système
+  Windows NT. La distribution utilisée est une Mandrake 8.1. Le but
+  est d'obtenir une configuration conforme à celle utilisée dans les
+  chapitres précédents.}
+
+
+\section{Avant de commencer l'installation}
+
+\subsection{Configuration minimale}
+
+La configuration minimale supportée par Linux est un 386 avec au
+minimum 12 Mo de mémoire vive. Il va de soi qu'avec un tel foudre de
+guerre, vous ne pourrez pas aller bien loin, une configuration
+raisonnable serait plutôt un 486DX2 66MHz avec au moins 32Mo de
+mémoire. La quantité de mémoire est de loin le facteur le plus
+important, et si vous voulez utiliser l'environnement graphique X11,
+il faut au minimum compter sur 64 Mo de mémoire vive. Vous pourrez
+donc parfaitement transformer un vieux 486 ou Pentium en routeur ou en
+Firewall avec partage de connexion à Internet par exemple. Vous
+n'aurez donc certainement aucun problème avec les ordinateurs
+puissants qui se vendent actuellement.
+
+
+\subsection{Récupération des informations sur le matériel}
+
+Avant de commencer quoi que ce soit, vous devriez récupérer le maximum
+de données concernant votre matériel. En effet, ces informations
+peuvent être particulièrement utiles pour diagnostiquer la cause des
+éventuels problèmes de configuration du matériel que vous pourriez
+rencontrer.  Bien que les distributions récentes soient capables de
+détecter le matériel le plus courant, vous aurez aussi peut être à
+spécifier certains paramètres matériels lors de l'installation et,
+dans le pire des cas, lors du premier démarrage de Linux. Les
+informations dont vous aurez certainement besoin sont les suivantes :
+
+\begin{itemize}
+\item type de processeur, avec sa marque et éventuellement sa vitesse,
+\item type de carte mère, avec sa marque et impérativement son
+  chipset,
+\item type de branchement de la souris (série, PS/2, interface bus
+  propriétaire),
+\item nombre de ports série, ainsi que leurs paramètres (ports
+  d'entrée/sortie, lignes d'interruption),
+\item nombre de ports parallèle, ainsi que leurs paramètres (ports
+  d'entrée/sortie, lignes d'interruption),
+\item si vous disposez d'un contrôleur SCSI, marque et modèle de ce
+  contrôleur (modèle du chipset de la carte SCSI),
+\item sinon, nom du contrôleur de disque IDE (regardez sur le chipset
+  de la carte mère),
+\item types de disques durs (IDE, IDE UltraDMA 33, 66 ou 100, SCSI),
+  ainsi que leurs taille et leur position dans le système (contrôleurs
+  auxquels ils sont connectés, numéros d'unités logiques SCSI),
+\item type de lecteur de CD-ROM (IDE, ATAPI, SCSI, connecté sur carte
+  son) et le type de leur branchement s'ils sont externes (port
+  parallèle, SCSI ou USB),
+\item nom, modèle et marque de la carte graphique, type de chipset
+utilisé par cette carte et taille de sa mémoire vidéo,
+\item nom, modèle et marque de l'écran, avec ses fréquences de
+  balayage horizontales et verticales, sa bande passante et les
+  fréquences recommandées par le constructeur pour les différentes
+  résolutions,
+\item type de carte son (ISA, PCI, PnP) ainsi que le nom du chipset
+  utilisé par cette carte,
+\item type de carte réseau (ISA, PCI, PnP) ainsi que le nom
+de son chipset,
+\item type de modem (interne, externe) et, si le modem est interne, sa
+  nature (modem complet ou émulation).
+\end{itemize}
+
+Vous pouvez obtenir ces informations en consultant la documentation
+fournie avec votre ordinateur, les sites Web des constructeurs des
+différents composants, les informations fournies par le programme de
+configuration du BIOS ou affichées directement par le BIOS au
+démarrage de la machine, ou tout simplement en ouvrant le boîtier de
+la machine et en regardant ce qu'il y a à l'intérieur. Vous pouvez
+également récupérer les informations indiquées dans la configuration
+de MS Windows si celui-ci est installé.
+                
+Il se peut que vous n'ayez pas besoin de ces informations et que
+l'installation se passe sans problème. Cependant, si d'aventure Linux
+exige que vous les connaissiez, mieux vaut pouvoir lui répondre.
+
+Bien que cela soit assez rare, certains composants ou périphériques
+additionnels peuvent ne pas être gérés par Linux, faute d'avoir un
+gestionnaire de périphérique adéquat (cet état de fait est en général
+dû à une rétention d'information de la part des fabricants, qui
+empêchent ainsi les développeurs de Linux d'écrire les gestionnaires
+de périphériques dans de bonnes conditions). C'est en particulier le
+cas de nombre de périphériques bas de gamme conçus pour ne fonctionner
+qu'avec MS Windows, ou de quelques périphériques exotiques. Les
+Win-modems ont une triste réputation à ce sujet (il s'agit de modems
+incomplets, dont une partie du traitement de signal est reporté dans
+un logiciel spécifique à Windows), ainsi que des imprimantes dites
+``GDI'', qui ne comprennent que les commandes graphiques de Windows.
+Vous pourrez également avoir des problèmes avec des cartes de
+numérisation vidéo analogiques ainsi que certaines cartes de
+décompression MPEG.  Certaines marques se distinguent par le fait
+qu'elles refusent obstinément de développer des gestionnaires de
+périphérique pour leur matériel ou, pire encore, de fournir les
+informations nécessaires aux développeurs de Linux pour écrire ces
+gestionnaires sous licence libre. Mais il est toujours recommandé, de
+manière générale, de bien se renseigner auprès des vendeurs et des
+groupes de discussion avant tout achat de matériel... Vous pourrez
+trouver une liste (non exhaustive) de matériel testé sous Linux dans
+la liste de matériel compatible
+(http://www.linuxdoc.org/HOWTO/Hardware-HOWTO/). La Linux Hardware
+Data base (http://lhd.datapower.com/) vous permettra également
+d'effectuer une recherche sur n'importe quel type de matériel et sur
+n'importe quel modèle très facilement. Il existe d'autres sites
+réalisant périodiquement des tests sur le matériel récent, comme par
+exemple Linux-Hardware (http://www.linuxhardware.org).
+
+
+\subsection{Sauvegarde des données}
+
+L'installation du système de base est l'opération la plus délicate,
+puisqu'il faut travailler au niveau le plus bas. La moindre erreur
+peut provoquer une catastrophe, ce qui peut aller jusqu'à recommencer
+complètement l'installation. Si vous installez Linux pour la première
+fois sur votre ordinateur, ou s'il n'y a pas d'autre système
+d'exploitation installé dessus, vous en serez quitte pour quelques
+heures perdues. Sinon, ce qui est le plus à craindre, c'est la perte
+totale de vos données, y compris celles des autres systèmes
+installés ! Donc :
+
+\begin{center}
+IL FAUT DONC FAIRE UNE SAUVEGARDE DE VOS DONNÉES
+\end{center}
+
+Si vous disposez d'un lecteur de bande, le problème de la sauvegarde
+est très simple : vous n'avez qu'à faire une sauvegarde complète.
+Dans le cas contraire, vous allez sans doute devoir trier vos fichiers
+afin d'identifier ceux auxquels vous tenez réellement, et les recopier
+sur un support physique fiable (évitez absolument les disquettes, ils
+sont lents et n'ont jamais été fiables). Vous pouvez par exemple faire
+un CD de sauvegarde si cous disposez d'un graveur de CD.
+
+En fait, l'idéal est tout simplement de disposer d'un autre disque
+dur, que l'on pourra consacrer complètement à l'installation de Linux.
+Ainsi, vous pourrez expérimenter tout à loisir, sans craindre de
+perdre vos précieuses données. De plus, l'installation de Linux sur un
+disque vierge est nettement plus facile que sur un disque où Windows
+est déjà installé, parce que vous n'avez pas à dégager de la place
+pour son installation. Prenez toutefois garde au fait que Linux
+restera capable d'accéder aux données de votre premier disque dur, et
+que toute erreur de manipulation peut détruire les données qui s'y
+trouvent. Par exemple, si vous ne spécifiez pas le bon disque dur lors
+de la création des systèmes de fichiers, vous perdrez à nouveau toutes
+vos données. L'achat d'un tiroir peut être la vraie solution, car vous
+n'aurez qu'un seul disque à un instant donné dans votre ordinateur.
+Toutefois, cette technique a l'inconvénient de ne pas vous permettre
+d'accéder aux données de votre disque Windows à partir de Linux.
+
+
+\subsection{Amorçage}
+
+Pour commencer votre installation, vous devez avant tout démarrer
+votre ordinateur sous Linux. La méthode la plus simple est
+certainement de mettre le CD d'amorçage de votre distribution dans le
+lecteur de CD et de redémarrer l'ordinateur. Il faut que votre BIOS
+soit configuré pour amorcer le système sur le lecteur de CD pour que
+cette solution fonctionne. Si votre BIOS ne vous permet pas de le
+faire, il ne vous reste plus qu'à utiliser l'une des disquettes
+fournies avec votre distribution.  Dans tous les cas, Linux doit se
+lancer, et le programme d'installation doit démarrer. Suivez les
+indications fournies avec votre distribution pour cette étape.
+
+En général, les distributions fournissent un petit utilitaire DOS
+nommé \com{RAWRITE.EXE} qui permet de créer une disquette d'amorçage à
+partir d'un noyau très simplement. Il s'utilise avec la ligne de
+commande suivante :
+
+\verb'rawrite image lecteur:'
+
+où \verb'image' est l'image d'une des disquettes d'amorçage (que vous
+trouverez sur le CD d'amorçage de votre distribution), et
+\verb'lecteur' est le lecteur de disquette utilisé (en général,
+\verb'A:'). Vous pouvez aussi consulter la documentation de votre
+distribution pour savoir comment indiquer au noyau les modules qu'il
+doit charger, ou comment créer une disquette de démarrage pour un
+autre noyau.
+
+Dans la majorité des distributions, les outils nécessaires à
+l'installation sont placés sur un disque virtuel en mémoire après le
+démarrage de Linux. C'est en particulier le cas du programme
+d'installation. Cela est normal, puisque Linux n'est pas encore
+installé, d'une part, et que ces outils ne tiennent pas facilement sur
+une disquette, d'autre part. Ces outils sont donc souvent comprimés.
+Vous devez malgré tout avoir déjà accès aux périphériques de votre
+ordinateur, en particulier aux disques, pour poursuivre votre
+installation.
+
+
+\subsection{Partitionnement du disque}
+
+La deuxième opération après le démarrage du système est le
+partitionnement du disque dur. Cette étape est de loin la plus
+dangereuse, mais elle est absolument nécessaire.  Elle ne pose pas de
+problème lorsqu'on installe Linux sur une machine neuve, mais peut
+être délicate si un autre système d'exploitation est déjà installé ou
+doit être installé en parallèle.  Cette section décrit les principes
+de base du partitionnement, la manière de récupérer de la place sur un
+disque dur et l'opération de partitionnement proprement dite.
+
+
+\subsubsection{Notion de partition}
+
+Une ``partition''\index{Partition} est, comme son nom l'indique, une
+partie d'un disque dur. Les partitions permettent de diviser l'espace
+de stockage des disques durs en zones indépendantes de taille
+restreinte, et dans lesquelles différents systèmes ou différentes
+données peuvent être stockées de manière totalement indépendante.
+L'opération de ``partitionnement''\index{partitionnement} est
+l'opération de création des différentes partitions d'un disque dur.
+
+L'installation de plusieurs systèmes d'exploitation nécessite souvent
+d'allouer une partition à chaque système, car les systèmes
+d'exploitation ne comprennent généralement pas le format des systèmes
+de fichiers les uns des autres. Il également est parfois nécessaire,
+pour un même système, de définir plusieurs partitions, qui seront
+utilisées à des fins spécifiques. Par exemple, Linux fonctionne
+nettement mieux si on lui attribue une partition de
+``swap''\index{Swap (partition)} (dite aussi ``partition
+d'échange''\index{Partition d'échange}) pour stocker des données peu
+utilisées qui se trouve en mémoire lorsqu'il a besoin de plus de
+mémoire qu'il n'en est physiquement installée sur la machine. De même,
+il est possible de créer plusieurs partitions pour séparer les données
+utilisateurs des programmes, ce qui permet de faciliter les mécanismes
+de sauvegarde d'une part, et d'assurer une plus grande sécurité des
+données lors des opérations de maintenance du système d'autre part.
+
+Sur les machines de type PC, chaque disque dur peut être découpé en
+quatre partitions dites ``primaires''. La position, la taille et le
+type de ces partitions sont enregistrées dans le premier secteur du
+disque dur, que l'on appelle souvent le ``Master Boot
+Record''\index{MBD} \index{Master Boot Record} (``MBR'' en abrégé). Le
+MBR ne contient que quatre entrées pour la définition des partitions,
+d'où la limite de quatre partitions primaires. Le type des partitions
+est un code numérique qui indique le système d'exploitation capable de
+l'utiliser et sa nature (partition de swap ou système de fichiers par
+exemple). À titre d'exemple, Linux utilise principalement deux types
+de partition : les partitions de swap (numéro 82) et les partitions
+pour les systèmes de fichiers (type 83).
+
+Bien entendu, la limitation à quatre partitions seulement est
+extrêmement contraignante, aussi la notion de partition étendue
+a-t-elle été introduite.  Une ``partition étendue''\index{Partition
+  étendue} est une partition primaire spéciale, dans laquelle il est
+possible de définir jusqu'à 64 sous-partitions. Ces sous-partitions
+sont appelées des ``partitions logiques''\index{Partition logique}.
+Les données ne sont jamais stockées dans la partition étendue
+elle-même, mais dans ses partitions logiques (\voirf{fig:partition}).
+
+\begin{figure}[htbp]
+  \begin{center}
+    \includegraphics{eps/partition.eps}
+    \caption{Exemple de partitionnement de disque}
+    \label{fig:partition}
+  \end{center}
+\end{figure}
+
+On ne peut définir qu'une seule partition étendue sur un disque donné,
+mais cela n'empêche pas d'avoir des partitions primaires normales à
+côté de celle-ci. Il est donc recommandé,
+lorsque l'on crée la quatrième partition, de créer une partition
+étendue et non une partition primaire, afin de se réserver la
+possibilité de créer de nouvelles partitions ultérieurement. Il faut
+toutefois savoir que certains systèmes ne peuvent pas être installés
+sur des partitions logiques (notamment DOS et Windows 9x/Millénium),
+bien qu'ils soient capables d'y accéder une fois qu'ils ont démarré.
+
+Outre la table des partitions primaires, le MBR contient un petit
+programme, appelé le ``bootstrap loader''\index{bootstrap loader}, qui
+permet de charger le premier secteur d'une des partitions primaires.
+Ce secteur est communément appelé le ``secteur de boot''\index{Secteur
+  de boot}, parce qu'il contient le programme capable de charger le
+système d'exploitation. La partition dont le secteur de boot est
+chargé par le bootstrap loader est appelée la ``partition
+active''\index{Partition active}. Il ne peut y avoir qu'une seule
+partition active à chaque instant : celle du système d'exploitation
+principal.
+
+
+\subsubsection{Amorçage du système}
+
+Généralement, le programme stocké sur le secteur de boot d'une
+partition a pour but de charger le système d'exploitation qui y est
+installé. Cependant, pour certains systèmes d'exploitation, ce
+programme est très évolué et permet de lancer d'autres systèmes
+d'exploitation, éventuellement installés sur d'autre partitions ou
+d'autres disques durs. Ces programmes sont alors appelés des
+``gestionnaires d'amorçage''\index{Gestionnaires d'amorçage}.
+
+Linux dispose de deux gestionnaires d'amorçages très puissants : le
+GRUB et LILO\index{GRUB (gestionnaire d'amorçage)}\index{LILO
+  (gestionnaire d'amorçage)}.  Windows NT, 2000 ou XP disposent
+également d'un gestionnaire d'amorçage capable de lancer d'autres
+systèmes d'exploitation : NTLDR\index{NTLDR}.
+
+Pour résumer, lors du démarrage d'un PC, le BIOS charge le MBR du
+premier disque dur en mémoire et exécute le bootstrap loader. Celui-ci
+cherche ensuite à charger le secteur de boot de la partition active,
+et exécute le gestionnaire d'amorçage qui s'y trouve. Ce gestionnaire
+peut donner accès aux différents systèmes d'exploitation, qu'ils
+soient situés sur d'autres partitions ou même d'autres disques durs.
+La manière dont chaque système est lancé dépend bien sûr du système.
+Il faut donc, en général, lancer chaque système d'exploitation avec
+son propre chargeur. Cependant, on peut toujours utiliser un
+gestionnaire d'amorçage d'un autre système en rusant quelque peu : il
+suffit d'indiquer à ce gestionnaire de charger le secteur de boot de
+la partition d'installation du système que l'on désire lancer si
+celui-ci n'est pas pris en charge directement. Dans ce cas, le
+gestionnaire d'amorçage ne fait que passer la main au chargeur de
+l'autre système.
+
+
+\subsubsection{Plan de partitionnement}
+
+Avant de se lancer dans l'opération de partitionnement proprement
+dite, il faut établir un plan de partitionnement. Cela consiste tout
+simplement à déterminer la taille et la nature de chaque partition
+dans le système. Il est normal, sur un système où seul Linux sera
+utilisé, de disposer d'au moins trois partitions :
+
+\begin{itemize}
+\item une partition de swap, que Linux utilisera pour y stocker
+  temporairement des données lorsqu'il aura besoin de récupérer un peu
+  de place en mémoire. Il est recommandé de placer cette partition au
+  début du disque (c'est à dire au plus près du cylindre 0, là où le
+  taux de transfert est le plus rapide),
+\item une partition pour le système de fichiers racine (point de montage
+  \rep{/}, dans laquelle doit se
+  trouver l'ensemble des fichiers du système. Cette partition doit se
+  trouver dans les 1024 premiers cylindres pour que le BIOS puisse y
+  accéder et charger le gestionnaire d'amorçage du système,
+\item une partition devant contenir les données des utilisateurs
+(point de montage \rep{/home/}.
+\end{itemize}
+
+L'avantage d'avoir une partition séparée pour toutes les données des
+utilisateurs est considérable, puisque dans ce cas on peut mettre à
+jour le système ou le réinstaller complètement sans avoir à faire de
+sauvegarde de ces données. De plus, les fichiers de configuration
+importants peuvent être sauvegardés sur cette partition avant la
+réinstallation, ce qui est extrêmement pratique. Ce type de
+partitionnement est à prendre sérieusement en considération, surtout
+pour les machines de particuliers, sur lesquels un grand nombre de
+programmes peuvent être installés simplement pour les tester. Il n'est
+donc pas rare, dans ces conditions, d'avoir à refaire une installation
+complète pour « nettoyer » rapidement le système.
+
+Toutefois, si l'on ne dispose pas de beaucoup de place sur le disque,
+il est possible de regrouper la partition racine et la partition
+contenant les données utilisateurs.  Un mauvais dimentionnement de ces
+partitions aura dans ce cas de moins lourdes conséquences (si une
+partition est pleine, on ne peut pas facilement utiliser l'espace
+restant sur les autres partitions).
+
+
+Si votre machine est destinée à accueillir plusieurs systèmes
+d'exploitation, il est vivement recommandé de créer au moins une
+partition FAT ou FAT32. Cette partition permettra en effet d'échanger
+des données entre Linux et les autres systèmes d'exploitation, car les
+systèmes de fichiers FAT sont reconnus par tous les systèmes
+d'exploitation courants. Notez que si Windows NT4 doit être installé,
+vous devrez créer une partition FAT plutôt qu'une partition FAT32, car
+Windows NT ne reconnaît pas, sans programme additionnel, les
+partitions FAT32. Ce problème ne se pose plus pour Windows 2000 et
+pour XP. Notez également que bien que Linux sache parfaitement lire
+les partitions NTFS (utilisées par Windows NT4, Windows 2000 et par
+XP), l'écriture sur ces partitions est expérimentale et n'est donc pas
+conseillée. Inversement, aucun système Windows ne sait lire les
+systèmes de fichiers Linux, quels qu'ils soient. Avoir une partition
+FAT est donc incontournable dans ce cas de configuration.
+
+Si la machine doit être d'une fiabilité absolue ou si vous êtes soumis
+à des contraintes d'exploitation fortes, vous pouvez opter pour des
+solutions radicales qui consistent à séparer les données
+d'exploitation (normalement situées dans le répertoire \rep{/var/})
+des fichiers des programmes, et de les placer dans une partition
+dédiée. Vous pourrez alors ne monter que cette partition en
+lecture/écriture. Ainsi, en cas de crash système, seule la partition
+contenant les données d'exploitation devra être réparée, ou à
+l'extrême rigueur réinitialisée complètement par les scripts de
+démarrage.
+
+Rien ne vous empêche de créer d'autres partitions si vous le désirez.
+Sachez cependant que les systèmes de fichiers de Linux ne sont pas
+aussi limités que les systèmes de fichiers FAT et FAT32 en ce qui
+concerne les tailles maximales des partitions, et que par conséquent,
+créer une multitude de partitions n'est pas nécessaire et n'est
+certainement pas une bonne idée. La création de partitions
+supplémentaires peut malgré tout s'avérer nécessaire, par exemple pour
+y installer d'autres systèmes d'exploitation. Dans ce cas, vous aurez
+certainement à créer une partition étendue et des partitions logiques.
+
+La grande difficulté dans l'établissement du plan de partitionnement
+est de bien déterminer ses besoins en place disque, aussi bien pour
+les programmes que pour les données et le swap. Cependant, d'une
+manière générale, on peut considérer que ce qui est le plus important
+pour un particulier, ce sont ses données, et que le système ne va pas
+prendre des dizaines de giga-octets sur le disque ! Si vous décidez de
+placer les programmes et les données utilisateurs dans deux partitions
+séparées, vous pouvez envisager le plan de partitionnement suivant :
+
+\begin{description}
+\item [Une partition de swap] deux fois la mémoire vive de
+  l'ordinateur si vous ne disposez pas de beaucoup d'espace disque,
+  256 Mo sinon. Il est inutile de consacrer plus de place que cela,
+  car il est très rare d'avoir besoin de plus de 384 Mo de mémoire
+  virtuelle (la mémoire virtuelle est la somme de la mémoire libre et
+  de la taille des partitions ou fichiers d'échange). Notez que la
+  règle du double de la mémoire vive est tout à fait empirique. Elle
+  se base sur le principe que si le système a besoin de plus de swap,
+  c'est que de toutes façons il n'est pas dimensionné pour ce qu'on
+  lui demande de faire. Cela dit, vous pouvez mettre autant de swap
+  que vous le désirez si vous en avez réellement besoin (par exemple
+  pour manipuler de très grandes photos ou des fichiers de très grande
+  taille). Si vous avez un gros disque, vous pouvez utiliser une très
+  grande partition de swap : elle ne sera quasiment pas utilisée, mais
+  le jour où vous en aurez besoin, elle sera là. Après tout, abus de
+  bien ne nuit pas...  Sachez que de toutes façons, si un jour il
+  fallait plus de mémoire virtuelle, vous pourriez créer un fichier
+  d'échange temporaire.
+\item[une partition racine] contenant le système, les programmes et
+  les fichiers de configuration : environ 2 Go. Il est possible de
+  travailler avec 1 Go, mais on n'est vraiment pas à l'aise avec
+  XWindow ou si l'on désire compiler des programmes récupérés sur
+  Internet (ce qui est assez courant). Il est inutile de dépasser les
+  3 Go pour cette partition, si l'on a besoin de plus de place, c'est
+  que le répertoire des données de travail \rep{/var/} devient trop
+  gros et dans ce cas on a intérêt à le placer sur une partition qui
+  lui est dédiée. Notez que l'on a intérêt à placer cette partition au
+  début du disque pour deux raisons : premièrement, c'est à cet
+  endroit que le disque dur est le plus rapide, et deuxièmement,
+  certains BIOS ne sont pas capables d'accéder aux cylindres de numéro
+  supérieur à 1024 et ne peuvent donc pas accéder au gestionnaire
+  d'amorçage du système s'il est installé sur cette partition,
+\item[une partition pour les répertoires personnels des utilisateurs]
+  le reste de l'espace disponible sur le disque moins, bien entendu,
+  l'espace nécessaire aux partitions des autres systèmes
+  d'exploitation et celui d'une éventuelle partition de sauvegarde ou
+  d'échange de données,
+\item[une partition de sauvegarde ou d'échange de données],
+  éventuellement. Elle sera utilisée pour échanger des données entre
+  systèmes dans le cas d'une configuration multi-boot.  Cette partition
+  devra être en FAT16 si les autres systèmes ne supportent pas les
+  partitions de type FAT32 (par exemple DOS, Windows 95 première
+  édition ou Windows NT4), mais on préférera tout de même la FAT32 si
+  possible (Windows 95 OSR2 ou plus, ou Windows 2000 ou XP). Cette
+  partition pourra faire environ 1 Go, soit la taille nécessaire pour
+  stocker une image disque de CD-ROM plus quelques fichiers
+  complémentaires. Elle pourra être de taille supérieure si un autre
+  système d'exploitation y est installé.
+\end{description}
+
+La partition du système dont on utilise le gestionnaire d'amorçage
+doit être placée de préférence avant le cylindre 1024. En effet,
+certains BIOS ne peuvent pas accéder aux cylindres suivants, et le
+bootstrap loader ne peut donc pas charger le gestionnaire d'amorçage
+du système dans ce cas. Cela signifie que la deuxième partition doit
+être la partition du système d'exploitation principal (cela a en plus
+l'avantage de donner les accès disque les plus rapides pour les
+fichiers de ce système).
+
+Notez que ce plan de partitionnement utilise les quatre entrées de la
+table des partitions, et ne permet donc pas d'en ajouter une
+complémentaire. Si l'on désire installer un autre système
+d'exploitation, on pourra le faire sur la partition FAT (auquel cas on
+pourra lui consacrer plus d'un giga-octets), soit sur un deuxième
+disque dur. Si cela ne s'avère pas possible (par exemple parce que
+l'on veut installer Windows NT, Windows 2000 ou XP sur une partition
+NTFS tout en conservant la partition FAT), on devra créer une
+partition étendue. Je préconise dans ce cas de placer les deux
+dernières partitions (la partition d'échange et la partition des
+répertoires personnels des utilisateurs) dans des partitions logiques
+de cette partition étendue, ce qui laisse libre la troisième partition
+primaire pour un autre système d'exploitation. Bien entendu, ce plan
+de partitionnement est une suggestion et vous êtes absolument libre
+d'en choisir un autre. Je ne le fournis que pour aider ceux qui ne
+savent pas comment effectuer leur partitionnement précisément. Il
+devrait convenir pour tous les disques de plus de 4 Go, qui sont
+monnaie courante à présent.
+
+
+\subsubsection{Utilisation de \com{parted}}
+
+L'utilitaire GNU \com{parted} est le standard en ce qui concerne les
+manipulations de partitions sous Linux. Cet outil s'utilise en ligne
+de commande, et peut donc être utilisé à partir d'un terminal en mode
+texte pendant la phase d'installation, si votre distribution l'inclut
+avec ses outils d'installation standards. Vous pourrez lancer
+\com{parted} avec la simple commande suivante :
+
+\verb'parted disque'
+
+
+\section{Déclaration des utilisateurs locaux}
+
+
+\subsection{Création des utilisateurs}
+
+
+\subsubsection{Modification des fichiers de configuration}
+
+Le fichier \fich{/etc/passwd} contient la définition des utilisateurs
+locaux du système, chaque utilisateur y est décrit par une entrée
+(\voir{sec:passwd} pour la structuration des enregistrements de ce
+fichier). Ainsi, pour créer un nouvel utilisateur, il suffit de
+rajouter une ligne dans le fichier \fich{/etc/passwd}.
+
+Par exemple, pour créer l'utilisateur nommé ``Rémi LEBLOND'',
+utilisant le login ``remi', ayant le répertoire de connexion
+\verb'/home/remi', utilisant l'interpréteur de commande \com{bash},
+ayant un identifiant numérique 500 et faisant partie du groupe 500,
+nous ajouterons la ligne suivante au fichier \fich{/etc/passwd} :
+
+\begin{verbatim}
+  remi:*:500:500:Rémi LEBLOND:/home/remi:/bin/bash
+\end{verbatim}
+
+Le deuxième champs de cette ligne indique le mot de passe de
+l'utilisateur. Il peut être :
+
+\begin{itemize}
+\item Vide, si l'utilisateur n'a pas de mot de passe,
+\item le mot de passe crypté par l'algorithme à sens unique
+  \com{crypt}\footnote{La fonction crypt est celle utilisée pour le
+    cryptage des mots de passe. Elle est basée sur l'algorithme DES
+    (Data Encryption Standard) avec des variantes prévues entre autres
+    choses pour éviter l'implémentation matérielle d'un casseur de
+    code.},
+
+Exemple de mot de passe crypté : ``jn37OT0surAy.''
+\item le caractère '*' pour indiquer que le mot de passe crypté est
+  stocké dans le fichier \fich{/etc/shadow}.
+\end{itemize}
+
+
+
+\subsubsection{Utilisation d'outils système}
+
+Généralement, la plupart des distributions Linux propose des outils
+facilitant la manipulation du fichier des utilisateurs. Il s'agit,
+soit d'outils en commandes en ligne de commande, soit d'outils
+graphiques.
+
+La commande \com{useradd} permet de créer de nouveaux utilisateurs.
+
+Exemple d'utilisation : Création d'un nouvel utilisateur ``util1''.
+\begin{verbatim}
+# useradd util1
+# passwd util1
+Changing password for user util1.
+New UNIX password: 
+Retype new UNIX password: 
+passwd: all authentication tokens updated successfully.
+\end{verbatim}
+
+Le nouveau compte utilisateur sera inséré dans les fichiers du système
+quand c'est nécessaire, le répertoire personnel sera créé, et les
+fichiers initiaux copiés à partir du répertoire \rep{/etc/skel}, cela
+dépendant des options présentes en ligne de commandes.  La commande
+crée un groupe pour chaque utilisateur ajouté au système, à moins
+que l'option -n ne soit fournie.  Comme la grande majorité des
+commandes Linux, \com{useradd} accepte un grand nombre d'options
+permettant, par exemple, de spécifier l'emplacement du répertoire
+personnel ou le groupe principal. Se reporter à la page de manuel pour
+plus d'informations.
+
+A l'inverse, la commande \com{userdel} permet de supprimer des comptes
+utilisateur.
+
+La distribution Mandrake dispose d'un outil graphique permettant de
+gérer les utilisateurs et les groupe : \com{userdrake}
+(\voirf{fig:userdrake}).
+
+\imagelarg{userdrake.eps}{Exemple de fenêtre UserDrake}{fig:userdrake}
+
+
+
+\subsection{Création des groupes}
+
+
+\subsubsection{Modification des fichiers de configuration}
+
+Le fichier \fich{/etc/group} contient la définition des groupes
+locaux du système, chaque groupe y est décrit par une entrée
+(\voir{sec:group} pour la structuration des enregistrements de ce
+fichier). Ainsi, pour créer un nouveau groupe, il suffit de
+rajouter une ligne dans le fichier \fich{/etc/group}.
+
+
+
+\subsubsection{Utilisation d'outils système}
+

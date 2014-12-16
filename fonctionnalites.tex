@@ -1,0 +1,744 @@
+\chapter{Fonctionnalités de Linux}
+
+\resumchap{Dans ce chapitre, nous aborderons les différentes
+  fonctionnalités d'un système Linux. Nous verrons comment celles-ci
+  sont prises en charge par le système.}
+
+\section{Fonctionnalités du noyau}
+
+\subsection{Présentation rapide}
+
+Le noyau LINUX a les caractéristiques techniques suivantes :
+\begin{itemize}
+\item Multi-tâches et multi-utilisateur,
+\item Multi-plate-forme (Intel x86 et Itanium, Alpha, MIPS, PowerPC,
+  SPARC, etc.)
+\item Espace mémoire pour applications en mode protégé 32 bits.
+  Support de la gestion de la mémoire virtuelle (64 bits en cours de
+  développement),
+\item Architecture SMP (Symetric Multi-Processing) sur plate-forme
+  Intel et Sun,
+\item Support de plusieurs systèmes de fichiers : FAT16, FAT32, NTFS,
+  Ext2FS, Ext3FS, ReiserFs, XFS, JFS, HPFS...
+\item Performance élevée en réseau : Support de la grande majorité des
+  protocoles actuels (TCP/IP 4 et 6, IPX/SPX, AppleTalk... ), partage
+  de ressources (NFS, SMB... ),
+\item Gestion évoluée du stockage sur disque (Striping-RAID 0,
+  mirroring-RAID 1 logiciel et RAID 5 logiciel, gestion de volumes
+  logiques),
+\item Interface graphique : XFree86 qui est une implantation libre de
+  l'architecture standard X.
+\end{itemize}
+
+Il fonctionne sur une trés grande diversité de plate-formes
+matérielles, depuis les PDA\footnote{IBM a même présenté plusieurs
+  prototypes de montres fonctionnant avec Linux. Au delà de la
+  prouhesse technologique, on est en droit de s'interroger sur
+  l'utilité pratique de telles réalisations, même si elle prouve la
+  grande souplesse du système Linux.} jusqu'aux systèmes centraux IBM,
+en passant par les super-calculateurs SGI.
+
+Ce système est largement utilisé dans les milieux universitaires, il
+est donc très souvent à la pointe de la recherche : Ainsi, Linux a été
+le premier système à supporter le protocole IP v6 ou le processeur
+64bits Itanium d'Intel.
+
+Aujourd'hui, Linux occupe une place de choix dans les serveurs
+d'infrastructure (routeurs, serveur de nom, serveur DHCP, serveur Web,
+serveur FTP... ) et commence à obtenir ses lettres de noblesse au
+coeur des solutions d'entreprise.
+
+Par contre, il butte encore assez nettement dans sa conquête du poste
+client, souffrant de la position dominante de Windows et sur la
+difficulté de changer les habitudes des utilisateurs. En effet, autant
+le changement de l'OS d'un serveur est imperceptible par les
+utilisateurs, autant il est très sensible dès qu'il touche le poste de
+travail.
+
+
+\subsection{Découpage du système}
+
+Comme tout logiciel d'une certaine taille, Linux est d'une grande
+complexité. Cette complexité implique un grand nombre d'erreurs,
+d'anomalies et de dysfonctionnement potentiels. En effet, pour qu'un
+système informatique fonctionne correctement, il faut implémenter un
+très grand nombre de fonctionnalités et prévoir une action appropriée
+pour chaque événement possible. Un programme aussi complexe est
+quasiment impossible à appréhender dans sa globalité par un
+développeur. De plus, une erreur de programmation touchant une
+fonction donnée peut avoir des répercussions difficilement prévisibles
+sur d'autres fonctions du système (effet de bord).
+
+Pour résoudre ce problème, il est courant de subdiviser le système en
+composants indépendants, dont le mauvais fonctionnement potentiel ne
+peut perturber que partiellement les autres parties du système. Il va
+de soi que, lorsqu'un composant du système rencontre une avarie, ceux
+qui l'utilisent risquent fort de se retrouver dans un état d'erreur
+assez difficile à gérer. Cela peut souvent provoquer leur propre
+perte. Par conséquent, plus un composant est utilisé, plus il doit
+être fiable.
+
+Or il est un composant à la base de tout dans Linux : le noyau
+(``kernel'' en anglais). C'est le coeur du système et, en fait, c'est
+précisément le système Linux. Heureusement, ce composant est d'une
+très grande fiabilité, et il n'est pas rare de voir un système Linux
+fonctionner plusieurs mois ou années sans rencontrer de problème.
+
+Lorsque l'on parle de Linux en temps que système d'exploitation, on
+désigne en fait le noyau Linux accompagné d'outils permettant
+d'utiliser ce dernier. Ces outils sont en grande partie issus du
+projet GNU. Tous ces outils mis bouts à bouts représentent bien plus
+que le noyau Linux lui même.
+
+Pour simplifier, on peut dire qu'il y a plus de GNU que de Linux dans
+un système Linux fonctionnel.  C'est pour cette raison qu'il est plus
+correct de parler d'un système GNU/Linux, bien qu'il soit courant de
+ne citer que le nom du noyau.
+
+
+\subsection{Le noyau Linux}
+
+Le noyau Unix joue le rôle d'intermédiaire entre les programmes et le
+matériel du système.  Il a pour buts :
+
+\begin{itemize}
+\item de partager équitablement et efficacement les ressources entre
+  les différents processus. Il gère la mémoire pour tous les
+  programmes en cours d'exécution (processus), et s'assure qu'ils
+  occupent tous une part équitable (ou non) du temps processeur.
+\item de faciliter l'utilisation du système informatique. Pour cela,
+  il fournit une interface simple à utiliser aux programmes pour
+  leur permettre de communiquer avec le matériel (appels système).
+\end{itemize}
+
+Généralement, le noyau est constitué d'un seul fichier binaire
+comportant l'ensemble des fonctions. Ce fichier est issu de la
+compilation du noyau\index{Compilation du noyau}. On parle alors d'un
+noyau monolithique\index{Noyau monolithique} car toutes les fonctions
+du noyau se retrouvent dans un seul fichier binaire. Tout changement du
+noyau nécessite alors une nouvelle compilation de ce dernier et un
+redémarrage du système (\voirf{fig:noyau_mono}).
+
+\image{noyau_monolythique.eps}
+      {Prise en charge de fonctions par un noyau monolythique}
+      {fig:noyau_mono}
+
+Il est possible d'obtenir plus de souplesse en utilisant le mécanisme
+des modules\index{module (noyau)}. Ces derniers sont des entités
+indépendantes prenant en charge des services généralement assurés par
+le noyau (pilotes de périphériques, généralement). On peut les
+compiler séparément, les insérer et les retirer\footnote{Il semble que les
+  prochaines versions de Linux ne permettront plus de retirer des
+  modules du noyau, en raison de la trop grande complexité de ce
+  mécanisme. La suppression de cette fonctionnalité devrait permettre
+  de gagner en fiabilité et en facilité de maintenance.} du noyau à n'importe
+quel moment. Ce mécanisme permet d'obtenir un noyau à géométrie
+variable, dont ont peu étendre ou réduire les
+fonctionnalités en fonction des besoins (\voirf{fig:noyau_modulaire}).
+
+\image{noyau_modulaire.eps}
+      {Prise en charge de fonctions par un noyau modulaire}
+      {fig:noyau_modulaire}
+
+En raison de cette souplesse, l'utilisation des modules est devenu la
+méthode préférée pour coder certaines fonctionnalités du noyau. Bon
+nombre de pilotes de périphériques utilisés occasionnellement, tels
+que PCMCIA et les gestionnaires de cartouches QIC-80/40, sont des
+modules chargeables. 
+
+L'utilisation de modules chargeables rend également possible la
+réalisation d'un noyau générique fonctionnel et relativement efficace.
+Ce type de noyau est capable de fonctionner correctement sur
+différents types de configurations.
+
+Les noyaux fournis avec les distributions font largement appel aux
+modules pour pouvoir s'adapter aux multiples configurations
+différentes sur lesquelles elles sont susceptibles de pouvoir être
+installées. Ces noyaux peuvent donc être qualifiés de
+``passent-partout''.  Ceci explique pourquoi il est préferable de
+recompiler soit-même le noyau de son système pour l'adapter au mieux à
+sa configuration (et supprimer du noyau tout ce qui n'a pas lieu d'y
+être).
+
+
+
+\subsection{Le couple GNU - Linux}
+
+Le noyau gère quasiment tout (mémoire, disques, systèmes de fichiers,
+réseau, clavier, droits des utilisateurs, etc.), mais il n'est pas
+exploitable tel quel. Il est par exemple incapable de proposer à
+l'utilisateur une interface lui permettant d'indiquer interractivement
+les commandes qu'il doit exécuter.
+
+Ces opérations sont du ressort d'autres modules développés par la Free
+Software Foundation. Parmi ces modules, on trouve le ``shell'' (ce
+qui signifie grosso modo ``environnement utilisateur''). Le shell est
+capable de lire des commandes saisies au clavier, de les exécuter et
+d'afficher leurs résultats à l'écran. En général, les programmes
+capables de réaliser ces opérations sont appelés des interpréteurs de
+commandes. Mais le shell est bien plus que cela, car il peut être
+programmé, et il peut gérer les processus (en arrêter un, en lancer un
+autre, etc.). En fait, les commandes que le shell peut exécuter sont
+en nombre très réduit. La plupart des commandes sont tout simplement
+d'autres programmes (voir figure \ref{fig:noyau_linux_gnu}).
+
+\imagelarg{noyau_linux_gnu.eps}
+          {Architecture d'un système GNU/Linux}
+          {fig:noyau_linux_gnu}
+
+Utilisé comme seule interface utilisateur, le shell permet d'exécuter
+directement des programmes en ligne de commande, basés sur une
+interface utilisateur en mode caractères\footnote{Comme on le fait
+  avec MS-DOS, par exemple.}. Ces programmes sont souvent développés
+sous la licence GNU, soit par la Free Software Foundation, soit par
+des bénévoles. On retrouve ici l'ensemble des commandes Unix
+courantes. Ces commandes sont absolument essentielles pour pouvoir
+utiliser le système, mais elles sont assez rébarbatives et peu
+d'utilisateurs acceptent de s'en contenter\footnote{Surtout ceux qui
+  sont habitués aux systèmes Windows ou Macintosh...}.
+
+C'est pour cela qu'une couche supplémentaire a été développée, pour
+introduire une interface graphique plus conviviale :
+XWindow\index{XWindow}.
+
+Encore une fois, cette couche logicielle est constituée de plusieurs
+composants dont les plus importants sont :
+\begin{itemize}
+\item \textbf{Le serveur X}, capable de fournir les services
+  graphiques aux autres applications.
+  
+\item \textbf{Le gestionnaire de fenêtre} (``Window
+  Manager''\index{Window Manager} en anglais) est le composant qui se
+  place juste au-dessus du serveur X.  Il est en charge, comme son nom
+  l'indique, de gérer les fenêtres des applications graphiques sous X.
+  C'est le gestionnaire de fenêtres qui prend en charge la gestion des
+  décorations des fenêtres de premier niveau (c'est-à-dire des
+  fenêtres principales des programmes). Par exemple, il s'occupe
+  d'afficher les bords, la barre de titre, les boutons de réduction et
+  de restauration, etc. des fenêtres. C'est également lui qui s'occupe
+  du positionnement des fenêtres, et qui donc permet à l'utilisateur
+  de déplacer et de réduire les fenêtres des applications graphiques.
+  L'utilisateur est libre d'utiliser le gestionnaire de fenêtre qu'il
+  désire, selon ses propres goûts et ses désirs, pouvant ainsi
+  personnaliser son environnement de travail\footnote{Contrairement à
+    des systèmes comme Windows ou MacOs, Linux n'est pas lié à une
+    interface graphique bien définie. Il est ainsi facilement possible
+    d'utiliser une interface ressemblant à celle de Windows, de MacOs
+    ou issue de votre imagination. Il est même possible, dans
+    certaines conditions, de changer radicalement d'interface
+    graphique sans quitter les programmes en cours d'exécution.}.
+
+\item Il existe des environnements graphiques complets qui, en plus
+  d'un gestionnaire de fenêtre souvent extrêmement puissant,
+  fournissent la plupart des outils classiques que l'on est en droit
+  d'attendre d'un système graphique moderne. Ainsi, ces environnements
+  comprennent des éditeurs, des outils de configuration, des
+  navigateurs Internet, des logiciels multimédia... En plus de ces
+  applications, ils fournissent un cadre standard pour les
+  applications graphiques qui savent communiquer avec eux. Ce cadre
+  permet d'améliorer l'intégration des diverses applications entre
+  elles, et c'est la raison pour laquelle on appelle souvent ces
+  environnements des \textbf{gestionnaires de bureau}.  KDE et Gnome
+  sont des exemples de tels environnements de travail.
+  
+\item Enfin, au-dessus de toutes ces couches logicielles, on trouve
+  les \textbf{applications X}, qui sont aussi diverses que variées
+  (traitement de texte, tableurs, logiciels de dessin...).
+  Quelques-unes de ces applications sont simplement des habillages
+  (``front-end'' en anglais) d'applications en ligne de commande,
+  c'est-à-dire des interfaces graphiques à des programmes non
+  graphiques existants.
+  
+  Ce concept permet :
+  \begin{itemize}
+  \item d'avoir un composant métier unique utilisé par plusieurs
+    interfaces différentes (réutilisation de code),
+  \item de rendre indépendante le code métier de celui de l'interface
+    utilisateur.  Encore une fois, la stabilité en est d'autant plus
+    accrue.
+  \end{itemize}
+
+\end{itemize}
+
+\imagelarg{ecran_graphique.eps}
+          {Exemple d'interface utilisateur graphique utilisant WindowMaker}
+          {fig:ecran_wm}
+
+\imagelarg{ecran_graphique_kde.eps}
+          {Exemple d'interface utilisateur graphique utilisant KDE}
+          {fig:ecran_kde}
+
+En résumé, un système GNU/Linux est structuré de la manière suivante
+(\voirf{fig:couches_linux}) :
+\begin{itemize}
+\item le noyau Linux,
+\item le shell,
+\item les programmes en ligne de commande, dont le serveur XWindow,
+\item le gestionnaire de fenêtre,
+\item le gestionnaire de bureau,
+\item les applications XWindow.
+\end{itemize}
+
+\imagelarg{couches_linux.eps}
+          {Structure du système GNU/Linux}
+          {fig:couches_linux}
+
+
+\subsection{Notion de processus}
+
+Un processus est un programme en exécution. Chaque processus est une
+entité indépendante disposant de son propre espace mémoire.
+
+Tout travail réalisé par Linux est pris en charge par un processus. Le
+principal rôle du noyau consiste à gérer les processus pour leur
+fournir les ressources nécessaire à leur déroulement et leur permettre
+d'interagir avec le monde extérieur.
+
+Dès son lancement, le noyau lance un premier processus (init) qui est
+l'ancêtre de tous les processus lancés sur le système par la suite
+(appels systèmes fork et exec).  Chaque processus peut lancer d'autres
+processus, il est alors le père de ces derniers (et ces processus sont
+ses fils). 
+
+Le système maintient une table des processus en fonctionnement avec
+tous les attributs caractérisent chacun d'eux. Cette table peut être
+représentée sous la forme d'un arbre généalogique, puisque tout
+processus à un père (sauf init) et peut avoir des fils
+(\voirf{fig:arbo_processus}).
+
+\imagelarg{ArboProcessus.eps}
+          {Exemple d'arborescence de processus}
+          {fig:arbo_processus}
+
+\subsection{Parallèle avec Windows}
+
+Il n'est pas évident d'établir un parallèle avec MS Windows du fait de
+la structuration très différentes des deux systèmes.  Cependant, on
+peut considérer que le noyau Linux correspond aux modules KERNEL ou
+IO.SYS de Windows, que le shell correspond aux interpréteurs de
+commandes COMMAND.COM ou CMD.EXE, que les programmes en ligne de
+commande correspondent aux programmes DOS ou console classiques
+(xcopy, fdisk, format...), que le serveur X correspond au couple
+pilote de carte graphique (GDI), que le gestionnaire de fenêtre
+correspond au module USER, et le gestionnaire de bureau à
+l'explorateur, les fonctionnalités d'OLE et aux programmes fournis
+avec Windows.
+
+La différence essentielle vient de la grande souplesse de Linux qui
+permet de se constituer un système sur mesure en fonction de ses
+besoins. En effet, pourquoi allourdir un serveur d'une interface
+graphique si cette dernière n'est jamais utilisée ? Avec Linux, il est
+possible de ne garder que les composants utiles à la destination du
+système, ce qui explique grandement l'efficacité observée sur des
+configurations modestes.
+
+
+
+\section{Principe du système de fichiers}
+
+Il est nécessaire de définir rapidement les termes qui vont être
+utilisés dans cette section, car les systèmes de fichiers Unix sont
+très différents des systèmes de fichiers du DOS et de Windows. La
+connaissance de ce vocabulaire est nécessaire pour la compréhension de
+la structure du système de fichiers de Linux.
+
+\subsection{Notion de système de fichier}
+
+Toute l'information maintenue par le système est enregistrée dans des
+fichiers organisés dans une structure hiérarchique de répertoires.
+Comme pour les processus, chaque fichier possède des attributs qui
+peuvent être modifiés par les utilisateurs par l'intermédiaire des
+commandes du système.
+
+Linux étant un système multi-utilisateurs, certains attributs des
+processus et des fichiers déterminent les droits des utilisateurs à
+les utiliser ou à les modifier. Ces droits sont associés à une
+identification de chaque utilisateur pour le système.
+
+\subsection{Les différents types de fichiers}
+
+Linux reprend le principe général des systèmes Unix suivant lequel
+``tout est fichier'' (ou presque). En effet, la quasi-totalité des
+composants du système est représentée sous la forme de fichiers. Cela
+peu surprendre de prime abord, mais dès que l'on a compris le
+principe, cela facilite énormement la programmation et la maintenance
+du système.
+
+Les différents types de fichiers sous Linux sont :
+
+\begin{description}
+\item [les fichiers normaux] : ce sont des collections d'octets. Il
+  n'existe pas de différence entre les fichiers texte et les fichiers
+  binaires.
+\item [les répertoires] : ce sont des fichiers contenant les noms des
+  fichiers et leurs numéros d'inode. Un répertoire contient toujours
+  deux sous répertoires spéciaux '.' et '..' qui correspondent
+  respectivement au répertoire courant et au répertoire père.
+\item [les liens symboliques] : permettent de présenter une image d'un
+  fichier sous un autre nom ou à un autre endroit sans dupliquer les
+  données. Un lien symbolique ``pointe'' vers un autre fichier,
+  appelé fichier cible. La notion de lien symbolique peut être
+  comparée à celle de raccourcis sous Windows, à la différence qu'ici,
+  cette notion est prise en charge dans le système de base alors que,
+  sous Windows, il s'agit d'un ajout tardif qu'il est assez facile de
+  contourner\footnote{Il suffit d'éditer le contenu d'un raccourci
+    Windows avec un éditeur de texte pour ce rendre compte qu'il
+    s'agit en fait d'un fichier texte interprété par le système.}.
+\item [les fichiers spéciaux en mode bloc] : sont les portes sur les
+  périphériques fonctionnant par blocs de données (ex : disques).
+  L'accès à un périphérique en mode bloc peut se faire aléatoirement
+  (accès à n'importe quel emplacement du fichier).
+\item [les fichiers spéciaux en mode caractère] : sont les portes vers
+  les périphériques fournissant ou consommant les données octet par
+  octet. L'accès à un périphérique en mode caractère ne peut se faire
+  que séquentiellement (accès successif à chaque emplacement du
+  fichier), si bien qu'il est impossible d'accéder au bloc n avant
+  de parcourir le bloc n-1. Ce type d'accès séquentiel est assez bien
+  illustré par le fonctionnement d'un lecteur de bande.
+\item [les tubes nommés "FIFO"]\footnote{FIFO : First In First Out
+    (premier arrivé, premier sorti).} : permettent à deux processus
+  sans relation de parenté de s'échanger des données comme par un
+  tube. L'écriture et la lecture dans un tube sont nécessairement
+  séquentielles. L'écriture rempli le tube, la lecture le vide. On dit
+  que la lecture des données d'un tube est destructive (\voirf{fig:fifo}).
+\end{description}
+
+\imagel{10}{fifo.eps}
+      {Exemple de tube nommé FIFO}
+      {fig:fifo}
+
+
+\subsection{Structure du système de fichiers}
+
+
+Comme la plupart des systèmes de fichiers, les systèmes de fichiers
+Unix sont structurés hiérarchiquement, et regroupent les fichiers dans
+des répertoires. Il existe un répertoire racine, d'où débutent tous
+les chemins possibles dans le système de fichiers. Chaque fichier ou
+répertoire a un nom qui permet aux utilisateurs du système de
+l'identifier. Le seul répertoire qui n'a pas de nom est le répertoire
+racine.
+
+Les systèmes de fichiers Unix n'ont pas les mêmes limitations sur les
+noms que les systèmes de fichiers FAT et FAT32 utilisés par Windows.
+Les noms des fichiers et des répertoires peuvent être très longs
+(jusqu'à 256 caractères par nom), et ils prennent en compte la casse
+des lettres\footnote{Ce qui signifie qu'il fait une différence entre
+  les caractères majuscules et minuscules. Ainsi, trois fichiers
+  nommés ``Fichier'', ``fichier'' et ``FICHIER'' seront distingés par
+  le système de fichiers, alors qu'ils seraient confondus sur un
+  système Windows.}.
+
+Les fichiers contiennent des données au sens large, ce peut être des
+données (texte, image, film, son, paramètres de programmes ou du
+système... ), ou des programmes. En fait, Unix (et donc Linux)
+manipule généralement l'ensemble de ses composants sous la forme de
+fichiers. Les répertoires sont eux-mêmes des fichiers spéciaux,
+interprétés par le système différemment des autres fichiers. Nous
+verrons plus loin (\voir{dev}) que les périphériques du système sont,
+eux aussi, représentés sous la forme de fichiers. Cette orientation
+``fichier'' systématique facilite grandement l'utilisation avancée
+d'un système Unix, mais peut dérouter les habitués des systèmes
+Windows.
+
+Les noms de répertoires et de fichiers sont séparés par un caractère
+spécial.  Ce caractère est traditionnellement, sous Unix, la barre
+oblique de division (nommée ``slash'' en anglais) : ``/''.  Comme le
+répertoire racine n'a pas de nom, il peut être accédé directement avec
+un simple ``slash''.
+
+La qualification complète d'un fichier se fait en précisant le nom du
+répertoire à chaque niveau et en séparant par des slashes chacun de
+ces noms. Cette qualification porte le nom de ``chemin'' d'accès
+(``path'' en anglais). L'exemple suivant vous montre l'allure d'un
+chemin d'accès typique sous Unix :
+
+\begin{verbatim}
+/home/remi/CNAM/linux/linux.tex
+\end{verbatim}
+
+Les utilisateurs du DOS et de Windows prendront garde ici au fait que
+Microsoft a préféré la barre oblique inverse (nommée ``backslash'' en
+anglais) ``backslash'', rendant ainsi tous ses systèmes
+incompatibles avec les systèmes Unix, et générant ainsi beaucoup de
+problèmes supplémentaires là où il n'était pas nécessaire d'en
+avoir\footnote{Le coût de cette ânerie, ainsi que celle des marqueurs
+  de fin de ligne dans les fichiers textes, doit atteindre des sommes
+  astronomiques dans tous les projets de portage ou de développement
+  d'applications portables.}.
+
+Les utilisateurs du DOS et de Windows constateront ici que les chemins
+d'accès Unix ne comportent pas de spécification de lecteurs. Les
+systèmes de fichiers Unix sont dits mono-tête, ce qui signifie qu'ils
+n'ont qu'un seul point de départ : le répertoire racine
+(\voirf{fig:rep_lin}). Les systèmes Microsoft sont multi-têtes, puisqu'ils
+ont un point de départ par lecteur et par partition (\voirf{fig:rep_win}).
+
+Le fait de n'avoir qu'un seul point de départ est beaucoup plus
+simple, et permet, encore une fois, d'écrire les programmes plus
+simplement et donc avec moins de bogues potentiels. Les habitués du
+DOS ne manquerons pas de se poser la question :
+
+\textit{``Mais alors, comment spécifie-t-on le lecteur que l'on veut
+  utiliser ?''}
+
+Cette question a deux réponses :
+
+\begin{itemize}
+\item Premièrement, on n'accède pas aux lecteurs, mais aux systèmes de
+  fichiers. Les utilisateurs du DOS devront donc réapprendre qu'un
+  lecteur représente un périphérique physique, et qu'il est possible
+  qu'il contienne plusieurs systèmes de fichiers. Il est, par exemple,
+  très courant qu'un disque dur de grande capacité soit divisé en
+  plusieurs partitions indépendantes, considérés comme des entités
+  distinctes (même par windows). Ils devront également se rendre
+  compte qu'un système de fichiers n'est pas nécessairement stocké sur
+  un lecteur : il peut être stocké dans un fichier\footnote{C'est le
+    cas par exemple pour les images disques de CD-ROM.}, accessible
+  par le réseau\footnote{C'est le cas des systèmes de fichiers réseau,
+    ``Network File System'' en anglais.}, ou encore généré par un
+  composant du système\footnote{C'est le cas des systèmes de fichiers
+    virtuels du noyau (\voir{proc}).}.
+  
+\item Cependant, le problème de l'accès aux systèmes de fichiers se
+  pose malgré tout. Pour accéder à un système de fichiers, il faut
+  réaliser une opération que l'on nomme le ``montage''\index{Montage
+    (de système de fichier)}. Cette opération associe le répertoire
+  racine de ce système de fichiers à l'un des répertoires de
+  l'arborescence existante. Ce répertoire est couramment appelé
+  ``point de montage''\index{Point de montage}.  Par exemple, il est
+  courant de monter le lecteur de disquette dans le répertoire
+  \rep{/mnt/floppy/}.  Ainsi, si la disquette contient le fichier
+  \verb'linux.tex', ce fichier sera accessible grâce au chemin suivant :
+
+\begin{verbatim}
+/mnt/floppy/ventes1999.sdw
+\end{verbatim}
+  
+  Cette solution permet d'accéder à tous les systèmes de fichiers de
+  la même manière, à partir d'un seul répertoire racine, que ces
+  systèmes de fichiers soient EXT2, FAT, ISO9660, NTFS ou Amiga... 
+  
+  En pratique, c'est nettement plus souple. Cela permet, par exemple,
+  de déplacer la localisation physique de fichiers sans modifier leur
+  emplacement logique dans l'arborescence (pour stocker sur un volume
+  réseau des informations qui étaient stockées sur un disque local,
+  par exemple). Ce type de modification est totalement transparente
+  pour l'utilisateur final, qui ne se rend généralement pas compte de
+  l'emplacement physique des données qu'il manipule. Il ne connait que
+  l'emplacement logique de ses données, c'est à dire leur emplacement
+  dans l'arborescence des répertoires.
+\end{itemize}
+
+\begin{figure}[htbp]
+\begin{small}
+\begin{verbatim}
+Poste de travail
+|_ A:                   (disquette)
+|_ C:                   (disque dur 1, partition 1)
+|   |_ Mes Documents 
+|   |_ Program Files 
+|   |_ Windows 
+|_ D:                   (disque dur 1, partition 2)
+|   |_ Programmes Perso
+|   |_ Documents Perso
+|_ E:                   (cdrom 1)
+\end{verbatim}
+\end{small}
+\begin{center}
+  \caption{Répertoires et points de montage sous Windows}
+  \label{fig:rep_win}
+\end{center}
+\end{figure}
+
+\begin{figure}[htbp]
+\begin{small}
+\begin{verbatim}
+/                           (disque dur 2, partition 1)
+|_ etc
+|_ home                     (disque dur 2, partition 2)
+|_ mnt
+|   |_ floppy               (disquette)
+|   |_ cdrom                (cdrom 1)
+|   |_ disque_C             (disque dur 1, partition 1)
+|   |   |_ Mes Documents
+|   |   |_ Program Files
+|   |   |_ Windows
+|   |_ disque_D             (disque dur 1, partition 2)
+|       |_ Programmes Perso
+|       |_ Documents Perso
+|_ opt
+|_ usr
+\end{verbatim}
+\end{small}
+\begin{center}
+  \caption{Répertoires et points de montage sous Linux}
+  \label{fig:rep_lin}
+\end{center}
+\end{figure}
+
+
+On prendra garde à toujours démonter les systèmes de fichiers pour les
+lecteurs amovibles.  Linux utilise en effet des zones de la mémoire
+que l'on appelle les tampons (``buffers'' en anglais), pour y stocker
+des données des systèmes de fichiers montés, et il n'écrit ces données
+que lorsque c'est nécessaire. Ce mécanisme permet d'accélérer les
+lectures et les écritures sur les disques, mais a l'inconvénient de
+nécessiter une requête de vidange des tampons (opération que l'on
+appelle ``\com{sync}'') avant de retirer le lecteur ou avant
+d'éteindre le système. Si on ne le fait pas, des données seront
+certainement perdues. Le système effectue le sync lorsqu'il s'arrête
+(par l'une des commandes \com{halt}, \com{shutdown} ou \com{reboot}),
+mais il ne le fait pas si on coupe le courant brutalement. C'est pour
+cela qu'il faut toujours arrêter le système proprement. De manière
+similaire, Linux empêche l'éjection des CD-ROM tant qu'ils sont
+montés.  En revanche, il ne peut rien faire pour les lecteurs de
+disquettes, c'est à l'utilisateur de prendre garde à les démonter
+avant de retirer la disquette.
+
+Deux derniers points auxquels les utilisateurs de DOS et Windows
+devront faire attention :
+
+\begin{itemize}
+\item Les fichiers ne sont pas identifiés par leur extension.  Un nom
+  de fichier peut contenir un ou plusieurs points, et une extension
+  peut être arbitrairement longue.  En particulier, un nom de fichier
+  peut commencer par un point. Dans ce cas, ce fichier sera considéré
+  comme caché par les programmes, et on ne les verra que si on le
+  demande explicitement,
+\item Les systèmes de fichiers Unix font la distinction entre les
+  majuscules et les minuscules. Il faut donc prendre garde à la
+  manière dont on écrit les noms de fichiers et de répertoires.
+  Cependant, la plupart des répertoires et des fichiers ont un nom
+  écrit complètement en minuscules.
+\end{itemize}
+
+
+
+
+
+\section{Sécurité et utilisateurs}
+
+\subsection{Notion de système multi-utilisateur}
+
+Linux est un système multi-utilisateur. Cela signifie que plusieurs
+personnes peuvent utiliser l'ordinateur, simultanément ou les unes à
+la suite des autres. Le système se charge de faire respecter les
+droits de chaque utilisateur. Les ressources de la machine sont ainsi
+partagées équitablement, tant au niveau de la puissance de calcul
+qu'au niveau de la mémoire, du disque, des imprimantes...
+
+Évidemment, une question se pose : comment plusieurs utilisateurs
+peuvent-ils se partager le clavier et l'écran ? La réponse est simple
+: en pratique, ils ne le peuvent pas. Par conséquent, il n'y a que
+trois solutions possibles :
+\begin{itemize}
+\item Soit on connecte à l'ordinateur d'autres claviers et d'autres
+  écrans (on appelle un couple clavier/écran un ``terminal''),
+\item Soit on accède au système par l'intermédiaire d'un autre
+  ordinateur via le réseau,
+\item Soit les utilisateurs lancent tour à tour leurs programmes. La
+  dernière solution nécessite que les programmes ne soient pas
+  interactifs : ils doivent être capable de fonctionner sans
+  intervention de celui qui les a lancés.
+\end{itemize}
+
+Pour être multi-utilisateur, le système doit satisfaire certains
+critères :
+\begin{itemize}
+\item Il doit être \textbf{multitâche}, c'est-à-dire qu'il doit être
+  capable de faire fonctionner plusieurs programmes simultanément sur
+  la même machine, en partageant les ressources de celle-ci,
+\item Il doit être \textbf{fiable}, Car un arrêt du système peut
+  déranger un nombre arbitraire de personnes, y compris celles qui ne
+  sont pas à proximité de l'ordinateur,
+\item Il doit être \textbf{sûr}, car il ne faut pas que les erreurs ou
+  les malveillances d'un utilisateur ne puissent déranger les autres.
+  Les droits d'accès de chaque utilisateur doivent donc pouvoir être
+  définis et respectés.
+\end{itemize}
+
+Le multitâche est assuré au niveau du noyau. Chaque programme en cours
+d'exécution (on les appelle ``processus'') fonctionne dans sa propre
+zone de mémoire, qui est complètement contrôlée par le noyau. Les
+ressources du processeur sont partagées entre les processus, et il est
+impossible à l'un d'entre eux de monopoliser la mémoire, le disque ou
+quoi que ce soit. Les processus doivent toujours passer par le noyau
+pour effectuer une opération, ce qui permet un contrôle absolu.
+
+La fiabilité est également assurée au niveau du noyau. Les zones de
+mémoire utilisées par chaque processus (encore appelées ``espaces
+d'adressage'') sont bien distinctes et bien identifiées par le noyau.
+Cela implique qu'il est impossible à un processus de perturber le
+fonctionnement d'un autre processus. Ainsi, si un processus fait une
+faute, il est purement et simplement terminé par le noyau. Cela est
+sans appel : le noyau est le seul maître à bord.
+        
+Enfin, la sécurité est assurée par le noyau et par le système de
+fichiers. Le noyau centralise tous les accès aux périphériques, il
+peut donc contrôler qui a le droit d'utiliser chaque péripherique en
+se référant aux droits d'accès définis par l'administrateur du
+système.
+
+
+\subsection{Méta-données sur les fichiers}
+
+Au niveau du système de fichiers, la sécurité est assurée par le
+stockage d'informations additionnelles pour chaque fichier ou
+répertoire. Ces informations permettent de connaître :
+
+\begin{itemize}
+\item \textbf{le numéro de l'utilisateur} qui possède le fichier ou le
+  répertoire. En général, le propriétaire est simplement celui qui l'a
+  créé. Cependant, l'administrateur peut changer le propriétaire d'un
+  fichier à tout moment.
+\item \textbf{le numéro du groupe} auquel appartient le fichier ou le
+  répertoire.  Tout fichier ou répertoire appartient à un groupe
+  unique, qui est utilisé pour calculer les droits des utilisateurs
+  faisant partie de ce groupe. Par défaut, un fichier nouvellement
+  créé par un utilisateur appartient au groupe de base de
+  l'utilisateur (attention, ce comportement varie selon les systèmes).
+  L'utilisateur peut toutefois donner ses fichiers à n'importe quel
+  groupe dont il fait partie.
+\item \textbf{les droits d'accès} au fichier ou au répertoire pour le
+  propriétaire, pour les utilisateurs faisant partie du groupe auquel
+  appartient le fichier ou le répertoire, et pour tous les
+  utilisateurs en général. Ces droits comprennent le droit de lecture
+  (représenté par la lettre 'r', pour ``Read''), le droit d'écriture
+  (représenté par la lettre 'w', pour ``Writeable''), le droit
+  d'exécution (représenté par la lettre 'x', pour ``eXecutable'') et
+  quelques attributs supplémentaires (qui seront détaillés plus loin -
+  \voir{droitelem}).
+\end{itemize}
+
+
+
+\subsection{Processus de connexion}
+
+Lorsqu'un utilisateur désire se connecter à un système Linux, le
+système lui présente une mire de connexion\index{Mire de connexion}
+lui demandant de décliner son identité. L'utilisateur entre alors son
+nom de connexion (appelé communément ``login''\index{login}).
+
+Le système recherche alors dans le fichier \fich{passwd} s'il trouve une
+entrée correspondant au login saisi par l'utilisateur. Si ce n'est pas
+le cas, il retourne une erreur, sinon, il demande
+éventuellement\footnote{Tous les comptes utilisateur ne sont pas
+  forcement protégés par un mot de passe, bien que cela ne soit pas
+  recommandé.} la saisie d'un mot de passe. 
+
+Nous avons vu que, pour des raisons évidentes de sécurité, le mot de
+passe ne figure pas en clair dans fichier \fich{passwd}, qui ne contiennent
+qu'un mot de passe crypté. Le cryptage se fait à l'aide de la fonction
+de cryptage à sens unique \com{crypt}. Cette fonction permet de
+crypter une chaîne de caractère pour obtenir une autre chaîne à partir
+de laquelle il est impossible de retrouver la chaîne initiale.
+
+Le système crypte donc le mot de passe saisi par l'utilisateur et
+compare la chaîne obtenue avec celle qui est contenue dans le fichier
+\fich{passwd}. Si les deux chaînes correspondent, c'est que le mot de passe
+est correct, sinon, la connexion est refusée.
+
+Lors de l'établissement de la connexion, l'utilisateur est placé dans
+son répertoire de base et le programme de base est lancé. La session
+de l'utilisateur se terminera avec ce dernier.

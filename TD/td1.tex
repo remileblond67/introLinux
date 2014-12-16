@@ -1,0 +1,172 @@
+\documentclass[french,12pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage{babel, indentfirst}
+\usepackage[xdvi]{graphicx}
+\usepackage{latexsym}
+\usepackage{tabularx}
+\usepackage{makeidx}
+\usepackage{times}
+\usepackage{color}
+\usepackage[ps2pdf]{hyperref}
+
+\author{Rémi LEBLOND}
+\title{TD 1 : Utilisation des commandes de base de Linux et vi}
+
+\begin{document}
+
+\maketitle
+
+\section{But de l'exercice :}
+
+Le but de cet exercice est d'aborder la manipulation des commandes de 
+base de Linux et de l'éditeur de texte "vi".
+
+Il se déroulera en trois temps :
+
+\begin{itemize}
+\item D'abord nous explorerons le contenu des différents répertoires
+  de Linux. Cela nous donnera l'occasion d'utiliser les commandes de
+  manipulation de répertoires et de fichiers. Nous effectuerons
+  également des recherches de fichiers basées sur leurs caractéristiques
+  (nom, taille, date de modification... ) et leur contenu (recherche 
+  d'un motif dans un fichier) ;
+
+\item Enfin, nous verrons les fonctions permettant de consulter et
+  manipuler les processus ;
+
+\item Ensuite, nous créerons un fichier texte à l'aide de l'éditeur
+  "vi", ce qui nous permettra de parcourir rapidement les différentes
+  fonctions de ce dernier ;
+  
+\end{itemize}
+
+\section{Exploration des différents répertoires du système}
+
+\subsection{Le répertoire personnel}
+
+\begin{itemize}
+\item Quel est le répertoire courant initial ?
+\item Quels sont les fichiers contenus dans ce dernier ?
+\item Affichez les fichiers cachés à l'aide de l'option '-a'. Comment
+  est-il possible de cacher un fichier ?
+\item Créez un fichier nommé "liste\_fichiers" et contenant la liste
+  des fichiers du répertoire courant. Visualisez le contenu de ce
+  dernier.
+\item Faites de même, mais en affichant les caractéristiques détaillées
+  des fichiers du répertoire courant (taille, date de création,
+  propriétaire, groupe d'affectation, matrice des droits). Créez un
+  fichier nommé "liste\_fichiers\_détail" contenant ces informations.
+\item Créez un sous-répertoire nommé "mon\_répertoire" et recopiez-y
+  le fichier "liste\_fichiers".
+\item Créez un lien symbolique pointant vers le fichier 
+  "liste\_fichiers\_détail". Affichez la liste détaillée de ce répertoire.
+  Que constatez-vous ?
+\item Modifiez le contenu du fichier "liste\_fichiers\_détail" en y
+  ajoutant la liste détaillée des fichiers du répertoire courant.
+  Consultez le contenu du fichier "liste\_fichiers\_détail" et
+  comparez-le au fichier correspondant dans le répertoire précédent.
+  Que constatez-vous ?
+\item Créez un sous-répertoire nommé "mon\_autre\_répertoire" pour y
+  copier le contenu du répertoire "mon\_répertoire".  Affichez la
+  liste détaillée de ce répertoire. Que constatez-vous ?
+\item Affichez le contenu du fichier "liste\_fichiers\_détail". Que
+  constatez-vous ?
+\item Afficher la liste des fichiers créés depuis moins d'une heure
+  à partir de votre répertoire personnel.
+\item Afficher la liste des liens symboliques à partir de votre
+  répertoire personnel.
+\item Retournez au répertoire "mon\_répertoire" et supprimer le
+  répertoire "mon\_autre\_répertoire". Que constatez-vous ? Quelles
+  dispositions devez-vous prendre pour supprimer ce répertoire ?
+\end{itemize}
+
+\subsection{Le répertoire "/dev"}
+\begin{itemize}
+\item Placez-vous dans le répertoire "/dev",
+\item Affichez la liste des fichiers, page par page. Quels fichiers
+  reconnaissez-vous ?
+\item Repérez les fichiers représentant les lecteurs de cdrom, le
+  lecteur de disquettes, les disques durs (hd*), le processeur, la
+  chaîne SCSI...
+\item Repérez et manipulez les fichiers ``random'' et ``zero'',
+  permettant respectivement de générer des données aléatoires ou
+  nulles.
+\item Redirigez la sortie standard d'une commande vers le fichier
+  /dev/null. Que constatez-vous ?
+\end{itemize}
+
+
+\subsection{Le répertoire "/proc"}
+\begin{itemize}
+\item Placez-vous dans le répertoire "/proc",
+\item Affichez la liste des fichiers. Quels fichiers reconnaissez-vous
+  ?
+\item Le fichier ``cpuinfo'' donne des indications sur les processeurs
+  du système. Quels enseignements en tirez-vous ?
+\item De même pour le fichier ``meminfo'' qui décrit l'utilisation
+  courante de la mémoire.
+\item Chaque processus du système est représenté à l'aide d'un
+  sous-répertoire dont le nom correspond au numéro de ce dernier.
+  Allez dans un de ces répertoire et consultez son contenu (notamment
+  les fichiers ``cmdline'', ``status'' et ``exe'').
+\item Créez un fichier nommé ``mes\_processus'' contenant le numéro de
+  tous les processus vous appartenant.
+\item Essayez de retrouver le répertoire correspondant à
+  l'interpréteur de commande en cours d'utilisation.
+\item Que se passe-t-il lorsque vous consultez un répertoire
+  correspondant à un processus ayant pris fin ?
+\end{itemize}
+
+\section{Manipulation des processus}
+
+\begin{itemize}
+\item Afficher la liste des processus lancés à partir du shell
+  courant.
+\item Afficher la liste de tous les processus du système.
+\item Lancez la commande suivante en tâche de fond :
+
+  \verb'cat /dev/zero > /dev/null'
+  
+  Quel sera le résultat de cette commande ? Quel est le numéro
+  du processus correspondant.
+\item Repérez ce processus dans la liste obtenue à l'aide de la
+  commande ``ps''.
+\item Mettez ce processus en veille. Vérifiez le nouvel état de ce
+  processus à l'aide de la commande ``ps''.
+\item Relancez l'exécution de ce processus.
+\item Consulter la liste des travaux en cours à l'aide de la commande
+  ``jobs''. Quelle différence constatez-vous par rapport au résultat de 
+  la commande "ps".
+\item Reprenez la main sur le processus en tâche de fond, à l'aide de
+  la commande ``fg''.
+\item Passez de nouveau le processus en tâche de fond à l'aide de la
+  commande ``bg''. Vérifiez le nouveau statut de ce processus à l'aide
+  des commandes ``ps'' et ``jobs''.
+\item Arrêtez l'exécution du processus d'arrière plan.
+\end{itemize}
+
+\section{Utilisation de l'éditeur "vi"}
+\begin{itemize}
+\item Retournez dans votre répertoire personnel.
+\item Lancer l'édition d'un fichier ``mon\_texte'' à l'aide de la
+  commande suivante :
+  
+  \verb'vi mon_texte'
+\item Saisissez un texte à l'aide de votre choix (racontez vos
+  dernières vacances, votre WE, votre passion ou, si vous manquez
+  d'inspiration, frappez frénétiquement sur votre clavier de façon à
+  produire du texte quelconque). Veillez à produire plusieurs paragraphes
+  en plaçant impérativement plusieurs fois le mot ``toto''. Utilisez pour
+  cela toutes les fonctions de "vi" (copie et déplacement de mots et de
+  paragraphes, ajout de texte... ).
+\item Recherchez les différentes occurrences du mot ``toto'' et parcourez-les
+  successivement.
+\item Remplacez toutes les occurrences du mot ``toto'' par ``tutu''.
+\item Déplacez une ligne du début à la fin du fichier.
+\item Enregistrez votre document.
+\item Procédez à de nouvelles modifications.
+\item Annulez les trois dernières modifications.
+\item Quittez "vi" en enregistrant les modifications.
+\end{itemize}
+
+\end{document}

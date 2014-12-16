@@ -1,0 +1,682 @@
+\documentclass[french,12pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage{babel, indentfirst}
+\usepackage[xdvi]{graphicx}
+\usepackage{latexsym}
+\usepackage{tabularx}
+\usepackage{makeidx}
+\usepackage{times}
+\usepackage{color}
+\usepackage[ps2pdf]{hyperref}
+
+\include{inc_fonctions}
+
+\author{Rémi LEBLOND}
+\title{TD 2 : Installation d'un système Debian GNU/Linux de base}
+
+\begin{document}
+\maketitle
+
+\section{But de l'exercice :}
+
+Le but de ce TD est de procéder à l'installation de la distribution
+Debian GNU/Linux.
+
+On se contentera ici d'installer un système de base avec :
+
+\begin{itemize}
+\item Une interface utilisateur en mode console ;
+\item La localisation en français ;
+\item Un compte utilisateur pour chaque membre de l'équipe de TD ;
+\item Une messagerie interne permettant la communication entre les
+  utilisateurs du système ;
+\item L'éditeur de texte vim ;
+\item L'éditeur de texte jed ;
+\item L'outil de messagerie mutt ;
+\item Le navigateur Web lynx ;
+\end{itemize}
+
+On utilisera pour cela une distribution GNU/Linux Debian 3.0, encore
+appelée "Woody".
+
+\section{Installation et paramétrage du système de base}
+
+\subsection{Présentation de l'installation}
+
+L'installation d'un système Debian GNU/Linux consiste en un assemblage
+de modules, qui peuvent être récupérés sur différents supports
+(disquettes, CD-ROM, DVD, réseau). L'ensemble des paquets de la
+distribution Debian 3.0 est, par exemple, disponible sur un un DVD, 7
+CD-ROM ou... un peu plus de 3000 disquettes. Il est néanmoins
+extrêmement rare d'installer sur un même système l'ensemble des
+paquets disponibles. Dans ce cas, il peut être judicieux de choisir
+l'installation via le réseau, qui permet de ne récupérer que les
+paquets utiles. Dans ce cas, on utilise uniquement un support local
+(CD-ROM le plus souvent) contenant une image minimale permettant de
+démarrer l'installation et le reste sera récupéré au besoin sur le
+réseau, via les protocoles FTP, HTTP ou NFS.
+
+L'autre avantage de ce type d'installation, c'est qu'il permet
+toujours de disposer des dernières mises à jour des paquets. Nous
+verrons comment cette mise à jour peut être effectuée même après
+l'installation initiale.
+
+L'installation d'une distribution Debian GNU/linux se déroule toujours
+en deux temps :
+\begin{itemize}
+\item Installation du système minimal, capable uniquement de démarrer
+  le système de façon autonome,
+\item Une fois que le système minimal a été installé et qu'il permet
+  de réamorcer le système, l'utilisateur peut choisir d'ajouter
+  explicitement de nouveaux modules.
+\end{itemize}
+
+Cette logique, qui permet d'obtenir un système taillé au plus près des
+besoins, est très différentes de la majorité des autres distributions
+Linux, qui ont tendance à installer beaucoup de modules inutiles.
+
+\subsection{Préparation de la machine hôte}
+
+Nous allons installer notre système en utilisant une machine virtuelle
+VmWare répondant aux caractéristiques suivantes :
+\begin{itemize}
+\item 64 Mo de mémoire;
+\item Un disque dur IDE de 2 Go;
+\item Un lecteur de CD-ROM IDE contenant l'image ISO située dans le
+  fichier suivant :
+  
+  \verb'd:\tmri\Linux\iso\debian\net_install.iso'
+\item Une carte réseau de type NAT\footnote{Pour permettre la
+    connexion au serveur contenant les paquets à installer.};
+\end{itemize}
+
+Lorsque cette machine est démarrée, elle devrait vous afficher l'écran
+d'accueil de l'installateur Debian, suivi d'une invite de commande
+(\verb'linux:') (\voirf{boot}).
+
+\imagelarg{debian_boot} {Écran de démarrage de l'installateur Debian}
+{boot}
+
+
+\subsection{dbootstrap : le programme d'installation}
+
+``dbootstrap'' est le programme qui est lancé pour prendre en charge
+le processus d'installation du système. Il est responsable de la
+configuration initiale du système et de l'installation du système de
+base.
+
+L'interface utilisateur de ``dbootstrap'' est rustique mais
+relativement simple à utiliser. Pendant tout le processus
+d'installation, vous verrez guidés par le menu principal : ``Menu
+principal d'installation - Debian GNU-Linux''. Les choix en haut du
+menu changeront pour indiquer la progression dans l'installation du
+système (\voirf{menu-principal}). L'installation se résume la plupart
+du temps à appuyer machinalement sur la touche ``Entrée'', puisque le
+premier choix dans le menu d'installation représente généralement la
+prochaine action à réaliser.
+
+\imagelarg{debian_menu-principal} {Menu principal de l'installateur}
+{menu-principal}
+
+L'installation d'un système Debian se déroule en deux étapes
+succesives :
+\begin{itemize}
+\item Installation d'un système de base,
+\item Redémarrage et paramétrage de ce dernier.
+\end{itemize}
+
+
+
+\subsection{Installation du système de base}
+
+\subsubsection{Lancement du programme d'installation}
+
+Lorsque l'installateur Debian vous affiche son écran de démarrage,
+tapez sur la touche ``entrée'' pour installer le noyau par défaut
+(version 2.2) ou ``bf24'' pour installer un noyau plus récent (2.4)
+supportant, entre autre, les périphériques USB et les systèmes de
+fichiers journalisés (EXT3 et ReiserFs).
+
+Le noyau par défaut est réputé plus stable que le noyau 2.4, mais nous
+choisirons tout de même ce dernier, car il présente des améliorations
+significatives (gestion des systèmes de fichiers journalisés, par
+exemple).
+
+\subsubsection{Choisir la langue}
+
+Choisissez, dans la liste de langues qui s'affiche, celle que vous
+désirez utiliser pour l'installation de votre système. On choisira
+généralement ``fr'' - ``France''.
+
+
+\subsubsection{Configurer le clavier}
+
+L'étape suivante consiste à configurer le clavier. Une bonne
+configuration du clavier est indispensable dans la mesure où vous
+aurez à saisir vos mots de passe qui n'apparaîtront jamais en clair à
+l'écran. Si vous avez un clavier français, choisissez le clavier
+``azerty/fr-latin0''.
+
+
+\subsubsection{Partitionnement du disque}
+
+Vous devez ensuite partitionner le disque dur de la machine hôte de
+façon a créer au moins une partition supportant le système de fichier
+racine (``/'') et une partition de swap. Les partitions à créer sont
+listées dans le tableau \ref{tab:partitions}.
+
+\begin{table}[htbp]
+\begin{center}
+\begin{tabular}{|c|c|c|c|p{3cm}|}
+\hline
+Périphérique & Taille & Type & Point de montage & Remarque \\
+\hline
+/dev/hda1 & 20 Mo & Linux (83)& /boot & Première partition primaire
+
+Doit être amorçable\\
+/dev/hda5 & 1 Go & Linux (83)& / & Première partition secondaire \\
+/dev/hda6 & 128 Mo & Linux swap (82) & Swap & \\
+/dev/hda7 & 200 Mo & Linux (83)& /tmp & \\
+/dev/hda8 & 500 Mo & Linux (83)& /home & \\
+\hline
+\end{tabular}
+\caption{Partitions à créer}
+\label{tab:partitions}
+\end{center}
+\end{table}
+
+Le partitionnement du disque est réalisé à l'aide de l'outil
+``cfdisk'' (\voirf{cfdisk}). Dans ce dernier, les flèches ``haut'' et
+``bas'' du clavier permettent de naviguer dans la liste des partitions
+alors que ``gauche'' et ``droite'' permettent de sélectionner, dans la
+liste du bas, l'action à réaliser lorsque l'on presse la touche
+``Entrée''.
+
+Lorsque les partitions nécessaires sont crées, vous devez écrire la
+table des partitions (action ``Write'') et quitter ``cfdisk'' (action
+``Quit'').
+
+\imagelarg{debian_cfdisk} {Interface utilisateur de l'outil de
+  partitionnement ``cfdisk''} {cfdisk}
+
+
+\subsubsection{Initialiser et activer une partition d'échange}
+
+Une fois que les partitions sont créées sur le disque, vous avez le
+choix entre initialiser et activer une nouvelle partition d'échange,
+activer une partition précédemment initialisée, ou continuer sans
+partition d'échange. Choisissez donc : ``Initialiser et activer une
+partition d'échange''.
+
+Ce menu doit d'abord vous présenter la boîte de dialogue indiquant :
+``Veuillez choisir la partition à activer comme périphérique
+d'échange''. Le périphérique présenté par défaut devrait être la
+partition d'échange préalablement définie ; si c'est bien le cas,
+pressez simplement ``Entrée''.
+
+Ensuite, une demande de confirmation vous informe que l'initialisation
+de la partition détruira toutes les données déjà présentes sur cette
+dernière. Si vous êtes sûr de vous, choisissez : ``Oui''. L'écran va
+changer pendant que le programme d'initialisation s'exécute.
+
+L'activation d'une partition d'échange est fortement recommandée, même
+s'il est possible de s'en passer en sélectionnant l'entrée du menu :
+``Continuer sans partition d'échange (swap)''.
+
+
+\subsubsection{Initialiser une partition Linux}
+
+Choisissez l'option : ``Initialiser une partition Linux'' du menu pour
+initialiser et monter les partitions de votre dique. La première
+partition que vous montez ou initialisez sera nécessairement montée
+sous '/', la ``racine''.
+
+Si vous installez un noyau 2.4, vous devez choisir le type de système
+de fichier à créer. Choisissez ``EXT3'', qui est journalisé.
+
+Il vous sera ensuite proposé de vérifier la présence de blocs disque
+défectueux. La réponse par défaut est de passer outre ce test, car il
+peut prendre un certain temps, et d'autre part, les contrôleurs de
+disques modernes possèdent des systèmes internes de contrôle et de
+gestion des blocs défectueux (surtout quand on utilise VmWare, car les
+disques émulés sont forcement parfaits).
+
+Les questions suivantes sont simplement des points de confirmation. Il
+sera demandé de confirmer chaque action, étant donné que
+l'initialisation est destructive pour les éventuelles données
+préexistantes de la partition.
+
+Une fois que vous avez monté la partition '/', vous devrez utiliser
+l'option de menu ``Autre choix'' pour initialiser et monter les
+partitions ``/tmp'' et ``/home''.
+
+\subsubsection{Installation et configuration du noyau}
+
+L'étape suivante est l'installation d'un noyau de base et de ses
+modules. Cette installation peut se faire à partir de différent type
+de supports : disquettes, CD-ROM, partition locale ou réseau. Les
+choix qui vous sont présentées varient en fonction du matériel que
+dbootstrap a détecté sur votre système.
+
+Si vous procédez à une installation à partir d'un CD officiel, le
+programme s'acquittera de cette tâche automatiquement, sans même vous
+demander le périphérique d'installation. Lorsqu'on vous demandera le
+CD, assurez-vous d'insérer le premier cédérom dans le lecteur.
+
+\textit{NB : L'installation du système de base depuis un CD ne vous
+  permet pas de disposer systèmatiquement des denières mise à jour de
+  modules. CE n'est pas génant puisque, de toute façon, les modules
+  installés pourront être mis à jour ultérieurement à partir du
+  réseau.}
+
+
+\subsubsection{Configurer les modules des pilotes matériels}
+
+L'option ``Configurer les modules des pilotes matériels'' permet de
+configurer les pilotes de périphériques qui sont présents sur votre
+système, sous la forme de modules du noyau. Cette étape est
+généralement facultative, sauf si vous utilisez du matériel
+particulier. Vous pouvez donc passer outre cette partie de
+l'installation.
+
+\subsubsection{Configurer le réseau}
+
+Lancez l'étape ``Configurer le réseau''. Le premier écran de cette
+étape vous propose de choisir un nom pour votre ordinateur. Appelez-le
+``debian-1''.  Dans l'écran suivant, il vous est demandé si vous
+souhaitez configurer le réseau par DHCP. DHCP est un protocole de
+configuration automatique du réseau. Répondez donc ``Oui'' pour
+récupérer les informations suivantes à partir du serveur DHCP :
+\begin{itemize}
+\item l'adresse IP de l'ordinateur,
+\item le masque de sous-réseau ou "netmask",
+\item l'adresse de la passerelle ou "gateway",
+\item le nom de domaine,
+\item les adresses IP des serveurs DNS.
+\end{itemize}
+
+
+\subsubsection{Installer le système de base}
+
+
+Cette étape permet l'installation d'un noyau sur la machine hôte. Nous
+avons vu qu'un système Debian pouvait être vu comme un assemblage de
+modules. En toute logique, le système de base, dont le noyau lui-même,
+est également décom- posé en modules. Le système de base est le plus
+petit ensemble de paquets né- cessaires au fonctionnement d'un système
+élémentaire et monobloc. Sa taille est inférieure à 70 Mo.
+
+Comme nous procédons à une installation via le réseau, l'installateur
+va de- voir chercher sur le réseau les modules correspondants. Nous
+allons donc devoir préciser à l'installateur l'emplacement des modules
+à utiliser.
+
+\begin{itemize}
+\item Sélectionnez Réseau : HTTP ou FTP par réseau,
+\item Dans la case Télécharger URL, rentrez l'adresse du miroir Debian
+  le plus proche accessible par HTTP,
+\item Miroir Français : \verb'http://ftp.fr.debian.org/debian'
+\item Dans le cadre de l'IUT, il est nécessaire d'utiliser un serveur
+  mandataire (souvent appelé ``proxy'') pour accéder au miroir Debian.
+  Pour configurer ce dernier vous devez entrer respectivement son
+  adresse et son numéro de port dans les champs ``Mandataire'' et
+  ``Port du mandataire''.
+  \begin{itemize}
+  \item Nom du mandataire : \verb'balbu'
+  \item Port du mandataire : \verb'8080'
+  \end{itemize}
+\end{itemize}
+
+
+
+\subsubsection{Rendre le système amorçable}
+
+Le chargeur d'amorçage standard pour i386 s'appelle LILO (pour LInux
+LOader). C'est un programme offrant de nombreuses fonctionnalités,
+parmi lesquelles la gestion de démarrage de MS-DOS, NT et OS/2.
+
+Pour préparer le premier amorçage sous Linux, il faut rendre le
+nouveau noyau amorçable directement depuis le disque dur. C'est
+l'objet de l'étape suivante ``Rendre le système amorçable''.  Lorsque
+l'installateur vous demande où vous voulez installer LILO, répondez
+``Installer dans le MBR\footnote{Master Boot Record}'' (défaut).
+
+L'étape suivante vous propose de créer une disquette d'amorçage. Ce
+n'est pas nécessaire car le CD d'installation pourra vous servir à
+amorcer en cas de problème (mode ``rescue'' ou ``rescbf24'').
+
+\subsubsection{Réamorcer le système}
+
+Cette étape vous propose d'amorcer votre nouveau système pour la
+première fois. Si une disquette ou un CD-ROM amorçable se trouvent
+dans votre lecteur, enlevez-les et sélectionnez ensuite l'option :
+``Réamorcer le système'' dans le menu.
+
+Votre système devrait alors démarrer tout seul !
+
+Une fois que Linux a fini de s'amorcer, vous êtes accueilli par un
+message de félicitation bien mérité (\voirf{congratulations}). Ne vous
+endormez pas trop vite sur vos lauriers car il vous reste encore
+quelques étapes pour finir l'installation.
+
+\imagelarg{debian_congratulations}{Message obtenu après le premier
+  démarrage du système}{congratulations}
+
+\subsection{Paramétrage post-démarrage de Debian}
+
+\subsubsection{Configuration du fuseau horaire}
+
+L'étape suivante est ``Time Zone Configuration''. A la question ``Will
+the hardware clock be set to GMT ?'', répondez :
+
+\begin{itemize}
+\item ``Non'', si c'est un ordinateur personnel sur lequel Windows et
+  Linux cohabitent, car sinon votre horloge aura une ou deux heures de
+  décalage sous Windows, parce que Windows ne sait pas faire la
+  différence entre horloge matérielle et horloge système.
+\item ``Oui'', si la machine est destinée à faire fonctionner
+  uniquement Linux. Nous choisirons donc cette option.
+\end{itemize}
+
+Ensuite, sélectionnez votre fuseau horaire (Europe puis Paris pour la
+France). Ne cherchez pas Strasbourg, elle ne figure pas dans la
+liste... Lorsque vous sélectionnez dans la liste, vous pouvez taper
+simplement la première lettre de la section qui vous intéresse.
+
+
+\subsubsection{Mots de passe MD5}
+
+On vous demandera d'abord si vous souhaitez installer la gestion des
+mots de passe MD5. C'est une autre méthode de stockage des mots de
+passe sur votre système ; elle est plus sûre que la méthode standard
+(appelée ``crypt'').
+
+Choisissez ``Non''.
+
+
+\subsubsection{Mots de passe ``Shadow''}
+
+L'activation des mots de passe ``shadow'' permet de stocker les mots
+de passe cryptés des utilisateurs dans un fichier uniquement
+accessible par l'administrateur du système (/etc/shadow) et non dans
+le fichier public traditionnel (/etc/passwd). Cela contribue à rendre
+le système plus sûr.
+
+Choisissez ``Oui''.
+
+
+\subsubsection{Mise en place du mot de passe de root}
+
+Le compte root est aussi appelé ``Super-Utilisateur''. C'est un compte
+qui contourne toutes les protections de sécurité présentes sur votre
+système. Le compte root doit être uniquement utilisé pour administrer
+le système, et pour une durée aussi courte que possible.
+
+Choisissez ``tmri2004'' pour le mot de passe de l'administrateur
+système.
+
+\subsubsection{Créer un utilisateur ordinaire}
+
+Le système vous demandera si vous souhaitez aussi créer un utilisateur
+ordinaire. Ce compte devrait être votre principal accès personnel.
+Vous ne devriez pas utiliser le compte root pour une utilisation
+quotidienne ou comme compte personnel.
+
+Nommez le compte utilisateur comme vous voulez. Par exemple, si votre
+nom est Jean Dupont, vous pouvez utiliser ``dupont'', ``jdupont'' ou
+``jd''. On vous demandera aussi le nom de l'utilisateur, et, comme
+précédemment, un mot de passe.
+
+Si, après l'installation, vous souhaitez créer un nouveau compte
+utilisateur, utilisez la commande adduser.
+
+Créez un compte pour chaque utilisateur du système.
+
+
+\subsubsection{Paramétrage de PPP}
+
+On vous demandera si vous souhaitez installer le reste du système au
+moyen de PPP, qui correspond à une connexion par modem. Si vous êtes
+connectés à un réseau, vous pouvez en toute sécurité répondre "Non" et
+sauter cette section.
+
+\subsubsection{Enlever PCMCIA}
+
+L'installateur vous pose la question ``Remove the PCMCIA package ?''.
+Répondez ``Oui'' car notre machine ne dispose pas de port PCMCIA (on
+en trouve généralement uniquement sur les ordinateurs portables).
+
+
+\subsubsection{Configuration d'APT}
+
+Le principal outil utilisé pour installer des paquets sur les systèmes
+Debian est un programme appelé ``apt-get'' (voir la présentation de
+cet outil page \pageref{apt}). APT doit cependant être configuré, pour
+qu'il sache où récupérer les paquets. L'application qui vous aidera
+dans cette tâche s'appelle ``apt-setup''. Vous pouvez exécuter à
+nouveau cet outil à n'importe quel moment une fois que l'installation
+est finie, en tapant ``apt-setup'' ou en modifiant manuellement le
+fichier /etc/apt/source.list.
+
+Si vous démarrez depuis un CD officiel, alors il sera automatiquement
+défini comme une source APT. Comme nous prévoyons d'installer le reste
+de votre système via le réseau, nous sélectionnerons la source HTTP.
+
+Dans la liste des sources possibles, sélectionnez HTTP. Répondez aux
+écrans suivants avec les consignes ci-dessous :
+
+\begin{itemize}
+\item ``Use non-US software ?'' : répondez Oui. Il s'agit de logiciels
+  dont l'exportation est interdite aux États-Unis en raison d'une loi
+  sur le cryptage.
+\item ``Use non-free software ?'' : répondez Oui, sauf si vous êtes
+  déjà allergique aux programmes non libres. En effet, les programmes
+  que Debian appelle "non-free" sont des programmes gratuits, mais pas
+  libres. La nuance est très importante !
+\item ``Use contrib software ?'' : répondez Oui.
+\item ``Select the mirror'' : sélectionnez votre pays ou un pays
+  proche puis le nom d'un miroir dans la liste qu'il vous propose...
+  sauf si vous avez connaissance d'un miroir Debian sur votre réseau
+  local (ce n'est pas notre cas). Dans ce dernier cas, sélectionnez
+  dans la liste : enter information manually. Il vous demande alors le
+  nom DNS (hostname) du miroir Debian et le répertoire où se trouve le
+  miroir.
+\item ``Enter HTTP proxy information'' : tapez :
+  
+  \verb'http://balbu:8080'
+  
+  où balbu est le nom DNS du proxy à utiliser et 8080, son port.
+  
+\item ``Add another apt source ?'' : répondez Non.
+\item ``Use security updates from security.debian.org'' ? : répondez
+  Oui pour bénéficier automatiquement des mises à jour de sécurité
+  sorties depuis la dernière release de la version stable.
+
+\end{itemize}
+
+\subsection{Ajout de composants au système de base}
+
+\subsubsection{Les outils de manipulation de modules}
+\label{apt}
+
+Différents outils permettent de manipuler les modules Debian :
+
+\begin{enumerate}
+\item [dpkgi :] C'est l'outil de base permettant de manipuler les
+  modules Debian. Ces derniers sont matérialisés par des fichiers
+  ``.deb'', en tout point comparables aux fichiers ``.rpm'' de la
+  plupart des autres distributions (RedHat, SuSe, Mandrake... ). Les
+  principales options de l'outil dpkg sont :
+\begin{enumerate}
+  
+\item [-i] Installation d'un paquet. Exemple :
+  
+  \verb'dpkg -i paquet.deb'
+\item [-r] Désinstallation d'un paquet. Exemple :
+  
+  \verb'dpkg -r paquet'
+\item [-P] Idem, mais supprime également les fichiers de
+  configuration.
+\item [--info] Description du contenu du paquet. Exemple :
+\item [-L] Liste les fichiers installés par le paquet spécifié.
+  Exemple :
+\begin{verbatim}
+$ dpkg -L fileutils
+/.
+/bin
+/bin/chgrp
+/bin/chmod
+/bin/chown
+/bin/cp
+/bin/dd
+/bin/df
+...
+\end{verbatim}
+\item [-S] Recherche le paquet ayant installé le fichier spécifié.
+  Exemple :
+\begin{verbatim}
+$ dpkg -S /bin/ls
+fileutils: /bin/ls
+\end{verbatim}
+\end{enumerate}
+
+\item [apt-get :] Cet outil facilite grandement la gestion des modules
+  Debian en prenant en charge la gestion des fichiers ``.deb''. Il se
+  charge de résoudre les dépendances entre paquets, de télécharger les
+  fichiers '.deb' depuis différentes sources, de les installer et,
+  enfin, de les configurer au besoin.
+  
+  La liste des différentes sources de paquets à utiliser est spécifiée
+  dans le fichier suivant :
+  
+  \verb'/etc/apt/sources.list'
+  
+  Il est possible d'utiliser les commandes suivantes :
+
+  \begin{enumerate}
+  \item [install] Permet d'installer un module. Par exemple, pour
+    installer un serveur de base de données MySql, on utilisera la
+    commande suivante :
+  
+    \verb'apt-get install mysql'
+  \item [remove] Pour supprimer ce même module, on utilisera la
+    commande suivante :
+    
+    \verb'apt-get remove mysql'
+    
+    Pour effacer également les fichiers de configuration, on utilisera
+    l'option '--purge'.
+  \item [update] Permet de mettre à jour la liste des paquets
+    disponibles.
+  \item [upgrade] Installe les nouvelles versions des paquets
+    installés.
+\end{enumerate}
+\item [apt-cache :] Permet de gérer la liste des paquets disponibles.
+  Les actions suivantes peuvent être utilisées :
+
+  \begin{enumerate}
+  \item [search :] Permet de rechercher un paquet. Par exemple, la
+    commande suivante permet de rechercher les paquets relatifs à
+    MySql :
+  
+    \verb'apt-cache search mysql'
+  \item [show :] Retourne la description d'un paquet. Exemple :
+    
+    \verb'apt-cache show mysql'
+\end{enumerate}
+
+Pour améliorer les performances, cet outil gère un cache local des
+paquets disponibles dans les différentes sources. Comme son nom
+l'indique, cet outil permet de g
+  
+\item [dpkg-reconfigure :] Permet de reconfigurer un paquet en
+  relançant l'opération effectuée lors de l'installation. Par exemple,
+  la commande suivante permet de reconfigurer un serveur déjà installé
+  MySql :
+  
+  \verb'dpkg-reconfigure mysql'
+\end{enumerate}
+
+D'autres outils sont également disponibles pour gérer les modules, ils
+proposent généralement une interface utilisateur plus conviviale pour
+obtenir les mêmes résultats\footnote{Ils se contentent généralement de
+  préparer les commandes à envoyer aux outils traditionnels.} :
+\begin{enumerate}
+\item [tasksel :] Permet d'installer un ensemble de modules relatifs à
+  un type de tâche déterminé (bureautique, serveur Web, serveur de
+  fichier... );
+\item [dselect :] Permet de gérer les paquets disponibles ou déjà
+  installés à l'aide de listes personnalisables;
+\item [aptitude :] Idem, mais en plus convivial (ce n'était pas très
+  difficile !);
+\item [synaptic :] Idem, mais en beaucoup plus convivial et proposant
+  un mode graphique (\voirf{synaptic}).  \imagelarg{synaptic}{Exemple
+    d'écran de l'application ``synaptic''}{synaptic}
+\end{enumerate}
+
+\subsubsection{Installation des modules}
+
+
+Pour ajouter les modules demandés sur notre système, on utilisera
+successivement les commandes suivantes en étant connecté en temps
+qu'administrateur du système (root) :
+\begin{verbatim}
+apt-get install vim
+apt-get install jed
+apt-get install exim
+apt-get install mutt
+apt-get install lynx
+\end{verbatim}
+
+\subsection{Localisation du système en français}
+Pour localiser le système en français, on installera le module
+"locales" à l'aide de la commande suivante :
+
+\verb'apt-get install locales'
+
+Lorsque le module est télé-chargé et installé, l'outil "apt-get'
+lancera l'interface de paramétrage du module "locales". On choisira
+alors la langue "fr\_FR@euro ISO-8859-15". Ensuite, on choisira cette
+même langue pour la localisation par défaut du système.
+
+Pour relancer l'outil de configuration par la suite, on utilisera la
+commande suivante :
+
+\verb'dpkg-reconfigure locales'
+
+Il est ensuite possible d'installer diverses documentations
+disponibles en français à l'aide des commandes suivantes :
+
+\begin{verbatim}
+apt-get install doc-linux-fr
+apt-get install doc-debian-fr
+apt-get install manpages-fr
+\end{verbatim}
+
+\subsection{Ajout de nouveaux utilisateurs}
+
+L'ajout de nouveaux utilisateurs du système peut être réalisé à l'aide
+de la commande suivante :
+
+\verb'useradd nom_nouvel_utilisateur'
+
+Par défaut, les nouveaux comptes sont désactivés. Pour les activer, il
+convient de changer leur mot de passe à l'aide de la commande suivante
+:
+
+\verb'passwd nom_nouvel_utilisateur'
+
+
+\subsection{Arrêter le système}
+
+Pour arrêter un système Linux en marche, vous ne devez pas redémarrer
+en appuyant sur le bouton-poussoir ``reset'' sur le devant de votre
+ordinateur, ni simplement arrêter l'ordinateur. Linux, comme Windows,
+doit être arrêté de la bonne manière, sinon des fichiers pourraient
+être perdus et le disque pourrait être endommagé. Vous pouvez appuyer
+sur la combinaison de touches Ctrl-Alt-Suppr. Vous pouvez aussi si
+vous le préférez vous connecter en tant qu'utilisateur privilégié, et
+taper shutdown -h now, reboot, ou halt.
+
+
+\end{document}

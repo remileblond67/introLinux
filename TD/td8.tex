@@ -1,0 +1,181 @@
+\documentclass[french,12pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage{babel, indentfirst}
+\usepackage[xdvi]{graphicx}
+\usepackage{latexsym}
+\usepackage{tabularx}
+\usepackage{makeidx}
+\usepackage{times}
+\usepackage{color}
+\usepackage[ps2pdf]{hyperref}
+
+\author{Rémi LEBLOND}
+\title{TD 8 : Intégration de Linux dans un environnement Windows}
+
+\input{inc_fonctions}
+
+\begin{document}
+
+\maketitle
+
+\section{But de l'exercice :}
+
+Le but de ce TD est d'intégrer un serveur Linux dans un environnement Windows. 
+Nous allons donc mettre en oeuvre un serveur Linux qui offrira aux stations clientes Windows les services suivants :
+\begin{itemize}
+\item Serveur de domaine principal (PDC) pour mettre en oeuvre un domaine NT nommé "CNAM",
+\item Explorateur principal de réseau,
+\item Serveur de temps, pour synchroniser les horloges des postes clients sur celle du serveur,
+\item Serveur WINS, pour permettre le recensement des machines disponibles et la résolution des noms NetBios,
+\item Serveur de fichier, pour les répertoires personnels (/home/*) et un répertoire commun (/var/commun).
+\end{itemize}
+
+Le but de la mise en oeuvre d'un domaine NT est de permettre à chaque utilisateur déclaré de se connecter indifféremment à une toute machine Windows cliente et d'y retrouver son environnement (c'est à dire, son répertoire personnel, ses préférences et l'accès au répertoire commun).
+
+L'ensemble de cette installation se fera avec une distribution Debian\footnote{Dans le but de maintenir des performances acceptables lorsque vous ferez fonctionner votre serveur Linux et une ou deux stations Windows, il est recommandé de "tailler petit" lors de la configuration de ces dernières (32 Mo de RAM et disques de 1 Go sont amplement suffisants pour le serveur Linux, 64 Mo de RAM et 1 Go de disque pour les clients Windows).}, mais vous pouvez évidemment faire exactement la même chose avec la distribution Mandrake.
+Pour ce TD, nous utiliserons la suite logicielle Samba, disponible dans la quasi totalité des distributions Linux.
+
+Le réseau à constituer devra avoir les caractéristiques suivantes :
+\begin{itemize}
+\item Nom de domaine NT "CNAM",
+\item Nom du serveur PDC : DEBPDC,
+\item Réseau IP à utiliser pour le serveur et les postes Windows : 192.168.1.0,
+\item Adresse IP du serveur (vous pouvez utiliser une autre adresse) : 192.168.1.1,
+\item Adresses IP des postes (vous pouvez utiliser une autre adresse) : 192.168.1.10 et 192.168.1.11,
+\item Noms des postes Windows NT clients : WINPC1 et WINPC2.
+\item Les comptes utilisateurs à intégrer au domaine NT "CNAM" sont : util1, util2 et util3.
+\item Les répertoires personnels des utilisateurs doivent être associés au lecteur "P:" des stations Windows,
+\item Le répertoire à rendre commun à publier vers les postes Windows est /var/commun et à associer au lecteur "S:" des postes Windows.
+\end{itemize}
+
+\section{Solution :}
+
+\subsection{Installation des services Samba}
+
+On utilise l'utilitaire apt-get, pour installer les paquetages nécessaires à Samba :
+\begin{verbatim}
+apt-get install samba
+\end{verbatim}
+
+
+\subsection{Paramétrage de Samba}
+
+Le paramétrage de Samba est centralisé sur un seul fichier : /etc/samba/smb.conf.
+
+Modifiez le fichier existant pour obtenir :
+\begin{verbatim}
+[global]
+   # Nom du domaine
+   workgroup = CNAM
+   # Nom du serveur
+   netbios name = DEBPDC
+   server string = Serveur PDC %h (Samba %v)
+   # Configuration en PDC
+   domain master = Yes
+   domain admin group = root
+   smb passwd file = /etc/passwd
+   encrypt passwords = Yes
+   domain logons = Yes
+   logon script = logon.bat
+   logon drive = P:
+   # Configuration en explorateur principal de réseau
+   local master = Yes
+   prefered master = Yes
+   os level = 100
+   wins support = Yes
+   name resolve order = wins host lmhostis bcast
+   time server = Yes
+[netlogon]
+   comment = Repertoire pour les scripts de connexion
+   path = /var/samba/netlogon
+   browseable = No
+   write list = root
+[homes]
+   comment = Repertoire personnel de %u
+   writable = Yes
+   browseable = No
+[commun]
+  comment = Repertoire commun a tous les utilisateurs
+  path = /var/commun
+  writable = Yes
+  browseable = Yes
+  create mode = 0777
+[cdrom]
+  comment = Lecteur de CD-ROM
+  writable = no
+  locking = no
+  path = /cdrom
+  public = yes
+  preexec = /bin/mount /cdrom
+  prostexec = /bin/umount /cdrom
+\end{verbatim}
+
+La commande \com{testparm} permet de vérifier la syntaxe du fichier \fich{smb.conf}.
+
+\begin{verbatim}
+# testparm
+Load smb config files from /etc/samba/smb.conf
+Precessing section "[netlogon]"
+Precessing section "[homes]"
+Precessing section "[commun]"
+Loaded services file OK.
+\end{verbatim}
+
+Pour que la nouvelle configuration soit prise en compte par Samba, vous devez le relancer à l'aide de la commande suivante :
+\begin{verbatim}
+/etc/init.d/samba restart
+\end{verbatim}
+
+\subsection{Création des répertoires}
+
+Si les utilisateurs util1, util2 et util3 ont été créés normalement, leurs répertoires personnels existent avec des droits d'accès adaptés.
+
+Le répertoire \fich{/var/commun} doit être créé en prenant garde qu'util1, util2 et util3 disposent des droits leur permettant d'y écrire\footnote{Soit vous ouvrez les droits d'écriture à tout le monde sur ce répertoire, soit vous l'attribuez à un groupe ("users", par exemple) dans lequel sont inscrits ces trois utilisateurs et vous donnez le droit d'écriture au niveau du groupe.}.
+
+Pour pouvoir stocker les scripts de connexion, vous devez créer le répertoire \fich{/var/samba/logonscript}\footnote{Celui qui est indiqué dans le fichier \fich{/etc/samba/smb.conf}.}, en s'assurant que tous les utilisateurs Windows disposent du droit de lecture sur ce dernier.
+
+Dans le répertoire \fich{/var/samba/logonscript}, créez le script de connexion "logon.bat" suivant, qui sera exécuté à chaque connexion sur une station Windows et permettra d'affecter le répertoire commun au lecteur "S:" :
+\begin{verbatim}
+net use S: \\debpdc\commun
+\end{verbatim}
+
+
+\subsection{Ajout des utilisateurs au domaine "CNAM"}
+
+L'ajout des utilisateurs au domaine NT se fait à l'aide de la commande smbpasswd. Cette dernière, qui doit systématiquement être suivi du matricule d'un utilisateur Linux, permet :
+\begin{itemize}
+\item de changer le mot de passe "Windows" d'un utilisateur, lorsqu'elle est utilisée sans paramètre,
+\item d'ajouter un utilisateur "Linux" au domaine NT, lorsqu'elle est utilisée avec l'option "-a",
+\item de supprimer ou désactiver un utilisateur "Linux" du domaine NT, lorsqu'elle est utilisée respectivement avec l'option "-x" ou "-d".
+\item d'ajouter une nouvelle station Windows cliente au domaine, lorsqu'elle est utilisée avec les options "-a" et "-m".
+\end{itemize}
+
+On utilisera donc les commandes suivantes :
+\begin{verbatim}
+smbpasswd -a util1
+smbpasswd -a util2
+smbpasswd -a util3
+smbpasswd -a root
+\end{verbatim}
+
+Notez qu'il est nécessaire de définir un mot de passe propre à Windows.
+
+\subsection{Déclaration des stations Windows NT devant se connecter au domaine "CNAM"}
+
+Chaque station cliente Windows NT (ou 2000) à intégrer au domaine NT doit disposer d'un compte Linux sur le serveur PDC, déclaré en temps que machine cliente dans Samba.
+
+Le nom de ces comptes doit correspondre au nom NetBios de la machine à connecter au domaine, en majuscule, suivi de "\$".
+
+\begin{verbatim}
+useradd -d /dev/null -s /bin/false WINPC1$
+useradd -d /dev/null -s /bin/false WINPC2$
+
+smbpasswd -a -m WINPC1
+smbpasswd -a -m WINPC2
+\end{verbatim}
+
+\subsection{Installation des stations Windows NT clientes}
+
+L'installation se fait de la même manière qu'avec un PDC fonctionnant avec Windows NT server. On intègre les stations dans le domaine NT "CNAM" en utilisant le compte "root". N'oubliez pas de déclarer le serveur Linux en temps que serveur WINS sur chaque station Windows, ce n'est pas indispensable, mais cela permet d'optimiser l'utilisation du réseau en évitant trop de diffusions.
+
+\end{document}

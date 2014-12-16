@@ -1,0 +1,591 @@
+\chapter{Arborescence d'un système Linux}
+
+\resumchap{Les informations données ici peuvent ne pas être correctes
+  pour votre distribution. En effet, certaines distributions utilisent
+  une structure légèrement différente.  Les informations données ici
+  sont conformes à la norme de hiérarchie de systèmes de fichiers
+  version 2.0 (``FHS'' en anglais). Vous pouvez consulter ce document
+  pour une description exhaustive du système de fichiers de Linux.}
+
+
+\section{Systèmes de fichier}
+
+
+\subsection{Principe}
+
+Il n'existe pas de norme d'organisation du système de fichiers, mais
+un standard est à peu près suivi par les différentes distributions de
+Linux.  L'organisation traditionnelle du répertoire racine est décrite
+dans le tableau suivant (\voirt{tab:princ_rep}).
+
+\input{inc_princ_rep}
+
+Le répertoire de base / s'appelle : répertoire racine (root) par
+analogie avec la racine d'un arbre représentant le système de
+fichiers. Il n'est pas standard d'ajouter des répertoires au niveau de
+la racine.
+
+Ce système de fichiers peut résider sur différentes partitions,
+différents supports physiques ou sur d'autres machines sur le réseau.
+Ce découpage est complètement transparent pour les utilisateurs du
+système de fichiers. Les différentes parties peuvent être connectées
+au démarrage du système ou à la demande, en cours d'utilisation.
+
+
+
+\section{Présentation des principaux répertoires}
+
+\subsection{\rep{/} : la racine}
+Répertoire racine. Point de départ de toute la hiérarchie du système
+de fichiers. Le système de fichiers contenant ce répertoire est monté
+automatiquement par le noyau pendant l'amorçage du système. Ce système
+de fichiers est appelé système de fichiers racine (``root'' en
+anglais).
+  
+
+\subsection{\rep{/bin/} : les binaires du système}
+Répertoire contenant les commandes générales nécessaires à
+l'utilisation courante du système. Tous les utilisateurs peuvent
+utiliser les commandes de ce répertoire.
+
+Exemple de commandes de \rep{/bin/} :
+
+\begin{itemize}
+\item \com{bash} : l'interpréteur de commandes (shell),
+\item \com{ls} : permet de lister le contenu d'un répertoire,
+\item \com{cd} : permet de changer de répertoire courant,
+\item \com{cat}, \com{more} : permet d'afficher le contenu d'un fichier,
+\item \com{vi} : l'éditeur de texte...
+\end{itemize}
+
+
+\subsection{\rep{/sbin/} : les binaires d'administration}
+Répertoire contenant les commandes nécessaires à l'administration du
+système. Seuls les administrateurs ont accès à ces programmes, les
+autres utilisateurs n'y ont pas accès.
+
+Exemple de commandes de \rep{/sbin/} :
+
+\begin{itemize}
+\item \com{reboot} : permet de redémarrer le système,
+\item \com{halt} : permet d'arrêter le système,
+\item \com{fdisk} : permet de modifier le partitionnement des disques,
+\item \com{fsck} : permet de vérifier l'état des systèmes de fichiers,
+\item \com{mkfs} : création de systèmes de fichier...
+\end{itemize}
+    
+\subsection{\rep{/home/} : les répertoires des utilisateurs}
+
+Le répertoire \rep{/home/} contient les répertoires des utilisateurs
+disposant d'un compte sur la machine. Chaque utilisateur possède
+généralement son propre répertoire. Le répertoire personnel de chaque
+utilisateur contient ses fichiers personnels et les fichiers de
+configurations qui lui sont propres.
+
+Les répertoires personnels se retrouvent généralement tous au même
+niveau (exemple : /home/util1 pour celui de util1), mais il est
+possible de créer des structures de groupes de travail en organisant
+les sous-répertoires (exemple : /home/compta/util1 si util1 fait
+partie du service comptabilité et /home/info/util2 si util2 fait
+partie du service informatique).
+
+Il est bon de placer ce répertoire dans un système de fichiers
+indépendant, afin d'éviter que sa saturation ne perturbe le
+fonctionnement du système complet.  Il peut être judicieux de placer
+ce répertoire sur un système de fichier réseau (NFS, par exemple), ce
+qui permet à un utilisateur de retrouver son répertoire personnel sur
+toutes les machines du réseau sur lesquels il se connecte (profil
+flottant).
+
+Exemples de fichiers de configuration présents dans le répertoire
+personnel d'un utilisateur :
+\begin{itemize}
+\item \fich{.bashrc} : script exécuté à chaque connexion de l'utilisateur. Il
+  permet de définir des alias, d'exécuter des commandes ou de
+  positionner des variables d'environnement, par exemple,
+\item \fich{.bash\_logout} : idem pour la déconnexion,
+\item \fich{.bash\_history} : historique des commandes utilisées,
+\item \rep{GNUstep/}, \rep{KDE/} : répertoires contenant les fichiers
+  de configuration personnels pour les environnements graphiques
+  WindowMaker et KDE...
+\end{itemize}
+
+
+\subsection{\rep{/root/} : le répertoire de l'administrateur}
+
+Répertoire contenant le répertoire personnel de l'administrateur. Même
+s'il serait tout à fait envisageable de placer ce répertoire sous
+\rep{/home/}, il est recommandé de le placer au plus près de la racine
+pour éviter qu'un problème sur le système de fichiers des utilisateurs
+(utilisation de NFS et lien réseau cassé, par exemple) ne l'empêche de
+travailler.
+
+Ce répertoire est généralement uniquement accessible à
+l'administrateur système.
+
+
+\subsection{\rep{/etc/} : les fichiers de configuration du système}
+
+Ce répertoire contient les fichiers de configuration du système.
+Exemples de fichiers situés dans \rep{/etc/} :
+\begin{itemize}
+\item \fich{/etc/passwd} contient la liste des utilisateurs du système,
+\item \fich{/etc/group} contient la liste des groupes du système,
+\item \fich{/etc/fstab} contient la définition des montages de
+  systèmes de fichiers,
+\item \fich{/etc/lilo.conf} contient la définition des paramètres
+  d'amorçage (utilisé pour configuré un double boot, par exemple),
+\item \fich{/etc/exports} description des répertoires exportés par NFS,
+\item \fich{/etc/hosts} traduction d'adresses IP en noms d'hôte,
+\item \fich{/etc/resolv.conf} règles de résolution des noms de
+  domaine...
+\end{itemize}
+
+On trouve les sous-répertoires suivants :
+
+\begin{itemize}
+\item \rep{/etc/X11/} contient les fichiers de configuration de
+  XWindow,
+\item \rep{/etc/rc.d/} contient les scripts de démarrage du système,
+\item \rep{/etc/init.d/} contient les scripts de démarrage des
+  différents services (deamons) du systèmes (apache, MySql\ldots ),
+\item \rep{/etc/cron/} contient les tâches à effectuer à la
+  périodicité donnée (daily, hourly, monthly, weekly),
+\item \rep{/etc/skel/} contient les fichiers à recopier dans le
+  répertoire d'un nouvel utilisateur,
+\item \rep{/etc/sysconfig/} contient les fichiers de configuration des
+  périphériques.
+\end{itemize}
+  
+Le répertoire \rep{/etc/opt/} contient les fichiers de configuration des
+applications.
+
+
+
+\subsection{\rep{/var/} : les données variables du système}
+
+Répertoire contenant toutes les données variables du système, c'est à
+dire les données pouvant être modifiées lors de l'utilisation courante
+du système ou de ses applications.
+
+\begin{itemize}
+\item \rep{/var/opt/} contient les données variables des applications.
+  
+\item \rep{/var/log/} contient les fichiers de trace de fonctionnement
+  du système\footnote{Une grande partie du travail d'administration
+    consiste à suivre les enregistrements afin de détecter les mauvais
+    fonctionnements. Le programme logrotate permet de conserver un
+    historique des fichiers. Il existe des outils de gestion des
+    fichiers de trace pour permettre, entre autres, la détection des
+    intrusions sur le système.}.
+  
+\item \rep{/var/spool/} contient les données en attente de traitement.
+  Les travaux d'impression en cours, les mails et les fax en attente
+  d'émission, les travaux programmés en attente d'exécution sont tous
+  stockés dans ce répertoire. Le répertoire spool contient des
+  sous-répertoires de gestion des files d'impression (lpd), de
+  courriers (mail), de forums (news), etc. Ces sous-répertoires
+  peuvent contenir, momentanément, des fichiers de taille importante.
+
+      
+\item \rep{/var/locks/} contient les verrous sur les ressources
+  système.  Certaines ressources ne peuvent être utilisées que par une
+  seule application (par exemple, un modem). Les applications qui
+  utilisent de telles ressources le signalent en créant un fichier de
+  verrou dans ce répertoire.
+  
+\item \rep{/var/cache/} contient les données de résultats
+  intermédiaires des applications. Les applications qui doivent
+  stocker des résultats intermédiaires doivent les placer dans ce
+  répertoire.
+  
+\item \rep{/var/catman} contient les fichiers d'aide mis en forme. Ce
+  répertoire contient les pages de manuel mises en forme pour un accès
+  plus rapide lors d'une deuxième utilisation.
+  
+\item \rep{/var/lib} contient quelques fichiers de configuration
+  \rep{/var/lock} les fichiers de verrous des applications
+  \rep{/var/run} les fichiers contenant les "pid" des processus du
+  système
+\end{itemize}
+
+
+
+\subsection{\rep{/usr/} : les données fixes partagées}
+Répertoire contenant les fichiers du système partageables en réseau et
+en lecture seule.
+        
+Le répertoire /usr contient de nombreux sous-répertoires. On retrouve
+presque la même organisation que sous la racine, mais le contenu est
+destiné aux utilisateurs plus qu'au système lui-même.
+
+La structure de /usr est la suivante :
+
+\begin{itemize}
+\item \rep{/usr/X11R6/} contient la hiérarchie des fichiers XWindow
+  \footnote{Protocole X, version 11 révision 6.}. Ce répertoire
+  contient des sous-répertoires \rep{bin/}, \rep{lib/} et
+  \rep{include/}, où se trouvent les exécutables de XWindow, les
+  bibliothèques et les fichiers d'en-têtes pour créer des programmes
+  pour XWindow en C et C++. On retrouve, dans ce répertoire, une
+  hiérarchie de fichiers ressemblant à celle de la racine, mais dédiée
+  à l'environnement XWindow.
+\item \rep{/usr/bin/} contient les commandes utilisateurs
+  supplémentaires \footnote{C'est à dire les commandes autres que les
+    commandes de base.}  du système,
+\item \rep{/usr/doc/} contient les documentations en ligne,
+\item \rep{/usr/etc/} contient la configuration des commandes
+  utilisateurs,
+\item \rep{/usr/games/} contient les (éventuels) jeux,
+\item \rep{/usr/include/} contient les fichiers d'en-têtes du système
+  pour le compilateur C/C++. Les fichiers de ce répertoire sont
+  utilisés pour réaliser des programmes dans les langages de
+  programmation C et C++.
+\item \rep{/usr/lib/} contient les bibliothèques partagées de tous les
+  programmes de \rep{/usr/bin/} et \rep{/usr/sbin/} et les
+  bibliothèques statiques pour la création de programmes.
+\item \rep{/usr/local/} contient les outils installés en dehors du
+  contexte de la distribution. ``local'' ne signifie pas ici que les
+  programmes qui se trouvent dans ce répertoire ne peuvent pas être
+  partagés sur le réseau, mais plutôt que ce sont des extensions du
+  système qu'on ne trouve donc que localement sur un site donné. Ce
+  sont donc les extensions qui ne font pas partie de la distribution
+  de Linux utilisée, et qui doivent être conservées lors des mises à
+  jour ultérieures de cette distribution. Ce répertoire contient les
+  sous-répertoires bin, lib, include et src, qui ont la même
+  signification que les répertoires du même nom de \rep{/usr/}.
+\item \rep{/usr/man/} contient les fichiers des pages du manuel en
+  ligne,
+\item \rep{/usr/sbin/} contient les commandes d'administration
+  supplémentaires. Ces commandes ne sont normalement utilisées que par
+  l'administrateur système.
+\item \rep{/usr/share/} contient les fichiers de configuration
+  partagés,
+\item \rep{/usr/src/} contient les fichiers sources du noyau et des
+  applications de la distribution. Normalement, ce répertoire ne doit
+  contenir que le code source des applications dépendantes de la
+  distribution que vous utilisez. Il est vivement recommandé de
+  conserver les sources du noyau de Linux\footnote{Elles se trouvent
+    dans le répertoire \rep{/usr/src/linux/}} sur son disque, afin de
+  pouvoir changer la configuration du système à tout moment.
+\end{itemize}
+
+
+Il est recommandé que ce répertoire soit placé sur un système de
+fichiers en lecture seule, et que les applications utilisent le
+répertoire \rep{/var/opt/} pour travailler.
+
+
+
+\subsection{\rep{/opt/} : les applications complémentaires}
+
+Répertoire contenant les applications complémentaires (add-on)
+n'appartenant pas à la distribution installée.
+
+
+
+\subsection{\rep{/dev/} : les périphériques}
+\label{dev}
+Répertoire contenant tous les fichiers spéciaux permettant d'accéder
+aux périphériques. Sous Linux, la plupart des périphériques sont
+accessibles au travers de fichiers spéciaux, grâce auxquels l'envoi et
+la réception des données vers les périphériques peuvent être réalisés
+de manière uniforme. Il existe un tel fichier pour chaque
+périphérique. 
+
+Ce répertoire peut être géré de deux façons :
+
+\begin{itemize}
+\item dans un système de fichier classique. Dans ce cas, il est
+  nécessaire de créer un fichier spécial pour chaque périphérique
+  installé. Cette solution présente l'avantage de permettre un
+  contrôle précis des droits d'accès aux périphériques.
+\item une autre possibilité est d'utiliser un système de fichiers
+  virtuel de type devfs\index{devfs}, géré directement par le noyau.
+  Le répertoire \rep{/dev/} ne contient dans ce cas que les fichiers
+  spéciaux des périphériques pour lesquels le noyau dispose d'un
+  gestionnaire intégré ou chargé dynamiquement. Cette dernière
+  solution présente l'avantage de gérer correctement les périphériques
+  branché à chaud sur le système (sur le bus USB, par exemple).
+\end{itemize}
+
+
+Le répertoire \rep{/dev/} contient beaucoup de fichiers spéciaux pour
+des périphériques qui ne sont pas physiquement présents dans la
+machine (disques IDE ou ports série, par exemple). Dans ce cas, les
+opérations sur les fichiers spéciaux des périphériques non installés
+seront tout simplement refusées par le noyau ou ne produisent pas de
+résultat.
+  
+Exemples de fichiers du répertoire \rep{/dev/} :
+
+\begin{itemize}
+\item \fich{/dev/hda} désigne le premier disque dur IDE du système,
+\item \fich{/dev/hda1}, la première partition de ce disque.
+\item \fich{/dev/cdrom} désigne le lecteur de CD-ROM.
+\item \fich{/dev/usb/scanner0} désigne le premier scanner USB.
+\item \fich{/dev/console} désigne la console du système.
+\end{itemize}
+
+
+\subsection{\rep{/mnt/} : les montages temporaires}
+
+Répertoire réservé au montage des systèmes de fichiers non-permanents
+(CD-ROM, disquettes, etc.). Ce répertoire peut contenir plusieurs
+sous-répertoires pour chaque périphérique amovible, afin de permettre
+d'en monter plusieurs simultanément.
+
+Notez qu'il est assez courant de disposer de liens symboliques dans la
+racine référençant les principaux systèmes de fichiers, afin d'en
+simplifier l'accès. Par exemple, il est courant\footnote{Ce principe
+  est appliqué sur la distribution Debian, par exemple.}, bien que peu
+élégant, d'avoir un répertoire \rep{/floppy/} référençant le lecteur
+de disquette et un répertoire \rep{/cdrom/} référençant le lecteur de
+CD-ROM.
+
+
+\subsection{\rep{/boot/} : les fichiers de démarrage}
+Ce répertoire contient le noyau\footnote{Il s'agit généralement d'un
+  fichier dénommé \fich{vmlinuz} et contenant le Noyau comprimé de
+  Linux. Les noyaux comprimés se décompriment automatiquement lors de
+  l'amorçage du système. Ils ont l'avantage de pouvoir être stocké sur
+  une disquette, une carte flash de faible capacité ou derrière un
+  lien réseau bas débit.} de Linux et ses informations de
+symboles\footnote{Dans le fichier \fich{/boot/System.map}}. Ce
+répertoire est souvent le point de montage d'un système de fichiers de
+très petite taille, dédié au noyau. Dans ce cas, il est recommandé de
+monter ce dernier en lecture seule. On notera que sur certains
+systèmes, le noyau reste placé dans le répertoire racine. Cette
+technique n'est pas recommandée, car on ne peut pas monter en lecture
+seule la partition racine en utilisation normale du système.
+  
+
+\subsection{\rep{/tmp/} : les fichiers temporaires}
+Ce répertoire permet de stocker des données temporaires. Il dispose
+généralement de droits d'accès particuliers permettant à chaque
+utilisateur d'y créer des fichiers sans pouvoir consulter les fichiers
+des autres utilisateurs.
+
+
+\subsection{\rep{/lib/} : les librairies partagées} 
+
+Répertoire contenant les bibliothèques partagées
+(``DLL'' en anglais, pour ``Dynamic Link Library'') utilisées par les
+programmes du système.
+  
+\rep{/lib/modules} contient les modules additionnels du noyau. Ces modules
+sont des composants logiciels du noyau, mais ne sont pas chargés
+immédiatement pendant l'amorçage. Ils peuvent en revanche être chargés
+et déchargés dynamiquement, lorsque le système est en fonctionnement.
+Il est fortement recommandé que ce répertoire soit placé dans le
+système de fichiers racine.
+  
+
+
+
+\subsection{\rep{/proc/} : indicateurs sur l'état du système}
+\label{proc}
+Ce répertoire représente le point de montage du pseudo système de
+fichiers du noyau. Ce dernier contient des fichiers permettant
+d'accéder aux informations sur le matériel, la configuration du noyau
+et sur les processus en cours d'exécution.
+
+On retrouvera, par exemple, un répertoire par processus actif. Chacun
+porte le numéro du processus décrit et contient les fichiers suivants
+:
+\begin{itemize}
+\item \fich{cmdline} contient la ligne de commande qui a créé le
+  processus,
+\item \fich{status} contient des informations sur l'état du processus
+  (en attente, en exécution, propriétaire... ),
+\item \fich{exe} est un lien vers le fichier exécutable utilisé par le
+  processus...
+\end{itemize}
+
+Dans le répertoire \rep{/proc/}, on retrouve des fichiers contenants
+des informations générales sur le système. Par exemple :
+\begin{itemize}
+\item \fich{uptime} contient le temps de fonctionnement du système,
+\item \fich{stat} contient diverses statistiques sur l'utilisation des
+  ressources du système (CPU, mémoire... ),
+\item \fich{meminfo} contient un récapitulatif de l'utilisation de la
+  mémoire.
+\item \fich{cpuinfo} contient une description des CPU du système...
+\end{itemize}
+
+\begin{verbatim}
+[root@rapido root]# cat /proc/cpuinfo
+processor       : 0
+vendor_id       : AuthenticAMD
+cpu family      : 6
+model           : 6
+model name      : AMD Athlon(tm) XP 1600+
+stepping        : 2
+cpu MHz         : 1394.455
+cache size      : 256 KB
+fdiv_bug        : no
+hlt_bug         : no
+f00f_bug        : no
+coma_bug        : no
+fpu             : yes
+fpu_exception   : yes
+cpuid level     : 1
+wp              : yes
+flags           : fpu vme de tsc msr pae mce cx8 apic sep mtrr 
+                  pge mca cmov pat pse36 mmx fxsr sse syscall 
+                  mmxext 3dnowext 3dnow
+bogomips        : 2778.72
+\end{verbatim}
+
+
+\section{Montage de systèmes de fichier}
+
+\subsection{Principe}
+
+Nous avons vu que la hiérarchie des fichiers de Linux était monotête,
+c'est à dire qu'il partait d'un racine unique, contrairement à Windows
+qui présente une racine par système de fichier (une pour chaque
+partition du disque dur, pour la disquette, le CD-ROM, les lecteurs
+réseaux... ).
+
+Tout fichier accessible par un système Unix est inséré dans une grande
+arborescence, la hiérarchie des fichiers, commençant à la racine
+\rep{/}.  Les fichiers de cette arborescence peuvent résider sur
+différents périphériques et ce, de façon transparente pour
+l'utilisateur.
+
+Ainsi, pour pouvoir exploiter plusieurs systèmes de fichier
+différents, nous devons rattacher ces derniers à l'arborescence des
+fichiers du système. Cette opération s'appelle le montage de systèmes
+de fichiers. Elle permet de rattacher la racine d'un système de
+fichier à un emplacement de l'arborescence des fichiers du système,
+nommé ``point de montage''\index{Point de montage}.
+
+\subsection{La commande \com{mount}}
+
+La commande \com{mount} permet d'attacher un système de fichiers
+trouvé sur un périphérique quelconque à l'arborescence des fichiers du
+système.  A l'inverse \com{umount} le détachera à nouveau.  La syntaxe
+de cette commande est la suivante :
+
+\verb'mount -t <type de système de fichier> <nom fichier> <emplacement>'
+
+Où :
+\begin{itemize}
+\item \verb'Type de système de fichier', décrit le format utilisé par
+  le système de fichier à monter. Voir la liste des principaux types
+  (\voirt{tab:type_sf}). Si l'option ``-t'' n'est mentionnée, ou si le
+  type ``auto'' est précisé, la recherche de type est effectuée sur le
+  superblock (dans l'ordre : minix, ext, ext2, xia, iso9660 sont
+  supportés).  Si cette recherche échoue, et si
+  \fich{/proc/filesystems} existe, alors tous les types de systèmes de
+  fichiers listés seront essayés successivement.
+
+  \begin{table}[htbp]
+    \begin{center}
+      \begin{tabular}{|l|p{8cm}|}
+\hline
+Type & Signification \\
+\hline
+ext2    & Système de fichier standard de Linux            \index{ext2}\\            
+ext3    & Système de fichier journalisé de Linux          \index{ext3}\\
+fat     & Système de fichier FAT (DOS)                    \index{fat}\\
+vfat    & Système de fichier FAT32 (depuis Windows 95r2)  \index{vfat}\\
+iso9660 & Système de fichier des CD-ROM                   \index{iso9660}\\
+ntfs    & Système de fichier de Windows NT (lecture seule)\index{NTFS}\\
+nfs     & Système de fichier réseau (Unix)                \index{NFS}\\ 
+smb     & Système de fichier réseau (Windows)             \index{SMB}\\ 
+\hline
+      \end{tabular}
+      \caption{Principaux types de systèmes de fichiers supportés par la commande \com{mount}}
+      \label{tab:type_sf}
+    \end{center}
+  \end{table}
+  
+\item \verb'Nom fichier' est le nom du fichier contenant le système de
+  fichier à monter. Il s'agit généralement de fichiers du répertoire
+  \rep{/dev/}. Par exemple :
+  \begin{itemize}
+  \item \fich{/dev/hda1} pour la première partition du premier
+    disque dur (le disque A),
+  \item \fich{/dev/hdb3} pour la troisième partition du deuxième
+    disque dur (le disque B),
+  \item \fich{/dev/fd0} pour le premier lecteur de disquette,
+  \item \fich{/dev/scd0} pour le premier lecteur de CD-ROM SCSI.
+  \end{itemize}
+\item \verb'Emplacement' est le repertoire de la hiérarchie des
+  fichiers où sera monté le système de fichiers. Le contenu précédent
+  du répertoire (s'il n'était pas vide), ainsi que son propriétaire et
+  ses modes d'accès initiaux deviennent invisibles tant que le nouveau
+  système de fichiers reste monté. Le chemin d'accès du répertoire
+  représente alors la racine du système de fichiers se trouvant sur le
+  périphérique.
+\end{itemize}
+
+\subsection{Le fichier \fich{/etc/fstab}}
+\index{fstab (fichier de configuration)}
+
+Nous avons vu comment utiliser monter des systèmes de fichiers à
+l'aide de la commande \com{mount} mais il est évident qu'il serait
+fastidieux de recourir systématiquement à cette commande pour monter
+les systèmes de fichiers utilisés couramment.
+
+Le fichier \fich{/etc/fstab}, contient des lignes décrivant les
+systèmes de fichiers habituellement montés, leurs répertoires, et
+leurs options.  Ce fichier est utilisé dans trois buts :
+
+\begin{itemize}
+\item Le montage automatique des systèmes de fichiers couramment
+  utilisés. La commande \com{mount -a [-t type]} (généralement
+  exécutée dans un script de démarrage) monte tous les systèmes de
+  fichiers indiqués dans \fich{fstab} (ou uniquement ceux du type
+  indiqué), à l'exception de ceux dont la ligne contient le mot-clé
+  ``noauto''.
+  
+\item La simplification du montage des systèmes de fichiers. Lorsque
+  l'on monte un système de fichiers mentionné dans la \fich{fstab}, il
+  suffit d'indiquer le point de montage, ou le périphérique (exemple :
+  \verb'mount /mnt/cdrom' pour monter le CD-ROM).
+  
+\item La ``démocratisation du droit de montage des systèmes de
+  fichiers''.  Normalement, seul le Super-Utilisateur peut monter des
+  systèmes de fichiers. Néanmoins, si la ligne de la \fich{fstab}
+  contient l'option \verb'user', n'importe quel utilisateur peut
+  monter le système de fichiers correspondant.
+
+ Ainsi, avec une ligne :
+ 
+ \verb'/dev/cdrom /cd iso9660 ro,user,noauto,unhide'
+ 
+ dans le fichier \fich{/etc/fstab}, n'importe quel utilisateur peut monter
+ le système iso9660 se trouvant sur son CDROM en utilisant la commande
+ \verb'mount /dev/cdrom'.
+       
+\end{itemize}
+
+
+\begin{figure}[htbp]
+  \begin{center}
+\begin{verbatim}
+/dev/hda5 / ext2 defaults 1 1
+/dev/hda7 /home ext2 defaults 1 1
+/dev/hda8 /var ext2 defaults 1 1
+/dev/hdb2 /tmp ext2 defaults 1 1
+none /dev/pts devpts mode=0620 0 0
+none /dev/shm tmpfs defaults 0 0
+/dev/scd0 /mnt/cdrom auto user,iocharset=iso8859-15,
+                          umask=0,exec,codepage=850,
+                          ro,noauto 0 0
+/dev/fd0 /mnt/floppy auto user,iocharset=iso8859-15,
+                          umask=0,sync,exec,codepage=850,
+                          noauto 0 0
+/dev/hda1 /mnt/windows vfat iocharset=iso8859-15,umask=0,
+                            codepage=850 0 0
+none /proc proc defaults 0 0
+/dev/hda6       none    swap     exec,dev,suid,rw 1 1
+\end{verbatim}
+    \caption{Exemple de fichier \fich{fstab}}
+    \label{fig:fstab}
+  \end{center}
+\end{figure}
+

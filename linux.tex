@@ -1,0 +1,39 @@
+% CNAM Strasbourg
+% Rémi LEBLOND
+% ------------------
+% Cours Linux TMRI 1
+% ------------------
+
+\documentclass[french,12pt,a4paper]{book}
+
+%\documentclass[french,10pt,a4paper,oneside]{book}
+
+\input{inc_fonctions}
+
+\makeindex
+
+\begin{document}
+\title{
+\input{titre}
+}
+\author{Rémi LEBLOND\\(remi.leblond@free.fr)}
+\date{\today}
+\maketitle
+
+\tableofcontents
+\include{presentation}
+\include{intro}
+\include{fonctionnalites}
+\include{arborescence}
+\include{utilisation}
+\include{installation}
+\include{reseau}
+\include{compil_noyau}
+\include{shell}
+
+\listoffigures
+\listoftables
+\printindex
+\bibliography{linux} \bibliographystyle{alpha} \nocite{*}
+
+\end{document}

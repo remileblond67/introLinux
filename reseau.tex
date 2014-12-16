@@ -1,0 +1,321 @@
+\chapter{Mise en réseau}
+
+\resumchap{Dans ce chapitre, nous allons aborder la configuration d'un système
+Linux pour l'intégrer à un réseau local.}
+
+
+
+\section{Principes généraux des réseaux}
+
+
+\subsection{Les classes de réseau IP}
+
+\begin{table}[htbp]
+  \begin{center}
+    \begin{tabular}{|c|p{8cm}|}
+    \hline
+    Classe & Plage disponible \\
+    \hline
+    A & 10.0.0.0 \\
+    B & 172.16.0.0 à 172.31.0.0 \\
+    C & 192.168.0.0 à 192.168.255.0 \\
+    \hline
+    \end{tabular}
+    \caption{Classes de réseaux IP disponibles pour une utilisation privée}
+    \label{tab:classes_ip}
+  \end{center}
+\end{table}
+
+\section{Configuration de base}
+
+
+\subsection{Affectation d'adresse}
+
+La commande \com{ifconfig} permet de configurer (et maintenir ensuite)
+les interfaces réseau.
+
+La configuration d'une interface réseau consiste à lui attribuer une
+adresse IP et à indiquer à quel type de réseau elle est raccordée.
+Ainsi, pour déclarer une nouvelle interface réseau, la syntaxe de la
+commande \com{ifconfig} est la suivante : \comex{ifconfig [nom de
+  l'interface] [adresse IP] options up|down}. Les nouvelles interfaces
+sont activées par défaut, mais il est possible de les désactiver à
+l'aide du paramètre ``down''.
+
+Le nom de l'interface peut généralement prendre les valeurs suivantes :
+\begin{description}
+\item [lo] : pour loopback\index{loopback (interface réseau)},
+  l'interface de réseau virtuel local à la machine,
+\item [eth0] : la première carte Ethernet installée. La deuxième
+  carte Ethernet porterait le nom \comex{eth1},
+\item [<nom d'une interface>:1] : le premier alias de
+  l'interface. Il est possible de définir des alias des interfaces
+  existantes. Chacun d'entre eux peut être configuré indépendamment à
+  l'aide de la commande \com{ifconfig}.
+\end{description}
+
+Les options les plus courantes sont :
+\begin{description}
+\item [netmask] : Définit le masque de réseau IP pour cette interface.
+  La valeur par défaut de cette valeur correspond au masque réseau
+  usuel pour les classes A, B ou C (déduite de l'adresse IP), mais
+  toute autre valeur peut être définie selon les besoins en sous-
+  réseaux.
+\item [up] : Cette option active l'interface.  Elle est implicitement
+  spécifiée si une nouvelle adresse est affectée à l'interface (voir
+  plus loin).
+\item [down] : Cette option arrête le fonctionnement du pilote pour cette
+  interface, et est utilisée lorsque les choses commencent à aller
+  mal.
+\item [pointopoint adresse] : Ce mot clé valide le mode point à point
+  d'une interface, signifiant qu'il existe un lien direct entre 2
+  machines, sans que personne d'autre ne puisse être à l'écoute.
+\end{description}
+
+Si aucun argument n'est donné, ifconfig affiche simplement l'état des
+interfaces actuellement définies. Si seul le paramètre interface est
+donné, il affiche seulement l'état de l'interface correspondante. Si
+seul le paramètre -a est fourni, il affiche l'état de toutes les
+interfaces, même celles qui ne sont pas actives.
+
+
+\begin{verbatim}
+[root@rapido remi]# ifconfig
+eth0      Lien encap:Ethernet  HWaddr 00:50:FC:49:D0:FB  
+          inet adr:192.168.0.1  Bcast:192.168.0.255  Masque:255.255.255.0
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:1663 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 lg file transmission:100 
+          RX bytes:0 (0.0 b)  TX bytes:112830 (110.1 Kb)
+          Interruption:11 Adresse de base:0x9000 
+
+lo        Lien encap:Boucle locale  
+          inet adr:127.0.0.1  Masque:255.255.255.0
+          UP LOOPBACK RUNNING  MTU:16436  Metric:1
+          RX packets:13989 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:13989 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 lg file transmission:0 
+          RX bytes:805767 (786.8 Kb)  TX bytes:805767 (786.8 Kb)
+\end{verbatim}
+
+
+\subsection{Définition de règles de routage}
+
+La commande \com{route} manipule la table de routage IP du noyau. Son
+utilisation première consiste à configurer des routes statiques vers
+des hôtes ou des réseaux via une interface, après sa configuration par
+le programme \com{ifconfig}.\index{Table de routage} 
+
+Utilisée seule, la commande \com{route} permet d'afficher la table de
+routage active du système.
+
+\begin{verbatim}
+[root@rapido remi]# route
+Table de routage IP du noyau
+Destination     Passerelle      Genmask         Indic Metric Ref    Use Iface
+192.168.0.0     *               255.255.255.0   U     0      0        0 eth0
+127.0.0.0       *               255.255.255.0   U     0      0        0 lo
+\end{verbatim}
+
+Pour définir une nouvelle route à l'aide de la commande \com{route},
+il faut :
+\begin{itemize}
+\item Choisir l'action :
+  \begin{itemize}
+  \item del pour supprimer une route,
+  \item add pour ajoute une route.
+  \end{itemize}
+\item Choisir la destination de la route :
+  \begin{itemize}
+  \item -net pour ajouter une route dont la cible est un réseau,
+  \item -host si la cible est un hôte.
+\end{itemize}
+\item Choisir la cible de la route : l'hôte ou le réseau destination.
+\item Définir les éventuelles options :
+  \begin{itemize}
+  \item netmask spécifie le masque réseau de la route à ajouter,
+  \item gw suivi de l'adresse de la passerelle signifie que tout
+    paquet IP envoyé à cette adresse sera routé par la passerelle
+    spécifiée.
+  \end{itemize}
+\end{itemize}
+
+\subsection{Test de la configuration}
+
+Commande \com{ping} permet de tester la communication vers un hôte
+spécifié par son adresse ou son nom. Par défaut, la commande \com{ping}
+s'exécute en boucle, il faut donc l'interrompre par CTRL-C.
+
+\begin{verbatim}
+[root@rapido remi]# ping brouette
+PING brouette (192.168.0.10) from 192.168.0.1 : 56(84) bytes of data.
+64 bytes from rapido (192.168.0.1): icmp_seq=0 ttl=255 time=80 usec
+64 bytes from rapido (192.168.0.1): icmp_seq=1 ttl=255 time=46 usec
+64 bytes from rapido (192.168.0.1): icmp_seq=2 ttl=255 time=51 usec
+
+--- rapido ping statistics ---
+3 packets transmitted, 3 packets received, 0% packet loss
+round-trip min/avg/max/mdev = 0.046/0.059/0.080/0.015 ms
+\end{verbatim}
+
+\subsection{Résolution des noms de machines}
+
+Jusqu'à présent, nous avons désigné les différents composants du
+réseaux par leur adresse IP. Si cette désignation convient
+parfaitement à un système informatique, elle n'est pas naturelle pour
+un être humain normalement constitué. Aussi, pour des raisons de
+commodité, nous allons voir comment attribuer de véritables noms aux
+machines du réseau.
+
+Le fichier \fich{/etc/hosts} permet de nommer les machines du réseau,
+ce qui permet de traduire une adresse IP en nom et vice versa. Chaque
+ligne du fichier permet de nommer une adresse IP. Elles commence donc
+par l'adresse IP suivie des différents noms associés à cette adresse.
+Par exemple :
+
+\begin{verbatim}
+[root@rapido root]# cat /etc/hosts
+127.0.0.1       rapido localhost.localdomain localhost
+192.168.0.10    brouette
+192.168.0.1     rapido
+\end{verbatim}
+
+
+
+\section{Centralisation de configuration}
+
+\subsection{Installation d'un serveur NIS}
+
+\subsubsection{Présentation}
+
+Lorsqu'un réseau partage des informations entre
+différentes machines, il est intéressant de centraliser la gestion des
+mots de passe pour permettre aux utilisateurs de se connecter de
+n'importe où. Pour cela, il faut installer un serveur NIS sur le
+réseau. NIS signifie Network Information System.
+
+L'intérêt de NIS repose donc sur une bibliothèque de données à
+consulter. Ce système de pages jaunes (Yellow Pages en anglais, à
+l'origine du yp débutant les commandes NIS) repose sur RPC, au même
+titre que NFS. Le partage d?informations permet de mettre en commun
+des fichiers tels que \fich{/etc/passwd} ou \fich{/etc/hosts} pour
+partager les mots de passe ou les alias de machines.
+
+La configuration d'une connexion NIS demande un rien de maîtrise, et
+se décompose en deux étapes distinctes :
+
+\begin{itemize}
+\item La mise en oeuvre du serveur,
+\item La configuration des clients.
+\end{itemize}
+
+La première phase porte sur la mise en place d'un serveur et la
+génération de cartes, bases de données issues des données en partage.
+La seconde phase concerne chacun des clients.  Le serveur Le serveur
+NIS s'appelle \com{ypserv}. Nous allons utiliser la centralisation des
+mots de passe comme support de notre exemple et nous supposerons que
+le paquetage \com{ypserv} a été installé. Pour cela, on peut vérifier
+la présence de l'exécutable \com{ypserv} dans le répertoire
+\rep{/usr/sbin} et l'existence d'un répertoire \rep{/var/yp} dans
+lequel se trouve un fichier \fich{Makefile}.
+
+Pour faire les choses proprement et bien séparer les données, il faut
+créer un répertoire \rep{/etc/NIS} dans lequel nous allons placer une
+copie des fichiers \fich{passwd}, \fich{shadow} et \fich{group} du
+répertoire \rep{/etc/}. Nous allons retirer tous les utilisateurs qui
+doivent être exportés des fichiers originaux, et ne laisser que
+ceux-ci dans les copies (i.e. on supprime dans les copies les
+utilisateurs et groupes ayant un identificateur supérieur à 500).
+
+Dans le fichier \fich{/var/yp/Makefile}, il faut mettre les variables
+YPSRCDIR et YPPWDDIR valant \rep{/etc/NIS}, et de même ne laisser sur
+la ligne ``all :'' que les services nécessaires, c'est à dire passwd,
+shadow et group.  On doit donc retrouver les lignes suivantes dans le
+fichier \fich{/var/yp/Makefile} :
+
+\begin{verbatim}
+...
+YPSRCDIR = /etc/NIS
+YPPWDDIR = /etc/NIS
+...
+all: passwd group shadow
+\end{verbatim}
+
+Il reste à fixer un nom de domaine NIS par la
+commande \com{domainname <nom domaine>}, puis lancer la commande \com{make}
+dans le répertoire \rep{/var/yp}. Par cette manipulation, on génère la
+bibliothèque de données accessibles.
+
+Finalement, il ne reste plus qu'à lancer le serveur par la commande
+\com{ypserv} et le démon \com{yppasswdd -D /etc/NIS} pour activer la
+partie serveur. Il peut être utile de mettre ces étapes dans un script
+de démarrage tout comme la définition du nom de domaine NIS. Pour
+cela, il suffit de rajouter ces quelques lignes dans le fichier
+\fich{/etc/rc.d/rc.inet2} (ou son équivalent suivant les
+distributions), après avoir écrit le nom de domaine NIS dans le
+fichier \fich{/etc/nisdomainname} :
+
+\begin{verbatim}
+if [ -r /etc/nisdomainname ]; then
+  nisdomainname ?cat /etc/nisdomainname?
+fi
+
+if [ -x ${NET}/ypserv ]; then
+  echo -n " ypserv?
+  ${NET}/ypserv
+fi 
+
+if [ -x ${NET}/rpc.yppasswdd ]; then
+  echo -n " yppasswdd?
+  ${NET}/rpc.yppasswdd
+fi
+\end{verbatim}
+  
+Après un redémarrage, le serveur NIS sera en place.  Le client Pour la
+configuration du client, il faut rajouter l'adresse IP (ou son nom
+s'il est défini dans /etc/hosts) du serveur dans le fichier
+\fich{/etc/yp.conf}. La ligne à rajouter sera la suivante :
+
+\verb'ypserver nom_du_serveur'
+
+Il faut également changer dans le fichier \fich{nsswitch.conf} l'ordre
+de recherche sur les fichiers partagés par le serveur NIS.
+Typiquement, on retrouve une ligne du genre :
+
+\verb'passwd: nis files'
+
+Finalement il ne reste plus qu'à lancer \com{ypbind}, la configuration
+est terminée et l'accès au serveur NIS est désormais possible. Pour le
+vérifier, nous allons récupérer le fichier \fich{passwd.byname} ou
+\fich{passwd.byuid} qui a été généré après la commande \com{make} sur
+le serveur.
+
+Pour ce faire, nous appelons la commande \verb'ypcat passwd.byname'.
+Enfin, la gestion des mots de passe ne se fait plus par la commande
+\com{passwd} mais par \com{yppasswd}, aussi est-il judicieux de
+remplacer passwd par un lien symbolique vers la commande
+\com{yppasswd} par la ligne suivante :
+
+\verb'ln -s yppasswd passwd'
+
+
+\subsection{Mise en oeuvre d'un serveur de noms (DNS)}
+
+
+\subsection{Partage de configuration réseau via DHCP}
+
+
+
+\section{Partage de ressources}
+
+\subsection{Accès distant par telnet}
+
+\subsection{Partage de fichiers par NFS}
+
+
+\subsection{Publication de fichier via FTP}
+
+
+\subsection{Publication Web via HTTP}
+

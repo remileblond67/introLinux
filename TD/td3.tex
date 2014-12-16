@@ -1,0 +1,276 @@
+\documentclass[french,12pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage{babel, indentfirst}
+\usepackage[xdvi]{graphicx}
+\usepackage{latexsym}
+\usepackage{tabularx}
+\usepackage{makeidx}
+\usepackage{times}
+\usepackage{color}
+\usepackage[ps2pdf]{hyperref}
+
+\author{Rémi LEBLOND}
+\title{TD 3 : Gestion des utilisateurs et de leurs droits d'accès}
+
+\begin{document}
+
+\maketitle
+
+\section{But de l'exercice :}
+
+Trois utilisateurs désirent utiliser votre système Linux pour
+collaborer à un projet confidentiel auxquels les autres utilisateurs
+du système ne devront pas accéder (sauf l'administrateur, bien sûr).
+
+Dans ce but, vous devez mettre à disposition de chacun d'eux un compte
+utilisateur et créer un répertoire commun dans lequel ils pourront
+créer des fichiers relatifs au projet. Ce répertoire devra être
+inaccessible aux autres utilisateurs du système.
+
+Les comptes à créer sont :
+\begin{itemize}
+\item util1,
+\item util2,
+\item util3,
+\item util4.
+\end{itemize}
+
+Le répertoire commun à créer est /var/projet\_cnam, dans lequel util1,
+util2 et util3 doivent être les seuls à pouvoir écrire (util4 ne doit
+pas pouvoir consulter ces données).
+
+\section{Mise en oeuvre}
+
+\subsection{Méthode traditionnelle}
+
+\subsubsection{Énoncé}
+
+Cette méthode consiste à modifier directement les fichiers de
+configuration du système. Elle est donc est applicable quelle que soit
+la distribution utilisée. Le but ici est de comprendre les rouages de
+la gestion des utilisateurs sous Linux.
+
+Les seuls outils à utiliser pour cet exercice sont :
+\begin{itemize}
+\item \texttt{vi} ou un autre éditeur de texte,
+\item \texttt{mkdir} qui permet de créer des répertoires,
+\item \texttt{chown} qui permet de changer le propriétaire d'un
+  fichier,
+\item \texttt{chgrp} qui permet de changer le groupe d'un fichier,
+\item \texttt{chmod} qui permet de changer la matrice des droits
+  d'accès d'un fichier.
+\end{itemize}
+
+
+\subsubsection{Solution}
+
+Exécuter les actions suivantes, dans un ordre quelconque :
+\begin{itemize}
+\item Ajouter les lignes suivantes dans le fichier
+  \texttt{/etc/passwd} :
+
+\begin{verbatim}
+util1::1010:1010:Util. 1:/home/util1:/bin/bash
+util2::1011:1011:Util. 2:/home/util2:/bin/bash
+util3::1012:1012:Util. 3:/home/util3:/bin/bash
+util4::1013:1013:Util. 4:/home/util4:/bin/bash
+\end{verbatim}
+  
+  Vous remarquerez que les utilisateurs ont été créés sans mot de
+  passe.
+  
+\item Ajouter les lignes suivantes dans le fichier \texttt{/etc/group}
+  :
+  
+  Création des groupes personnels des utilisateurs :
+
+\begin{verbatim}
+util1:*:1010:
+util2:*:1011:
+util3:*:1012:
+util4:*:1013:
+\end{verbatim}
+  
+  Création du groupe du projet et inscription des trois utilisateurs
+  participant au projet :
+
+\begin{verbatim}
+projet_cnam:*:1014:util1,util2,util3
+\end{verbatim}
+  
+\item Création des répertoires personnels des trois utilisateurs :
+
+\begin{verbatim}
+# mkdir /home/util1
+# mkdir /home/util2
+# mkdir /home/util3
+# mkdir /home/util4
+\end{verbatim}
+  
+\item Ensuite, vous devez positionner correctement les droits d'accès
+  aux différents répertoires que vous venez de créer.
+
+  \begin{itemize}
+  \item Changement du propriétaire des répertoires personnels des
+    utilisateurs :
+\begin{verbatim}
+# chown util1 /home/util1
+# chown util2 /home/util2
+# chown util3 /home/util3
+# chown util4 /home/util4
+\end{verbatim}
+    
+  \item Changement de groupe des répertoires personnels des
+    utilisateurs :
+
+\begin{verbatim}
+# chgrp util1 /home/util1
+# chgrp util2 /home/util2
+# chgrp util3 /home/util3
+# chgrp util4 /home/util4
+\end{verbatim}
+\end{itemize}
+  
+\item A partir de cette étape, chaque utilisateur est correctement
+  déclaré, de même que leurs groupes personnels respectifs. Ils
+  peuvent donc se connecter et utiliser le système sans problème. Par
+  contre, il ne disposent pas d'un environnement correctement
+  paramétré (les alias ne sont pas définis, de même que les variables
+  d'environnement comme PATH, par exemple).
+  
+  Pour ce faire, il faut recopier dans le répertoire personnel de
+  chaque utilisateur les fichiers \texttt{.bashrc} et
+  \texttt{.bash\_profile} que l'on trouvera dans le répertoire
+  \texttt{/etc/skel}. Nous verrons plus loin à quoi sert exactement ce
+  répertoire.
+
+\begin{verbatim}
+# cp /etc/skel/.bash* /home/util1
+# cp /etc/skel/.bash* /home/util2
+# cp /etc/skel/.bash* /home/util3
+# cp /etc/skel/.bash* /home/util4
+\end{verbatim}
+  
+\item Création du répertoire de projet :
+
+\begin{verbatim}
+# mkdir /var/projet_cnam
+\end{verbatim}
+  
+\item Changement de groupe du répertoire partagé du projet
+
+\begin{verbatim}
+# chgrp projet_cnam /var/projet_cnam
+\end{verbatim}
+  
+\item Changement de la matrice des droits du répertoire partagé du
+  projet, de façon à permettre aux membres du groupe de projet d'y
+  écrire et d'en interdire l'accès aux autres utilisateurs.
+
+\begin{verbatim}
+# chmod g+w /var/projet_cnam
+# chmod o-rwx /var/projet_cnam
+\end{verbatim}
+\end{itemize}
+
+Et le tour est joué !!!
+
+
+\subsection{Variante : Utilisation des outils système}
+
+\subsubsection{Énoncé}
+
+Vous avez certainement constaté que la méthode traditionnelle, si elle
+ne présente pas de difficulté majeure, est relativement lourde et
+répétitive. Elle est heureusement également très facile à automatiser.
+C'est pourquoi il existe pléthore d'outils de gestion des utilisateurs
+et des groupes, chaque distribution proposant généralement ses propres
+outils. Nous utiliserons ici les outils les plus courants, que l'on
+retrouve sur la plupart des systèmes Linux.
+
+Nous nous proposons ici de résoudre l'exercice précédant en utilisant
+les outils systèmes suivants :
+\begin{itemize}
+\item \texttt{useradd} : Permet de créer de nouveaux utilisateurs,
+  simplement en précisant en paramètre le nom de connexion de ce
+  dernier. Cet outil se charge de la déclaration de l'utilisateur et
+  de son groupe principal, puis de la création de son répertoire
+  personnel dans lequel il recopie les fichiers du répertoire
+  \texttt{/etc/skel}.
+
+\item \texttt{groupadd} : Idem pour les groupes.
+\item \texttt{usermod} : Permet de modifier des comptes utilisateurs
+  pour, par exemple, les inscrire dans des groupes.
+\end{itemize}
+
+
+\subsubsection{Solution}
+
+Pour solutionner le problème posé, il suffit donc d'exécuter les
+commandes suivantes :
+\begin{verbatim}
+# useradd util1
+# useradd util2
+# useradd util3
+# useradd util4
+# groupadd projet_cnam
+# usermod -G projet_cnam util1
+# usermod -G projet_cnam util2
+# usermod -G projet_cnam util3
+# mkdir /var/projet_cnam
+# chgrp projet_cnam /var/projet_cnam
+# chmod o-rwx /var/projet_cnam
+\end{verbatim}
+
+Les comptes créés avec \texttt{useradd} sont désactivés par défaut.
+Pour les activer, il faut changer leur mot de passe, ce qui est
+possible à l'aide de l'outil \texttt{passwd}. Utilisé sans argument,
+ce dernier permet de changer son propre mot de passe. L'administrateur
+du système a la possibilité de changer le mot de passe de tout
+utilisateur, en précisant son matricule en argument.
+
+\begin{verbatim}
+# passwd util1
+Enter new UNIX password: 
+Retype new UNIX password: 
+\end{verbatim}
+
+
+\section{La cerise sur le gâteau...}
+
+\subsection{Le dernier problème à régler}
+
+Lorsqu'un utilisateur crée un nouveau fichier, il en est le
+propriétaire et son groupe principal est également celui du fichier.
+Ce mode de fonctionnement est logique et correspond généralement aux
+besoins les plus courants. Par contre, nous aimerions que tous les
+fichiers créés dans le répertoire partage \texttt{/var/projet\_cnam}
+soient affectés au groupe ``projet\_cnam'' et non au groupe personnel
+de l'utilisateur l'ayant créé.
+
+
+\subsection{La solution}
+
+Il existe un droit spécial dit d'usurpation d'identité qui permet de
+solutionner le problème énoncé. Ce droit est noté par la lettre 's'
+dans la matrice des droits, dans laquelle il remplace le droit
+d'exécution ('x').
+
+Ce droit spécial peut s'appliquer :
+\begin{itemize}
+\item Aux fichiers exécutables. Il permet alors d'exécuter le
+  programme sous l'identité du propriétaire ou du groupe du fichier et
+  non celle de l'utilisateur l'ayant lancé ;
+\item Aux répertoires. Il permet de positionner le propriétaire ou le
+  groupe des fichiers créés dans le répertoire, en reprenant ceux de
+  ce dernier et non ceux de l'utilisateur ayant créé le fichier ;
+\end{itemize}
+
+Le positionnement de ce droit se fait à l'aide de la commande
+\texttt{chmod}.
+
+\begin{verbatim}
+# chmod g+s /var/projet_cnam
+\end{verbatim}
+
+\end{document}

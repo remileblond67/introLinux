@@ -1,0 +1,48 @@
+\begin{table}
+  \begin{center}
+\begin{tabular}{|c|p{10cm}|}
+\hline
+Commande&Explication\\
+\hline
+a         & Ajoute du texte après la position courante\\
+A         & Ajoute du texte à la fin de la ligne courante\\
+i         & Ajoute du texte avant la position courante\\
+I         & Ajoute du texte au début de la ligne courante\\
+o         & Ajoute une nouvelle ligne après la ligne courante\\
+O         & Ajoute une nouvelle ligne avant la ligne courante\\
+x         & Supprime le caractère courant\\
+r         & Remplace le caractère courant\\
+R         & Remplace les caractères suivants (mode "refrappe")\\
+dd        & Efface la ligne courante\\
+dw        & Efface le mot courant\\
+d\$       & Efface la fin de la ligne courante\\
+cw        & Change le mot courant\\
+c\$       & Change la fin de la ligne courante\\
+c\^       & Change le début de la ligne courante (de la position 
+            courante au début de la ligne)\\
+J         & Joint la ligne courante et la ligne suivante\\
+<numéro>G & Atteint un numéro de ligne\\
+G         & Atteint la fin du fichier\\
+:q        & Quitte l'éditeur (provoque une erreur si le fichier a été
+            modifié depuis le dernier enregistrement).\\
+:q!       & Quitte l'éditeur en ignorant les modifications apportées 
+            au fichier\\
+:w        & Enregistre le fichier courant\\
+:wq ou :x & Quitte l'éditeur en enregistrant les modifications du
+            document\\
+/<texte>  & Recherche le texte à partir de la position courante en
+            descendant dans le fichier\\
+?<texte>  & Recherche le texte à partir de la position courante en 
+            remontant dans le fichier\\
+n         & Atteint la prochaine occurrence du texte recherché (dans le
+            sens défini pour la recherche)\\
+u         & Annule le résultat de la dernière commande\\
+.         & Recommence la dernière commande\\
+m<car>    & Marque la ligne courante. La marque porte le nom du caractère suivant ``m''\\
+'<car>    & Retourne à une ligne marquée.\\
+\hline
+\end{tabular}
+\end{center}
+\caption{Commandes de l'éditeur vi}
+\label{tab:com_vi}
+\end{table}

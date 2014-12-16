@@ -1,0 +1,333 @@
+\documentclass[french,12pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage{babel, indentfirst}
+\usepackage[xdvi]{graphicx}
+\usepackage{latexsym}
+\usepackage{tabularx}
+\usepackage{makeidx}
+\usepackage{times}
+\usepackage{color}
+\usepackage[ps2pdf]{hyperref}
+
+\author{Rémi LEBLOND}
+\title{TD 6 : Installation d'un serveur de noms}
+
+\input{inc_fonctions}
+
+\begin{document}
+
+\maketitle
+
+\section{But de l'exercice :}
+
+Au cours de ce TD, nous allons mettre en oeuvre :
+\begin{itemize}
+\item un serveur de DHCP, pour centraliser la définition des
+  paramètres du réseau,
+\item un serveur de nom, basé sur le logiciel ``bind'', pour prendre
+  en compte les machines du réseau local et servir de cache pour les
+  domaines internet.
+\end{itemize}
+
+Ces serveurs viendront s'intégrer dans le réseau mis en oeuvre lors du
+précédent TD, sur le serveur ``debian1''.
+
+
+\section{Solution :}
+
+
+\subsection{Installation du serveur DHCP}
+
+DHCP (Dynamic Host Configuration Protocol) est un protocole qui permet
+de configurer automatiquement les paramètres réseau des postes
+connectés. Cela évite de mettre les configurations réseau "en dur" sur
+les postes connectés.
+
+Dans ce TD, nous installerons le serveur DHCP de l'Internet Software
+Consortium, qui se trouve dans le paquet Debian ``dhcp3-server''. Ce
+dernier s'installe à l'aide de la commande suivante, lancée sur
+``debian1'' :
+
+\com{\# apt-get install dhcp3-server}
+
+A l'installation, il vous demande d'entrer la liste des interfaces
+réseaux sur lesquelles le serveur DHCP doit écouter (séparées par des
+espaces). Cette information est ensuite stockée dans le fichier
+/etc/default/dhcp3-server.
+
+Dans notre cas, nous désirons uniquement que le serveur DHCP écoute
+l'interface ``eth1'', qui correspond à celle qui est reliée au réseau
+local (\voirf{fig:apt-get}).
+
+\imagelarg{dhcp-config}{Paramétrage du serveur DHCP par
+  \com{apt-get}}{fig:apt-get}
+
+Comme vous l'indiquent les messages d'avertissement affichés par
+\com{apt-get}, le serveur DHCP n'est pas fonctionnel avec la
+configuration par défaut, pour des raisons de sécurité (c'est une
+habitude chez Debian). On modifiera donc le fichier
+\fich{/etc/dhcp3/dhcpd.conf} (\voirf{fig:dhcpd.conf}).
+
+\begin{figure}[htbp]
+\begin{verbatim}
+option domain-name "cnam-strasbourg.org";
+option domain-name-servers 192.168.1.1;
+# Durée du bail en secondes
+default-lease-time 6000;
+max-lease-time 6000;
+authoritative;
+
+# Déclaration du sous-réseau 192.168.0.0/255.255.255.0
+subnet 192.168.1.0 netmask 255.255.255.0 {
+  # Adresse du routeur
+  option routers 192.168.1.1;
+  # Plage d'adresses pour les machines non déclarées
+  range 192.168.1.100 192.168.1.200;
+}
+
+# Déclaration des machines à adresse fixe
+host debian2 {
+  # Adresse MAC de la machine
+  hardware ethernet 00:0C:29:33:24:00;
+  # Adresse IP à attribuer
+  fixed-address 192.168.1.2;
+}
+host debian3 {
+  hardware ethernet 00:0C:29:05:CA:B0;
+  fixed-address 192.168.1.3;
+}
+\end{verbatim}\centering
+  
+  \caption{Contenu du fichier \fich{/etc/dhcp3/dhcpd.conf}}
+  \label{fig:dhcpd.conf}
+\end{figure}
+
+Une fois que le fichier de configuration est au point, il est
+nécessaire de relancer le serveur DHCP à l'aide de la commande
+suivante :
+
+\com{\# /etc/init.d/dhcp3-server restart}
+
+En cas d'erreur lors du redémarrage ou pour vérifier en temps réel le
+bon fonctionnement du serveur DHCP, il est nécessaire de surveiller
+les écritures dans le fichier \fich{/var/log/syslog} à l'aide de la
+commande suivante :
+
+\com{\% tail -f /var/log/syslog}
+
+Une fois que le serveur DHCP est démarré sur ``debian1'', il est
+nécessaire de reconfigurer les interfaces réseau des systèmes
+``debian2'' et ``debian3'', de façon à ce qu'elles récupèrent leur
+configuration depuis le serveur DHCP.
+
+Ainsi, il faudra modifier les fichiers \fich{/etc/network/interfaces}
+afin d'y trouver :
+
+\begin{verbatim}
+auto eth0
+  iface eth0 inet dhcp
+\end{verbatim}
+
+Après avoir modifié ce fichier, il est nécessaire de relancer le
+support du réseau pour récupérer la configuration des interfaces
+réseau depuis le serveur DHCP.
+
+\begin{verbatim}
+# /etc/init.d/networking restart
+\end{verbatim}
+
+On peut d'ailleurs constater la prise en compte de la requête DHCP en
+consultant le contenu du fichier \fich{/var/log/syslog} de
+``debian1''.
+
+
+\subsection{Mise en oeuvre du serveur de nom}
+
+\subsubsection{Installation}
+
+DNS (Domain Name System) est le protocole qui permet de faire la
+correspondance entre une adresse IP et le nom de domaine, ou nom DNS,
+du type ``www.debian.org''.
+
+Plusieurs serveur DNS sont disponibles pour les systèmes GNU/Linux.
+Nous installerons la version la plus souvent rencontrée et qui fait
+souvent figure de référence : BIND (Berkeley Internet Name Domain) de
+l'Internet Software Consortium dans sa version 9.
+
+Ce serveur s'installe à l'aide de la commande suivante, exécutée sur
+``debian1'' :
+
+\begin{verbatim}
+# apt-get install bind9
+\end{verbatim}
+
+
+\subsubsection{Configuration}
+
+Les fichiers de configuration de Bind se trouvent dans le répertoire
+\fich{/etc/bind/}. On y trouve notamment le fichier \fich{db.root},
+qui contient les adresses IP des serveurs DNS racines (c'est à dire
+les serveurs centraux du système DNS), et le fichier
+\fich{named.conf}, qui est le fichier de configuration principal de
+Bind.
+
+Le répertoire \fich{/var/cache/bind/} est destiné à accueillir les
+fichiers de zone pour ceux qui veulent configurer un serveur DNS
+primaire ou secondaire.
+
+
+\paragraph{Configurer un serveur indépendant}
+
+
+Par défaut, Bind est configuré en tant que serveur DNS "indépendant",
+qui n'est primaire ou secondaire pour aucun domaine. Un tel serveur
+peut faire office de cache DNS. En effet, le serveur DNS va retenir
+dans son cache les correspondances IP-DNS demandées par les clients,
+et ne sera pas obligé d'aller chercher à chaque fois auprès des autres
+serveurs DNS la réponse aux requêtes.
+
+Par exemple, si vous trouvez que le serveur DNS de votre fournisseur
+d'accès est trop long à répondre, vous aurez intérêt à installer un
+serveur DNS sur votre ordinateur et configurer votre système pour
+qu'il interroge en priorité le serveur local. Pour optimiser les temps
+de requêtes, configurez votre serveur DNS pour qu'il demande les
+enregistrements qu'il n'a pas dans son cache aux serveurs DNS de votre
+fournisseur d'accès au lieu d'aller les demander lui-même auprès des
+autres serveurs DNS.
+
+Pour cela, éditez le fichier \fich{named.conf} et dé-commentez les
+lignes de la sous-section forwarders de la section options en y
+inscrivant les adresses IPs des serveurs DNS de votre fournisseur
+d'accès. Le début du fichier named.conf ressemble alors à cela :
+
+\begin{verbatim}
+options { directory "/var/cache/bind";
+  forwarders { 48.128.12.41; 48.128.12.42; };
+  auth-nxdomain no; };
+\end{verbatim}
+
+où 48.128.12.41 et 48.128.12.42 sont les adresses IPs des serveurs DNS
+de votre fournisseur d'accès.
+
+Enfin, il faut modifier modifiez le fichier \fich{/etc/resolv.conf} de
+``debian1'' pour mettre ce serveur en première position dans
+la liste des serveurs DNS :
+
+\begin{verbatim}
+search cnam-strasbourg.org
+nameserver 192.168.1.1
+\end{verbatim}
+
+Comme nous utilisons un serveur DHCP, nous n'avons pas à modifier le
+fichier \fich{/etc/resolv.conf} des autres machines du réseau. Il nous
+suffit de modifier le fichier de configuration du serveur DHCP (ligne
+``option domain-name-servers'' du fichier
+\fich{/etc/dhcpd3/dhcpd.conf}, puis de relancer le serveur DHCP pour
+diffuser cette information.
+
+
+\paragraph{Configurer un serveur DNS primaire pour une zone}
+
+Le rôle principal d'un serveur de noms est de gérer les adresses
+d'une zone. Dans notre cas, nous attendons qu'il nous permette de
+gérer les adresses des machines de notre réseau, afin de centraliser
+les informations situées dans les multiples fichiers \fich{/etc/hosts}. 
+
+Pour cela, il nous faut configurer notre serveur Bind comme autoritaire
+(ou master) pour le domaine et donner à l'organisme auquel vous
+avez acheté votre domaine l'adresse IP de votre serveur.
+
+Pour celà, ajoutez à la fin du fichier \fich{named.conf} les lignes
+suivantes :
+
+\begin{verbatim}
+zone "cnam-strasbourg.org" {
+        type master;
+        file "cnam-strasbourg.org.zone";
+};
+\end{verbatim}
+
+Où \fich{cnam-strasbourg.org.zone} désigne le fichier, situé dans le
+répertoire \fich{/var/cache/bind/}, où seront stockés les
+enregistrements de la zone.
+
+L'écriture de ce fichier est, de loin, la phase la plus complexe de 
+la configuration d'un serveur de noms (\voirf{fig:zone}).
+
+\begin{figure}[htbp]
+\begin{verbatim}
+$TTL 86400 ; TTL (Time To Live) par défaut.
+
+; ENREGISTREMENT "SOA" (Start Of a zone of Authority).
+@ IN SOA master.cnam-strasbourg.org. root.dns.cnam-strasbourg.org. (
+  2004060902 ; Numéro de série de la zone
+               (doit changer à chaque modif)
+  86400 ; Refresh.
+  300 ; Retry.
+  2592000 ; Expire.
+  86400 ; TTL (Time To Live) minimum.
+)
+
+; ENREGISTREMENTS "NS"
+cnam-strasbourg.org.    IN      NS      debian1
+
+; ENREGISTREMENTS "A"
+debian1         IN      A       192.168.1.1
+debian2         IN      A       192.168.1.2
+debian3         IN      A       192.168.1.3
+
+; ENREGISTREMENTS "CNAME" : Alias DNS
+nfs             IN      CNAME   debian1
+mailhost        IN      CNAME   debian1
+nis             IN      CNAME   debian1
+
+; ENREGISTREMENTS "MX" : Serveur de messagerie
+cnam-strasbourg.org.    IN      MX      10      debian1
+\end{verbatim}
+\centering 
+  \caption{Fichier \fich{cnam-strasbourg.org.zone} à mettre en place}
+  \label{fig:zone}
+\end{figure}
+
+Vérifiez que vous n'avez pas fait d'erreur de syntaxe dans le fichier
+\fich{named.conf} :
+
+\begin{verbatim}
+% named-checkconf
+\end{verbatim}
+
+Si la commande n'affiche rien, c'est que le fichier \fich{named.conf}
+est valide. Ensuite, vérifiez la syntaxe du fichier de zone :
+
+\begin{verbatim}
+% named-checkzone cnam-strasbourg.org
+                  /var/cache/bind/cnam-strasbourg.org.zone
+zone cnam-strasbourg.org/IN: loaded serial 2003050102 OK
+\end{verbatim}
+
+Si la commande n'affiche aucun message d'erreur, alors il n'y a pas
+d'erreur de syntaxe dans le fichier de zone. Vous pouvez alors dire à
+Bind de relire son fichier de configuration :
+
+\begin{verbatim}
+# /etc/init.d/bind9 reload
+\end{verbatim}
+
+Attention, si vous faites un restart au lieu d'un reload, le cache de
+votre serveur DNS se videra !
+
+On peut surveiller si les modifications sont bien prises en compte en
+consultant le journal système, situé dans le fichier
+\fich{/var/log/syslog}.
+
+On pourra ensuite tester le bon fonctionnement du serveur de nom à
+l'aide des commandes classiques (\com{ping}, par exemple), mais
+également à l'aide de l'outil \com{host} (qui doit être installé au
+préalable).
+
+\begin{verbatim}
+% host nfs
+nfs.cnam-strasbourg.org CNAME debian1.cnam-strasbourg.org
+debian1.cnam-strasbourg.org A 192.168.1.1
+\end{verbatim}
+\end{document}

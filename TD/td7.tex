@@ -1,0 +1,188 @@
+\documentclass[french,12pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage{babel, indentfirst}
+\usepackage[xdvi]{graphicx}
+\usepackage{latexsym}
+\usepackage{tabularx}
+\usepackage{makeidx}
+\usepackage{times}
+\usepackage{color}
+\usepackage[ps2pdf]{hyperref}
+
+\author{Rémi LEBLOND}
+\title{TD 7 : Installation d'un serveur Web}
+
+\input{inc_fonctions}
+
+\begin{document}
+
+\maketitle
+
+\section{But de l'exercice :}
+
+Au cours de ce TD, nous allons mettre en oeuvre une plateforme LAMP
+(Linux, Apache, MySql et PHP), courament utilisée pour la réalisation
+d'application Web.
+
+Ces serveurs viendront s'intégrer dans le réseau mis en oeuvre lors du
+TD 5, sur le serveur ``debian1''.
+
+
+\section{Solution :}
+
+
+\subsection{Mise en oeuvre du serveur Web}
+
+
+\subsubsection{Installation}
+
+Apache est le serveur serveur web le plus utilisé dans le monde. Bien
+qu'il soit disponible sur de nombreuses plateformes, sa plateforme de
+prédilection est Unix et il se marie très bien avec Linux.
+
+Pour l'installer sur notre système Debian, on utilise la commande
+suivante :
+
+\begin{verbatim}
+# apt-get install apache
+\end{verbatim}
+
+
+
+\subsubsection{Configuration}
+
+Les fichiers de configuration d'Apache sont dans le répertoire
+\fich{/etc/apache/}. Nous n'allons pas vous expliquer toutes les
+possibilités de configuration, mais seulement le minimum pour pouvoir
+mettre une page web à disposition du monde.
+
+Editez le fichier \fich{/etc/apache/httpd.conf}, décommentez la ligne
+309 et mettez le nom DNS de votre machine :
+
+\begin{verbatim}
+ServerName debian1
+\end{verbatim}
+
+Si vous voulez pouvoir mettre des restrictions d'accès à vos pages
+avec des fichiers \fich{.htaccess}, modifiez également la ligne 357 et
+mettez :
+
+\begin{verbatim}
+AllowOverride All
+\end{verbatim}
+
+Maintenant que la configuration a été modifiée, il faut dire à Apache
+de relire ses fichiers de configuration :
+
+\begin{verbatim}
+# /etc/init.d/apache reload
+Reloading apache configuration.
+\end{verbatim}
+
+
+\subsubsection{Publication de documents}
+
+A partir de ce momment, notre serveur web est oppérationnel et publie
+les fichiers situés dans le répertoire \fich{/var/www}. Il est
+possible de le constater en ouvrant la page http://debian1 à l'aide
+d'un navigateur quelconque. On peut ainsi constater le résultat des
+modifications apportées au fichier \fich{/var/www/index.html}.  Lors
+de l'ajout de nouveaux documents à publier, il convient de s'assurer
+que l'ensemble des utilisateurs dispose au moins d'un droit de lecture
+sur ces derniers.
+
+Les utilisateurs du système peuvent également mettre leur page Web à
+disposition du monde. Par exemple, pour l'utilisateur util1, il suffit
+qu'il crée un répertoire public\_html/ dans son répertoire personnel
+avec un fichier \fich{index.html} dedans. Les permissions doivent être
+au minimum les suivantes :
+
+\begin{verbatim}
+% chmod 711 /home/util1/
+% chmod 711 /home/util1/public_html/
+% chmod 644 /home/util1/public_html/index.html
+\end{verbatim}
+
+La page web de util1 est désormais disponible au monde entier à
+l'adresse \verb'http://debian1/~util1/'.
+
+
+\subsection{Mise en oeuvre du support PHP}
+
+
+\subsubsection{Installation}
+
+PHP est un langage de script simple et libre qui est très utilisé pour
+développer des applications Web.
+
+Pour PHP, il exite un package de base php4 et des packages
+complémentaires contenant des modules de PHP (module pour MySQL, pour
+PostgreSQL, pour LDAP, etc...). Pour avoir la liste complète des
+packages contenant des modules de PHP :
+
+\begin{verbatim}
+% apt-cache search php4|grep ^php4-
+\end{verbatim}
+
+Installez le package de base (avec éventuellement des packages
+complémentaires) :
+
+\begin{verbatim}
+# apt-get install php4
+\end{verbatim}
+
+A l'étape de configuration des packages, il pose plusieurs questions :
+
+\begin{itemize}
+\item Do you want me to run the apacheconfig script now ? [y/N] :
+  répondez y,
+\item Save these changes to the configuration files ? [Y/n] : répondez
+  y,
+\item Restart Apache now ? [Y/n] : répondez n.
+\end{itemize}
+
+\subsubsection{Configuration}
+
+Pour configurer plus finement le support de PHP par Apache, éditez le
+fichier \fich{/etc/apache/httpd.conf} :
+
+\begin{itemize}
+\item pour dire à Apache de charger le module PHP, décommentez la
+  ligne suivante :
+  
+\begin{verbatim}
+LoadModule php4_module /usr/lib/apache/1.3/libphp4.so
+\end{verbatim}
+  
+  
+\item Pour dire à Apache de faire passer par l'interpréteur PHP toutes
+  les pages d'extension .php, décommentez la ligne suivante :
+  
+\begin{verbatim}
+AddType application/x-httpd-php .php
+\end{verbatim}
+  
+\item Enfin, dites à Apache de relire son fichier de configuration :
+  
+\begin{verbatim}
+# /etc/init.d/apache reload
+Reloading apache configuration.
+\end{verbatim}
+
+\end{itemize}
+
+Toutes les pages ayant l'extension .php seront désormais traitées par
+l'interpréteur PHP avant d'être envoyées par Apache au navigateur Web
+distant.
+
+
+%\subsection{Mise en oeuvre du serveur MySql}
+
+
+%\subsubsection{Installation}
+
+
+%\subsubsection{Configuration}
+
+
+\end{document}

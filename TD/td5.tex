@@ -1,0 +1,549 @@
+\documentclass[french,12pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage{babel, indentfirst}
+\usepackage[xdvi]{graphicx}
+\usepackage{latexsym}
+\usepackage{tabularx}
+\usepackage{makeidx}
+\usepackage{times}
+\usepackage{color}
+\usepackage[ps2pdf]{hyperref}
+
+\author{Rémi LEBLOND}
+\title{TD 5 : Mise en réseau d'un système de base}
+
+\input{inc_fonctions}
+
+\begin{document}
+
+\maketitle
+
+\section{But de l'exercice :}
+
+Au cours de ce TD, nous allons mettre en oeuvre un réseau constitué :
+\begin{itemize}
+\item d'un serveur principal, jouant le rôle de serveur NIS et NFS,
+\item d'un ensemble de machines clientes utilisant les services de ce
+  dernier (deux machines au moins).
+\end{itemize}
+
+Le but final est de permettre à chaque utilisateur déclaré de se
+connecter indifféremment à une toute machine cliente et d'y retrouver
+son environnement (c'est à dire, au moins, son répertoire personnel).
+
+Le serveur NIS concentrera donc, au minimum, les informations
+suivantes :
+\begin{itemize}
+\item Identité des utilisateurs (informations des fichiers
+  \fich{/etc/passwd} et \fich{/etc/shadow}),
+\item Déclaration des groupes d'utilisateurs (informations du fichier
+  \fich{/etc/group}).
+\end{itemize}
+
+Les serveur NFS publiera le répertoire personnel de chaque
+utilisateur, c'est à dire le répertoire \fich{/home}. Ce répertoire
+sera monté sur chaque système client.
+
+L'ensemble de cette installation se fera avec une distribution
+Debian\footnote{Dans le but de maintenir des performances acceptables
+  lorsque vous ferez fonctionner plusieurs machines virtuelles
+  simultanément, il est recommandé de "tailler petit" lors de la
+  configuration de ces dernières (32 Mo de RAM et disques de 1 Go sont
+  amplement suffisants).}, mais vous pouvez évidemment faire
+exactement la même chose avec la distribution Mandrake.
+
+\imagelarg{reseau-td5}{Schéma du réseau à mettre en place}{fig:réseau}
+
+Le réseau à constituer devra avoir les caractéristiques suivantes :
+\begin{itemize}
+\item Nom de domaine "cnam-strasbourg.org",
+\item Nom de domaine NIS "cnam-strasbourg-nis",
+\item Réseau 192.168.1.0, masque de sous-réseau 255.255.255.0,
+\item Plan de nommage :
+
+\begin{tabular}{|c|c|c|}
+\hline
+Nom de machine & Type & Adresse IP \\
+\hline
+debian1 & Serveur principal (NIS et NFS) & 192.168.1.1 \\
+debian2 & Système client & 192.168.1.2 \\
+debian3 & Système client & 192.168.1.3 \\
+\hline
+\end{tabular}
+
+
+\item Les comptes utilisateurs à créer répondent aux caractéristiques
+  suivantes :
+
+\begin{tabular}{|c|c|c|c|}
+\hline
+Login & Nom complet & Répertoire principal & Groupe principal \\
+\hline
+util1 & Utilisateur 1 & /home/util1 & util1 \\
+util2 & Utilisateur 2 & /home/util2 & util2 \\
+util3 & Utilisateur 3 & /home/util3 & util3 \\
+util4 & Utilisateur 4 & /home/util4 & util4 \\
+\hline
+\end{tabular}
+\end{itemize}
+
+\section{Solution :}
+
+\subsection{Configuration du réseau}
+
+\subsubsection{Objectif}
+
+Le réseau doit être configuré de façon à regrouper les machines
+``debian1'', ``debian2'' et ``debian3'' (réseau 192.168.1.0). Seul
+``debian1'' étant relié à internet, il servira de pont pour permettre
+à ``debian2'' et ``debian3'' de se connecter au serveur
+``www.debian.org'' lors de l'installation de nouveau paquets à l'aide
+de la commande \com{apt-get}.
+
+\subsubsection{Configuration des interfaces réseau}
+
+L'attribution d'une adresse IP à une interface
+réseau\footnote{Généralement une carte ethernet.} se fait à l'aide de
+la commande \com{ifconfig} suivante :
+
+\begin{verbatim}
+# ifconfig eth0 192.168.1.1 netmask 255.255.255.0
+\end{verbatim}
+
+Pour que se paramétrage soit retrouvé au prochain démarrage du
+système, il faut aller modifier le fichier de configuration
+\fich{/etc/network/interfaces}\footnote{Il faut noter que le fichier
+  de paramétrage des interfaces réseau n'est pas standardisé et peut
+  varier fortement d'une distribution à l'autre. Le fichier
+  /etc/network se retrouve sur la distribution Debian, Mandrake stocke
+  ces informations dans /etc/sysconfig/networking/ifcfg-eth0.}, afin
+d'y faire figurer les lignes suivantes :
+\begin{verbatim}
+# Connexion au réseau local
+auto eth0
+  iface eth0 inet static
+  address 192.168.1.2
+  netmask 255.255.255.0
+  broadcast 192.168.1.255
+\end{verbatim}
+
+Le serveur ``debian1'' étant équipé de deux interfaces réseau
+distinctes, respectivement reliées à internet et au réseau local, le
+fichier \fich{/etc/network/interfaces} devra contenir :
+\begin{verbatim}
+# Connexion à Internet
+auto eth0
+  iface eth0 inet dhcp
+
+# Connexion au réseau local
+auto eth1
+  iface eth1 inet static
+  address 192.168.1.1
+  netmask 255.255.255.0
+  broadcast 192.168.1.255
+\end{verbatim}
+
+Après modification de ce fichier, il est nécessaire de relancer le
+support du réseau pour que les nouveaux paramètres soient pris en
+compte :
+\begin{verbatim}
+# /etc/init.d/networking restart
+\end{verbatim}
+
+Le changement du nom de machine se fait en modifiant le fichier
+\fich{/etc/hostname}.  Pour que le nouveau nom soit pris en compte, il
+faut forcer la relecture de ce fichier à l'aide de la commande
+suivante :
+
+\begin{verbatim}
+# /etc/init.d/hostname.sh restart
+\end{verbatim}
+
+Le changement de nom doit également être reporté dans le fichier
+\fich{/etc/hosts}, pour permettre la résolution de nom.
+
+Afin de permettre la résolution des noms de machines, nous allons
+ajouter les lignes suivantes au fichier \fich{/etc/hosts} de chaque
+machine du réseau :
+\begin{verbatim}
+192.168.1.1     debian1.cnam-strasbourg.org debian1
+192.168.1.2     debian2.cnam-strasbourg.org debian2
+192.168.1.3     debian3.cnam-strasbourg.org debian3
+\end{verbatim}
+
+Pour qu'il ne soit pas nécessaire de préciser le domaine
+``cnam-strasbourg.org'' dans le nom des machines, il est nécessaire de
+définir ce dernier comme nom de domaine par défaut. Ceci nécessite de
+modifier le fichier \fich{/etc/resolv.conf}, pour indiquer :
+\begin{verbatim}
+search cnam-strasbourg.org
+\end{verbatim}
+
+A partir de ce moment, lors de la résolution de nom, si l'adresse
+recherchée n'est pas trouvée directement, le système lui adjoindra le
+domaine par défaut.
+
+A partir de ce moment, les commandes suivantes sont équivalentes, par
+exemple :
+\begin{verbatim}
+# ping 192.168.1.1
+# ping debian1
+# ping debian1.cnam-strasbourg.org
+\end{verbatim}
+
+Pour vérifier que votre réseau fonctionne correctement, utilisez la
+commande \com{ping} d'une machine à l'autre.
+
+\subsubsection{Configuration de l'accès à internet}
+
+A présent, les machines sont toutes connectées au réseau local et seul
+``debian1'' est relié à Internet. Nous voulons donc partager cette
+connexion avec l'ensemble des machines du réseau.
+
+Nous partagerons l'accès Internet à l'aide d'un serveur
+mandataire\footnote{Souvent appelé ``serveur proxy''.}, qui nous
+permettra une optimisation des télé-chargements et un contrôle des
+sites accessibles. Nous utiliserons pour cela le programme
+\com{squid}, qui est un standard dans le monde Unix.
+
+L'installation du serveur squid est réalisé à l'aide de la commande
+suivante :
+\begin{verbatim}
+apt-get install squid
+\end{verbatim}
+
+La configuration du serveur mandataire \com{squid} se fait à l'aide du
+fichier \fich{/etc/squid.conf}, qui doit au moins contenir les lignes
+suivantes :
+\begin{verbatim}
+acl manager proto cache_object
+acl localhost src 127.0.0.1/255.255.255.255
+acl all src 0.0.0.0/0.0.0.0
+acl machines_ok src 192.168.1.0/255.255.255.0
+
+# Autorisation de l'accès HTTP aux seules machines du réseau
+http_access allow machines_ok
+http_access deny all
+
+# Utilisation du serveur mandataire de l'IUT
+cache_peer 130.79.80.33 parent 8080 3130 no-query proxy-only
+\end{verbatim}
+
+Pour que cette configuration soit prise en compte, il faut relancer le
+serveur mandataire à l'aide de la commande suivante :
+
+\begin{verbatim}
+# /etc/init.d/squid restart
+\end{verbatim}
+
+A présent, le serveur mandataire est actif sur ``debian1'' et rend
+accessible le site sur lequel les commandes ``apt'' rechercheront les
+paquets. Il faudra juste veiller à spécifier le proxy sur les postes
+``debian1''\footnote{Bien que le poste ``debian1'' soit directement
+  connecté à Internet, nous utiliserons tout de même le serveur
+  mandataire pour bénéficier de son cache.}, ``debian2'' et
+``debian3'' à l'aide de la commande \com{apt-setup}.  Le serveur squid
+utilise par défaut le port 3128.
+
+\imagelarg{apt-setup-td5}{Configuration des outils apt}{fig:apt-setup}
+
+
+\subsection{Installation du serveur NIS}
+
+\subsubsection{Installation des packages sur le serveur principal}
+
+On utilisera le programme \com{apt-get} de Debian pour installer les
+packages NIS sur le serveur.  Pour ce faire, on exécute le commande
+suivante :
+\begin{verbatim}
+# apt-get install nis
+\end{verbatim}
+
+
+\subsubsection{Paramétrage du serveur NIS}
+
+Un serveur NIS permet de partager des informations systèmes entre
+plusieurs machines d'un même domaine NIS.
+
+Il est nécessaire, avant de commencer le paramétrage du serveur NIS,
+de déclarer le nom du domaine qui sera servi par le serveur. Ce
+paramétrage se fait à l'aide de la commande \com{nisdomainname}.
+Généralement, cette phase n'est pas nécessaire, car elle est déjà
+réalisée par le programme \com{apt-get}.
+
+\begin{verbatim}
+# nisdomainname cnam-strasbourg-nis
+\end{verbatim}
+
+Il faut ensuite lancer le serveur NIS, à l'aide de la commande
+\com{ypserv}, et l'initialiser en temps que serveur NIS principal, à
+l'aide de la commande \com{ypinit} avec l'option 'm' (comme
+"master")\footnote{Pour lancer un serveur secondaire, on utilisera
+  l'option 's', comme "slave".}.
+
+\begin{verbatim}
+# ypserv
+# /usr/lib/yp/ypinit -m
+\end{verbatim}
+
+Un serveur NIS étant indispensable au bon fonctionnement des machines
+du domaine NIS qu'il sert, il est prudent d'introduire une redondance.
+Ainsi, il est possible de mettre en oeuvre des serveurs esclave en
+plus du serveur principal. Ces derniers prendront le relais en cas de
+défaillance du serveur principal. Nous verrons dans un deuxième temps
+comment mettre en place un serveur NIS esclave.
+
+Le programme \com{ypinit} va vous demander la liste des serveurs NIS à
+maintenir. Pour le moment, nous ne disposerons que d'un seul serveur
+NIS (debian1). Utilisez ``CTRL'' + ``D'' pour sortir de la liste.
+
+Une fois que le serveur NIS est actif, il faut constituer sa base de
+données. Cette dernière est stockée dans des fichiers situés dans le
+répertoire \fich{/var/yp}. La construction de la base NIS se fait à
+partir des fichiers de configuration de la machine locale (debian1),
+sur la base du fichier de construction \fich{/var/yp/Makefile}.
+
+En conservant le fichier \fich{Makefile} par défaut, les données des
+fichiers suivants sont exportés vers la base NIS :
+\begin{itemize}
+\item \fich{/etc/passwd}
+\item \fich{/etc/group}
+\item \fich{/etc/hosts}
+\item \fich{/etc/rpc}
+\item \fich{/etc/services}
+\item \fich{/etc/netid}
+\item \fich{/etc/protocols}
+\item \fich{/etc/netgroup}
+\item \fich{/etc/networks}
+\end{itemize}
+
+Le fichier \fich{/etc/networks} n'étant pas présent sur la machine
+debian1, la constitution de la base NIS va se solder par un échec. Il
+est possible de remédier a ce problème de deux façons :
+\begin{itemize}
+\item En créant un fichier \fich{/etc/networks} vide, à l'aide de la
+  commande suivante :
+  
+  \com{\# touch /etc/networks}
+\item En modifiant le fichier de construction de la base NIS
+  (\fich{/var/yp/Makefile}, afin d'obtenir la ligne suivante :
+\begin{verbatim}
+ALL = passwd group
+\end{verbatim}
+\end{itemize}
+
+Ensuite, il faut se rendre dans le répertoire \fich{/var/yp} et lancer
+la commande \com{make}.
+
+\begin{verbatim}
+# cd /var/yp
+# make
+\end{verbatim}
+
+On remarque que cette manipulation a créé un sous-répertoire de
+\fich{/var/yp} portant le nom du domaine ("cnam-strasbourg-nis").  Ce
+dernier contient les différentes informations publiées par NIS, qui
+sont extraites des fichiers de configuration du serveur sur lequel
+s'exécute NIS, conformément au fichier de configuration
+\fich{/var/yp/Makefile}.
+
+La commande \com{make} devra être lancée, depuis le répertoire
+\fich{/var/yp}, dès qu'une modification des fichiers de configuration
+du serveur NIS devra être publiée.
+
+A partir de maintenant, le serveur NIS est configuré et fonctionne.
+
+Nous allons donc maintenant créer, sur le serveur NIS, les comptes des
+utilisateurs à l'aide de commande \com{adduser}, puis mettre à jour
+les informations publiées par NIS.
+\begin{verbatim}
+# adduser util1
+# adduser util2
+# adduser util3
+# adduser util4
+# cd /var/yp
+# make
+\end{verbatim}
+
+Pour que le serveur NIS soit lancé à chaque démarrage de "debian1", il
+faut modifier le fichier \fich{/etc/default/nis}, pour changer la valeur
+suivante :
+\begin{verbatim}
+NISSERVER=master
+\end{verbatim}
+
+
+\subsubsection{Paramétrage des clients NIS}
+
+Sur les clients, il est nécessaire :
+\begin{itemize}
+\item de configurer la connexion au réseau (procéder de la même façon
+  que pour le serveur),
+\item d'installer les paquetages NIS, à l'aide de la commande suivante
+  :
+\begin{verbatim}
+# apt-get install nis
+\end{verbatim}
+\item de configurer le nom de domaine NIS, à l'aide de la commande
+  suivante :
+\begin{verbatim}
+# nisdomainname cnam-strasbourg-nis
+\end{verbatim}
+\item de modifier les fichiers de configuration locaux afin de leur
+  faire accepter les paramètres NIS. Il convient de modifier les
+  fichiers suivants :
+  \begin{itemize}
+  \item Ajouter la ligne suivante au fichier /etc/passwd, afin
+    d'autoriser l'ajout des enregistrements issus du serveur NIS :
+  \begin{verbatim}
+  +::::::
+  \end{verbatim}
+    
+  \item Ajouter la ligne suivante au fichier /etc/shadow, afin
+    d'autoriser l'ajout des enregistrements issus du serveur NIS :
+  \begin{verbatim}
+  +::::::::
+  \end{verbatim}
+    
+  \item Ajouter la ligne suivante au fichier /etc/group, afin
+    d'autoriser l'ajout des enregistrements issus du serveur NIS :
+  \begin{verbatim}
+  +:::
+  \end{verbatim}
+  \end{itemize}
+  
+\item de lancer le service client NIS (ypbind), à l'aide de la
+  commande suivante\footnote{Le même résultat peut être obtenu en
+    redémarrant le système.} :
+\begin{verbatim}
+# /etc/init.d/nis start
+\end{verbatim}
+\end{itemize}
+
+Normalement, le système devrait se connecter au serveur NIS du domaine
+"cnam-strasbourg-nis" et, ainsi, bénéficier des paramétrages de ce
+derniers. A partir de ce moment, il est possible de se connecter à
+tous les postes clients à l'aide des comptes utilisateur déclarés sur
+le serveur NIS.
+
+Par contre, lorsque l'on se connecte avec un de ces comptes depuis un
+poste client, le système affiche un message d'avertissement pour
+indiquer que le répertoire personnel n'a pas été trouvé. Il faut donc
+partager ces dossiers, qui se trouvent sur les disques de ``debian1''.
+Nous utiliserons pour cela un serveur NFS.
+
+
+\subsection{Installation du serveur NFS}
+
+\subsubsection{Installation des packages sur le serveur principal}
+
+On utilisera le programme \com{apt-get} de Debian pour installer les
+packages NFS sur le serveur (debian1).  Pour ce faire, on exécute la
+commande suivante :
+\begin{verbatim}
+# apt-get install nfs-user-server nfs-common
+\end{verbatim}
+
+
+\subsubsection{Déclaration des répertoires à exporter}
+
+Sur le serveur NFS, on ajoute une entrée dans le fichier
+\fich{/etc/exports} pour exporter le répertoire \fich{/home} en
+lecture et écriture pour les machines du réseau :
+\begin{verbatim}
+/home   *(rw,root_squash)
+\end{verbatim}
+
+Pour prendre en compte les modifications apportées au fichier
+\fich{/etc/exports}, on utilise la commande \com{exportfs} :
+\begin{verbatim}
+# exportfs -a
+\end{verbatim}
+
+Ensuite, on lance le serveur et les utilitaires NFS, à l'aide des
+commandes suivantes :
+\begin{verbatim}
+# /etc/init.d/nfs-user-server start
+# /etc/init.d/nfs-common start
+\end{verbatim}
+
+Par la suite, en cas de modification du fichier \fich{/etc/exports},
+il suffira de lui dire de relire son fichier de configuration à l'aide
+de la commande suivante :
+
+\begin{verbatim}
+# /etc/init.d/nfs-kernel-server reload
+Re-exporting directories for NFS kernel daemon...done.
+\end{verbatim}
+
+
+\subsection{Configuration des clients NFS}
+
+\subsubsection{Installation des packages sur les postes clients}
+
+On utilisera le programme "apt-get" de Debian pour installer les
+paquets NFS sur les postes clients (debian2 et debian3).  Pour ce
+faire, on exécute la commande suivante :
+\begin{verbatim}
+# apt-get install nfs-common
+\end{verbatim}
+
+\subsubsection{Montage du répertoire /home}
+
+Pour monter un export NFS, on procède de la même façon que pour les
+autres systèmes de fichiers, à l'aide de la commande \com{mount}.
+\begin{verbatim}
+# mount -t nfs debian1:/home /home
+\end{verbatim}
+
+A partir de ce moment, on retrouve le répertoire /home présent sur le
+serveur debian1 sur les postes clients. Les utilisateurs peuvent donc
+désormais se connecter sur n'importe poste client et y retrouver leur
+répertoire personnel. Le tour est joué !!!
+
+Pour retrouver ce montage NFS après un redémarrage d'un poste client,
+on ajoute la ligne suivante dans le fichier \fich{/etc/fstab} :
+\begin{verbatim}
+debian1:/home /home nfs soft,timeo=5,intr,rsize=8192,wsize=8192 0 0
+\end{verbatim}
+
+Après toute modification du fichier \fich{/etc/fstab}, il est très
+important de vérifier s'il est correct en tapant la commande
+\com{mount -a}. Cette commande est lancée au démarrage du système pour
+monter automatiquement les systèmes de fichiers. Si ce montage ne se
+passe pas bien, la séquence de démarrage se trouve interrompue, ce qui
+est toujours très gênant.
+
+Désormais, vous pouvez vous connecter sur chaque machine du réseau à
+l'aide des mêmes identifiants et constater que vous y retrouver votre
+répertoire personnel.
+
+
+\subsection{Installation de l'outil \com{ssh}}
+
+SSH signifie Secure SHell. C'est un protocole qui permet de faire des
+connexions sécurisées\footnote{\com{ssh} offre un service identique à
+  \com{telnet} mais, contrairement à ce dernier, il ne fait pas
+  transiter en clair sur le réseau les commandes passées.} entre un
+serveur et un client SSH. Nous allons utiliser le programme OpenSSH,
+qui est la version libre du client et du serveur SSH.
+
+L'installation des outils \com{ssh} se fait classiquement à l'aide de 
+la commande suivante :
+\begin{verbatim}
+# apt-get install ssh
+\end{verbatim}
+
+Le paquet ``ssh'' va se charger d'installer à la fois les outils client
+et serveur (\com{sshd}) d'OpenSSH. Le programme \com{apt-get} se charge
+de configurer ces derniers. Vous pouvez normalement accepter les valeurs
+proposées par défaut.
+
+En installant ce paquet sur chaque machine du réseau, vous devriez être 
+en mesure de vous connecter d'une machine à l'autre. Ainsi, pour ouvrir
+une nouvelle session sur ``debian1'' à partir de ``debian2'', il suffit 
+d'utiliser la commande suivante :
+
+\com{\# ssh debian1}
+
+\end{document}

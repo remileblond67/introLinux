@@ -1,0 +1,160 @@
+% CNAM Strasbourg
+% Rémi LEBLOND
+% ----------------------------
+% Linux TMRI 1 : Examen final
+% ----------------------------
+\documentclass[french,12pt,a4paper]{exam}
+\usepackage[T1]{fontenc}
+\usepackage{babel, indentfirst}
+\usepackage[xdvi]{graphicx}
+\usepackage{latexsym}
+\usepackage{tabularx}
+\usepackage{amsmath}
+\usepackage{times}
+
+\newcommand{\ouinon}{$\Box$ Oui, $\Box$ Non}
+\newcommand{\choix}[1]{$\Box$ #1}
+\newcommand{\lignesoul}{\hbox to \linewidth {\enspace\hrulefill}}
+\newcommand{\ligne}[2]{\hbox to #1cm {#2 \enspace\hrulefill}}
+
+%\boxedpoints
+\pointsinmargin
+
+\title{
+\textsl{UV TMRI-1 - Systèmes en réseaux}\\
+\textbf{Introduction au système Linux}\\
+--- \\
+Examen final
+}
+
+\date{2 juillet 2004}
+
+\header{TMRI Systèmes en réseau}
+       {Examen final}
+       {2 juillet 2004}
+\runningheadrule
+\firstpagefooter{}
+                {Attention, document sur \numpages\ pages}
+                {}
+\runningfooter{Rémi LEBLOND}
+              {Page \thepage\ sur \numpages}
+              {CNAM Strasbourg}
+\pointname{pt}
+\marginpointname{pt}
+
+\begin{document}
+\maketitle
+
+\begin{center}
+  \fbox{\parbox{\textwidth}{
+      \textit{Principe de notation :}
+      
+      Ce questionnaire est composé de \numquestions\ questions
+      représentant \numpoints\ points. Les points
+      affectés à chaque réponse sont indiqués dans la marge gauche.
+      }
+  }
+\end{center}
+
+
+\section{Déploiement de stations Linux}
+  
+Une entreprise souhaite déployer Linux sur 30 postes de travail reliés
+à un réseau local Ethernet à 100Mb/s.  Elle désire permettre à chaque
+utilisateur de se connecter indifféremment sur tout poste en
+retrouvant son environnement de travail. Pour des raisons de sécurité,
+elle souhaite que les données manipulées par les utilisateurs et leurs
+applications ne soient pas stockées sur les postes clients, mais se
+retrouvent centralisées sur un serveur. Tous les postes de travail
+doivent pouvoir être inter-changés. Ainsi, en cas de défaillance de
+l'un d'entre eux, un utilisateur doit pouvoir continuer son travail
+tout autre poste du réseau en retrouvant intactes ses données.
+
+\subsection{Mise en place de l'infrastructure générale}
+
+\begin{questions}
+  \addpoints
+  
+  \question[1] Décrivez rapidement une infrastructure permettant de
+  répondre à ces besoins. Justifier vos choix.
+  
+  \question[3] Comment centraliser le contrôle d'accès au système
+  informatique (nom des utilisateurs et mots de passe) ? Proposez une
+  solution en la décrivant précisément.
+  
+  \question[3] Comment permettre à l'utilisateur de retrouver son
+  répertoire de travail sur tout poste du réseau sur lequel il se
+  connecte ? Précisez la configuration à mettre en oeuvre.
+  
+  \question[2] Comment centraliser la configuration du réseau et le
+  plan de nommage des machines ?
+  
+  \question[1] L'administrateur système souhaite pouvoir intervenir à
+  distance sur tous les postes et serveurs depuis sa machine. Comment
+  peut-il faire? Expliquer précisément la configuration a mettre en
+  oeuvre.
+  
+
+\subsection{Mise en place de droits d'accès particuliers}
+
+La principale application utilisée dans cette entreprise est le
+logiciel de comptabilité. Ce dernier est nommé "compta", ses fichiers
+exécutables sont situés dans /usr/compta, ses fichiers de paramétrage
+dans /opt/compta et elle stocke ses données dans /var/compta/data.
+  
+Certains utilisateurs (groupe ``compta\_modif'') doivent pouvoir
+mettre à jour les données de la comptabilité, d'autres (groupe
+``compta\_consult'') ne peuvent que les consulter et, enfin, les
+utilisateurs restants ne doivent pouvoir accéder à aucune de ces
+informations.
+  
+\question[3] Comment peut-on répondre à ces besoins? Décrivez
+précisément l'infrastructure et la politique de gestion des droits
+permettant de répondre à ces contraintes (partage de l'information et
+droits d'accès aux données).
+  
+\question[1] Certains utilisateurs du système utilisent exclusivement
+le programme de comptabilité. Ils ne doivent pas pouvoir faire autre
+chose du système informatique. Proposez une solution permettant de
+limiter l'accès de ces utilisateurs au seul programme de comptabilité.
+  
+\question[1] Certains postes sont accessibles en libre service. Pour
+des questions de confidentialité et de sécurité, on désire éviter que
+quiconque puissent entrer ou sortir des informations numériques
+(fichiers) du système informatique depuis ces postes. La politique de
+sécurité à mettre en place doit donc interdire l'utilisation du
+lecteur de disquettes de ces postes.
+  
+Proposez une solution permettant de mettre en oeuvre cette politique.
+
+
+\section{Cohabitation avec Windows}
+
+L'entreprise dispose de vingt postes fonctionnant avec Windows
+NT qu'il souhaite raccorder au réseau que vous avez mis en place.
+Chaque utilisateur, qu'il se connecte indifféremment à une station
+Windows ou Linux, doit systématiquement retrouver :
+
+\begin{itemize}
+\item le contenu de son répertoire de connexion,
+\item le contenu du répertoire utilisé par le logiciel de compta, en
+  lecture seule.
+\end{itemize}
+
+\question[3] Proposez une solution permettant aux utilisateurs de se
+connecter sur ces postes Windows avec les mêmes comptes que ceux
+utilisés pour les machines Linux.
+
+\section{Ouverture d'un accès Internet}
+
+L'entreprise souhaite faire bénéficier certaines machines de son
+réseau d'un accès Internet ciblé : accès aux sites institutionnels,
+aux pages jaunes et aux sites d'information en dehors des heures de
+travail.
+
+\question[2] Proposez une solution, basée sur Linux, permettant de
+satisfaire ce besoin.
+\end{questions}
+
+\end{document}
+

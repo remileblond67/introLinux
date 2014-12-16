@@ -1,0 +1,54 @@
+\begin{table}[htbp]
+\begin{tabular}[width=\linewidth]{|c|p{8cm}|}
+\hline
+Saisie & Signification\\
+\hline
+\verb'commande' & La commande est exécutée normalement, le symbole
+                  d'invite sera affiché lorsqu'elle se terminera.\\
+\hline
+
+\verb'commande &' & La commande est exécutée en arrière-plan, ce qui
+                    signifie qu'elle n'a en principe pas accès au terminal. 
+
+                    Le shell reprend donc la main immédiatement, et affiche
+                    son symbole d'invite alors que la commande continue à 
+                    s'exécuter en tâche de fond.
+
+                    Bash affiche une ligne du type
+                    \verb'[1] 2496'
+
+                    indiquant le numéro du job à l'arrière-plan suivi du PID
+                    c'est-à-dire de l'identifiant de processus.
+                    Lorsque la commande se termine, Bash affichera une ligne :
+
+                    \verb'[1]+    Done commande'
+
+                    juste avant de proposer un nouveau symbole d'invite.\\
+\hline
+
+\verb'commande > fichier' & La commande est exécutée, mais sa sortie standard
+                            est dirigée vers le fichier indiqué. Seule la
+                            sortie d'erreur s'affiche à l'écran.\\
+\hline
+
+\verb'commande >> fichier' & La sortie standard est ajoutée en fin de fichier
+                             sans en écraser le contenu.\\
+\hline
+
+\verb'commande < fichier' & La commande est exécutée, mais ses informations 
+                            d'entrée seront lues depuis le fichier qui est
+                            indiqué plutôt que depuis le terminal.\\
+\hline
+
+\verb'commande1 | commande2' & Les deux commandes sont exécutées simultanément,
+                               l'entrée standard de la seconde étant connectée
+                               par un tube (pipe) à la sortie standard de la 
+                               première.\\
+\hline
+\end{tabular}
+\begin{center}
+  \caption{Syntaxe de redirection de sortie standard vers une autre commande}
+  \label{tab:redir_commandes}
+\end{center}
+\end{table}
+

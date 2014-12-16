@@ -1,0 +1,59 @@
+% Paquetages à utiliser
+\usepackage[T1]{fontenc}
+\usepackage{babel, indentfirst}
+\usepackage[xdvi]{graphicx}
+\usepackage{latexsym}
+\usepackage{tabularx}
+\usepackage{makeidx}
+\usepackage{times}
+\usepackage{color}
+\usepackage[ps2pdf]{hyperref}
+
+% Mise en forme des noms de commande
+\newcommand{\com}[1] {\texttt{#1}\index{#1 \textit{(cmd)}}}
+% Mise en forme des exemples de commande
+\newcommand{\comex}[1] {\texttt{#1}}
+% Mise en forme des noms de fichier
+\newcommand{\fich}[1] {\texttt{#1}\index{#1 \textit{(fich)}}}
+% Mise en forme des noms de répertoire
+\newcommand{\rep}[1] {\texttt{#1}\index{#1 \textit{(rép)}}}
+% Renvoi vers un label
+\newcommand{\voir}[1] {voir \ref{#1}, page \pageref{#1}}
+% Renvoi vers une figure
+\newcommand{\voirf}[1] {voir figure \ref{#1}, page \pageref{#1}}
+% Renvoi vers un tableau
+\newcommand{\voirt}[1] {voir tableau \ref{#1}, page \pageref{#1}}
+% Mise en forme du résumé de chaque partie
+\newcommand{\resumchap}[1] {
+  \textit{#1}
+}
+% Insertion d'une image EPS en pleine largeur de page
+\newcommand{\imagelarg}[3] {
+\begin{figure}[htbp]
+  \begin{center}
+    \includegraphics[width=\linewidth]{eps/#1}
+    \caption{#2}
+    \label{#3}
+  \end{center}
+\end{figure}
+}
+% Insertion d'une image EPS
+\newcommand{\image}[3] {
+\begin{figure}[htbp]
+  \begin{center}
+    \includegraphics{eps/#1}
+    \caption{#2}
+    \label{#3}
+  \end{center}
+\end{figure}
+}
+% Insertion d'une image EPS
+\newcommand{\imagel}[4] {
+\begin{figure}[htbp]
+  \begin{center}
+    \includegraphics[width=#1cm]{eps/#2}
+    \caption{#3}
+    \label{#4}
+  \end{center}
+\end{figure}
+}

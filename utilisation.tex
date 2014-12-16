@@ -1,0 +1,2013 @@
+\chapter{Utilisation de Linux}
+
+\resumchap{Dans ce chapitre, nous allons aborder la manipulation courante
+  d'un système Linux correctement installé. Pour les auditeurs du
+  TMRI, il s'agit de PC sur lesquels sont installés des systèmes
+  Mandrake Linux 8.1. Dans un premier temps, les manipulations se
+  feront en mode texte afin de bien comprendre le fonctionnement du
+  système, puis nous aborderons le mode graphique.}
+
+
+\section{Trouver de l'aide}
+\label{sec:aide_ligne}
+
+Il existe plusieurs types d'aide en ligne :
+\begin{itemize}
+\item le manuel de référence
+\item les "HOWTO"
+\item les documents du "Linux Documentation Project", alias LDP
+\item les fichiers de documentation des paquetages
+\end{itemize}
+
+
+\subsection{Le manuel}
+
+Le manuel en ligne est accessible par la commande \com{man}. Il est
+organisé en différentes sections :
+
+\begin{table}[htbp]
+
+\begin{center}
+  \begin{tabular}{|c|p{8cm}|}
+\hline
+Section & Intitulé \\
+\hline
+1&les commandes utilisateur \\
+2&les appels système \\
+3&les bibliothèques de programmation \\
+4&les fichiers spéciaux \\
+5&les formats de fichiers \\
+6&les jeux \\
+7&divers \\ 
+8&les commandes d'administration \\
+9&le noyau \\
+\hline
+\end{tabular}
+\end{center}
+  \caption{Sections du manuel (commande \com{man})}
+  \label{tab:section_man}
+\end{table}
+
+La syntaxe de la commande \com{man} est :
+
+\begin{verbatim}
+man {options} {section} commande
+\end{verbatim}
+
+Par défaut, les sections sont parcourues dans l'ordre des numéros. Il
+est possible de préciser le numéro de section lors de l'ouverture du
+manuel :
+
+\begin{verbatim}
+man kill
+man 2 kill
+\end{verbatim}
+
+Lors de la lecture du manuel, il est possible de rechercher un motif à
+l'aide de la commande \verb'/motif'. Cette commande positionne le
+curseur sur la première occurrence du motif. Pour se positionner sur
+l'occurrence suivante, on utilisera la touche \verb'n', pour
+l'occurrence précédente, \verb'N'.  Pour quitter le manuel, on
+utilisera la touche \verb'Q'.
+
+La variable d'environnement \com{MANPATH} donne le chemin de recherche
+des pages de manuel :
+
+\begin{verbatim}
+    MANPATH=/usr/man:/usr/local/man
+\end{verbatim}
+
+Il existe une base de mots clés pour la recherche dans les pages de
+manuel. Cette base est construite par la commande
+\com{/usr/sbin/makewhatis}. Les commandes \com{apropos} et
+\com{whatis} permettent d'effectuer des recherches dans cette base de
+données.  \cite{ATRID}
+
+\subsection{TexInfo}
+
+C'est un projet de la FSF (Free Software Foundation) pour remplacer
+les pages de manuel classiques.  La base de données d'informations est
+répartie et accessible par la commande \com{info}. Cette commande
+permet de visualiser en mode interactif des documents hypertexte. Le
+système est auto renseigné, il suffit de lancer \com{info} et de
+naviguer dans cet environnement pour avoir l'aide en ligne.
+\cite{ATRID}
+
+\subsection{Les HOWTO}
+
+Les HOWTO sont des documents expliquant comment effectuer une tâche
+donnée comme : "Installer Linux sur le même disque que Windows NT".
+Ils sont disponibles dans plusieurs formats (texte, PostScript, HTML)
+et sont installés dans le répertoire \rep{/usr/doc/HOWTO}. Ce sont
+les premiers documents à consulter lorsqu'on recherche une information
+pouvant s'exprimer par Comment faire pour ? ''.
+
+Il existe des traductions françaises de ces documents à l'adresse suivante :
+
+\verb'http://www.freenix.fr/linux/HOWTO/' \cite{ATRID}
+
+
+\subsection{Les documentations}
+
+A partir du répertoire \rep{/usr/doc}, on trouve les documentations
+des paquetages installés. Le contenu est assez inégal et dépend du
+concepteur du paquetage. C'est néanmoins une ressource importante en
+terme de documentation. \cite{ATRID}
+
+
+\subsection{Autres sources d'information}
+
+
+\subsubsection{Les sites Web}
+
+Certains sites Web proposent de la documentation en ligne ou
+téléchargeable sur le système Linux (\voirt{tab:site_web_doc}).
+
+\begin{table}[htbp]
+  \begin{center}
+    \begin{tabular}{|l|p{8cm}|}
+\hline
+Nom & URL \\
+\hline
+Linux Center        &  http://linux-center.org/fr/\\
+Unix Guru Universe  &  http://www.ugu.com/\\
+LDP                 &  http://sunsite.unc.edu/mdw/linux.html/\\
+Le guide du ROOTard &  http://www.freenix.fr/linux/Guide\\
+\hline
+    \end{tabular}
+    \caption{Sites Web de documentation sur Linux}
+    \label{tab:site_web_doc}
+  \end{center}
+\end{table}
+
+D'autres sites proposent des nouvelles concernant Linux et les
+logiciels libres en général. Ce sont de bonnes sources pour se tenir
+informé des nouvelles versions de logiciels
+(\voirt{tab:site_web_news}).
+
+\begin{table}[htbp]
+  \begin{center}
+    \begin{tabular}{|l|p{8cm}|}
+\hline
+Nom & URL \\
+\hline
+Freshmeat            & http://www.freshmeat.net \\
+Da Linux French Page & http://linuxfr.org/ \\
+\hline
+    \end{tabular}
+    \caption{Sites Web de nouvelles sur Linux}
+    \label{tab:site_web_news}
+  \end{center}
+\end{table}
+
+
+\subsubsection{Les forums}
+
+Un grand nombre de forums existe traitant en totalité ou partie de
+Linux. Les plus importants et les plus fréquentés sont :
+
+
+\begin{itemize}
+\item fr.comp.os.linux.configuration
+\item fr.comp.os.linux.annonce
+\item fr.comp.os.linux.moderated
+\item comp.os.linux.answers
+\item comp.os.linux.security
+\item comp.os.linux.setup
+\end{itemize}
+
+
+\section{Les commandes}
+
+\subsection{Principes de base}
+
+Nous allons voir les commandes utilisateur principales de Linux (il en
+existe plusieurs centaines). Les commandes sont des programmes écrits
+avec n'importe quel langage informatique pour résoudre un problème
+donné. Le système est évolutif et il est facile d'ajouter de nouvelles
+commandes. Toutefois, avant d'écrire une commande, il faut vérifier
+qu'il n'existe pas quelqu'un ayant déjà effectué ce travail par une
+recherche sur le système ou sur le Web.
+
+Une commande Linux est toujours composée de la même façon :
+
+\verb'nom_commande {options} liste_de_paramètres'
+
+Les options sont généralement composées du signe - et d'un caractère
+ou d'un mot. Elles modifient, ou précisent, le fonctionnement de la
+commande. La liste des paramètres permet de spécifier la cible de la
+commande. Les options et les paramètres sont séparés par des
+caractères blancs (espace ou tabulation).
+
+\subsection{Les entrées - sorties de commandes}
+
+Nous avons constaté jusqu'à présent que les commandes utilisaient
+l'écran et le clavier pour communiquer avec l'utilisateur.  Ce mode de
+fonctionnement est tout à fait adapté à une utilisation interactive du
+système, dans laquelle l'utilisateur transmet des ordres au système à
+l'aide du clavier et lit les réponses du système sur l'écran.
+
+Tous les programmes Linux sont lancés avec trois flux de données
+ouverts : l'entrée standard (stdin), la sortie standard (stdout) et la
+sortie des erreurs (stderr). \index{Entrée
+  standard}\index{stdin}\index{stdout}\index{Sortie
+  standard}\index{stderr}\index{Sortie des erreurs}
+
+Par défaut, l'entrée standard est le clavier et les sorties sont
+dirigées sur l'écran. Il est possible de rediriger l'entrée ou la
+sortie vers un fichier ou vers une autre commande. Ceci permet
+d'enchaîner des traitements sur un flot de données.
+
+
+D'une façon générale, on retrouve donc trois flux pour toutes les
+commandes :
+\begin{itemize}
+\item La sortie standard, sur laquelle la commande va envoyer les
+  réponses obtenues. La commande \com{ls}, par exemple, va envoyer sur
+  la sortie standard la liste des fichiers du répertoire courant,
+\item La sortie erreur, sur laquelle la commande va envoyer ses
+  messages d'erreur.  La commande \com{ls}, par exemple, va envoyer
+  sur la sortie erreur ses messages indiquant les erreurs rencontrées
+  (un fichier qui n'existe pas, un problème de droit d'accès, une
+  erreur de syntaxe dans les options... ),
+\item L'entrée standard, dans laquelle la commande va lire les
+  réponses à ses questions. Quand la commande \com{rm}, par exemple,
+  demande de confirmer la suppression de fichier, elle lit la réponses
+  (``y'' ou ``n'') sur l'entrée standard.
+\end{itemize}
+
+Par défaut, les sorties standard et erreur sont redirigées sur l'écran
+et l'entrée standard est prise sur le clavier (\voirf{fig:es_commandes}).
+
+\imagelarg {ES_commandes.eps}
+           {Les entrées-sorties de commandes}
+           {fig:es_commandes}
+
+Exemple :
+
+\begin{verbatim}
+[remi@pc1 essai]$ rm a toto
+rm: remove write-protected file `a'? y (sortie standard,
+                        réponse lue sur entrée standard)
+rm: cannot remove `toto': Aucun fichier ou répertoire de ce type
+                                         (sortie erreur)
+
+[remi@pc1 essai]$ ls . toto
+ls: toto: Aucun fichier ou répertoire de ce type
+                                         (sortie erreur)
+.:                                       (sortie standard)
+bilan1999  bilan2001      prévision2000  prévision2002
+bilan2000  prévision1999  prévision2001
+\end{verbatim}
+
+
+\subsection{Redirection de commandes}
+
+Nous avons vu que, par défaut, les entrées de commandes proviennent du
+clavier et les sorties (standard et erreur) sont envoyées sur l'écran,
+ce qui convient généralement dans le cadre d'une utilisation
+interactive du système. Il est toutefois possible de rediriger les
+entrées comme les sorties vers ou depuis (\voirt{tab:redir_commandes})
+:
+\begin{itemize}
+\item un fichier,
+\item une autre commande.
+\end{itemize}
+
+
+\subsubsection{Redirection vers un fichier}
+
+Pour rediriger la sortie standard d'une commande vers un fichier, on
+ajoute le symbole \com{>} suivi du nom du fichier vers lequel on
+désire rediriger le flux de sortie. La ligne de commande \verb'ls > toto'
+permet de créer\footnote{Si le fichier ``toto'' existe, il sera
+  écrasé.} un fichier nommé toto contenant la liste des fichiers du
+répertoire courant.
+
+On obtient un résultat légèrement différente en utilisant \com{>>}.
+Ici le flux de la sortie standard est ajouté à la fin du fichier et ne
+remplace plus l'ensemble du contenu du fichier. De ce fait, si le
+fichier ``toto'' contient le texte ``Ceci est mon texte'', la commande
+\verb'ls >> toto' ajoutera la liste des fichiers à la fin du texte
+``Ceci est mon texte'', alors que \verb'ls > toto' aurait écrasé le
+contenu du fichier toto.
+
+\begin{verbatim}
+[remi@pc1 essai]$ cat toto
+Ceci est mon texte
+[remi@pc1 essai]$ ls >> toto
+[remi@pc1 essai]$ cat toto
+Ceci est mon texte
+bilan1999
+bilan2000
+bilan2001
+prévision1999
+prévision2000
+prévision2001
+prévision2002
+toto
+\end{verbatim}
+
+Nous savons maintenant rediriger la sortie standard des commandes dans
+un fichier. Pour rediriger la sortie des erreurs, nous utilisons
+\com{2>} ou \com{2>>}, de la même façon que \com{>} ou \com{>>}.
+
+Ainsi, \verb'ls > toto 2> erreurs'\footnote{Ce qui équivalent à ls 2>
+  erreurs > toto, l'ordre des redirection n'ayant pas de
+  signification.} permet d'obtenir la liste des fichiers du répertoire
+courant dans le fichier ``toto'' et de stoker les éventuelles erreurs
+générées par la commandes dans le fichier ``erreurs''.
+
+Pour rediriger l'entrée standard d'une commande depuis un fichier, on
+utilise \com{<} après la commande. Ainsi, \verb'rm fichier1 < fichier2'
+permet d'utiliser ``fichier2'' pour l'entrée standard de la
+commande \verb'rm fichier1'.
+
+\subsubsection{Redirection vers une autre commande}
+
+Pour rediriger la sortie standard d'une commande vers l'entrée
+standard d'une autre commande, on ajoute le symbole \com{|} suivi du
+nom de la commande vers laquelle on souhaite rediriger le flux de
+données. Ce dernier sera reçu par l'entrée standard de la commande
+réceptrice et traité de la même façon que si elle avait été saisie au
+clavier.
+
+Lorsque l'on réalise ce type de redirection, il faut noter
+que les processus producteur et consommateur du flux de données sont
+automatiquement synchronisés (le consommateur se met en attente si le
+producteur n'émmet plus de données, le producteur fait de même si le
+consommateur n'est pas en mesure de traiter les données envoyées sur
+son entrée standard).
+
+Pour rediriger la sortie erreur, on utilise le symbole \com{2|}.
+
+\input{inc_cmd_redirect}
+
+
+
+\section{Entrer et sortir de Linux}
+
+\subsection{Connexion à un système Linux}
+
+Nous avons vu que Linux est un système multi-utilisateur, ce qui
+signifie que plusieurs personnes différentes sont susceptibles
+d'utiliser une même machine. Il est donc nécessaire que chacun
+s'identifie clairement auprès du système. Cette opération est réalisée
+lors de l'opération dite de login (du verbe anglais ``to log in'', qui
+signifie ``s'enregistrer'' dans le système).
+
+Chaque utilisateur d'un système Linux est identifié par un nom unique
+: son login. Lorsqu'un utilisateur veut se connecter à un système
+Linux, il doit préciser son login lorsque le système lui présente sa
+mire de connexion. Certains login peuvent être associés à un mot de
+passe, dans ce cas, le système le demandera à l'utilisateur après
+qu'il ait saisi son login. La mire de connexion peut être graphique ou
+en mode texte.
+
+Une fois que l'utilisateur a été identifié, il peut accéder au
+système. Pour cela, le système vous donne accès à un ``interpréteur de
+commandes'', positionné à un endroit particulier du système de fichier
+: le répertoire de base de l'utilisateur\index{Répertoire de base},
+encore appelé ``home directory'' (pour répertoire ``maison''). Comme
+son nom l'indique, ce répertoire peut être utilisé comme bon lui
+semble par son propriétaire : il est libre d'y enregistrer ses données
+personnelles, d'y donner accès aux autres utilisateurs ou, au
+contraire, de le protéger. Il est aussi utilisé pour y placer des
+fichiers de configuration propres à l'utilisateur.  Il y a
+généralement un répertoire de base par utilisateur.
+
+Généralement, le répertoire de base des utilisateur a la forme
+suivante :
+
+\begin{verbatim}
+/home/<login de l'utilisateur>
+\end{verbatim}
+
+Sur tout système Linux, il existe un utilisateur bien particulier qui
+bénéficie de tous les droits sur le système : l'administrateur du
+système, communément appelé utilisateur ``root''. Cet utilisateur se
+connecte comme tous les autres, mais nécessite de respecter certaines
+précautions évidentes :
+\begin{itemize}
+\item l'accès à ce compte devra être soigneusement contrôlé puisqu'un
+  utilisateur connecté sur le compte root dispose de tous les droits
+  sur le système,
+\item les manipulations réalisées sous le compte root doivent
+  soigneusement réfléchies, car elles sont faites ``sans filet'' et
+  toute erreur de manipulation peut avoir de graves conséquences sur
+  le système.
+\end{itemize}
+
+\subsection{Déconnexion d'un système Linux}
+
+Il est très important de se déconnecter et de ne jamais laisser une
+session ouverte sans surveillance, car une personne mal intentionnée
+pourrait très bien utiliser ce terminal à vos dépends. Il aurait tous
+vos droits, et effectuerait ses opérations en votre nom. La sécurité
+du système garantissant que vous seul pouvez vous connecter sous ce
+nom, grâce au mot de passe, vous seriez donc responsable des
+agissements de l'intrus. Le problème est d'autant plus sensible pour
+les sessions de l'utilisateur ``root''.
+
+Pour quitter l'interpréteur de commande, vous pouvez utiliser :
+\begin{itemize}
+\item la commande \com{logout}, qui ne fonctionne qu'avec
+  l'interpréteur de commandes de connexion,
+\item la combinaison de touches \com{CTRL + D},
+\item la commande \com{exit}.
+\end{itemize}
+
+Ces deux dernières commandes ont pour effet de sortir de
+l'interpréteur de commande courant\footnote{Nous verrons par la suite
+  comment il est possible d'ouvrir en cascade plusieurs interpréteurs
+  de commande.}. Si ce dernier se trouve être le shell de connexion,
+alors l'utilisateur est déconnecté de la machine.
+
+\subsection{Arrêt et redémarrage du système}
+
+Il faut bien comprendre que Linux, tout comme la plupart des systèmes
+d'exploitation modernes, ne peut pas être arrêté en éteignant
+directement l'ordinateur, comme on le faisait autrefois avec le DOS.
+En effet, la plupart des systèmes d'exploitation utilisent une partie
+de la mémoire de l'ordinateur pour y stocker temporairement les
+données qui ont été lues à partir du disque et celles qui doivent y
+être écrites. Cette zone de mémoire constitue ce qu'on appelle un
+tampon (``buffer'' en anglais), et elle sert à accélérer les accès aux
+périphériques plus lents, que sont les disques durs et lecteurs de
+CD-ROM. Il va de soi qu'une requête de lecture sur des données déjà
+situées en mémoire est infiniment plus rapide que si elles ne s'y
+trouvaient pas. Il est en revanche plus difficile de comprendre
+pourquoi les requêtes d'écriture doivent être différées. La raison est
+la suivante : le système préfère différer l'écriture physique sur le
+disque parce qu'une autre requête d'écriture dans la même zone du
+disque peut très bien avoir lieu ultérieurement. Si les données qui
+n'ont pas été écrites sont ainsi modifiées par une requête ultérieure,
+il n'est plus nécessaire de les écrire, et ainsi le système peut
+économiser un temps précieux en ne le faisant pas. Si les données à
+écrire sont contiguës à celles d'une requête précédente, le système
+peut les écrire en bloc, ce qui est toujours plus rapide que de faire
+plusieurs écritures partielles (notamment parce que les têtes de
+lecture du disque n'ont pas à être déplacées). Enfin, si les données
+qui doivent être écrites font l'objet d'une requête de lecture, il va
+de soi qu'elles sont immédiatement accessibles. On voit que cette
+stratégie permet de travailler beaucoup plus vite.  De facto, Linux
+utilise toute la mémoire vive libre pour ses tampons d'entrées /
+sorties, ce qui en fait un système extrêmement performant. Le gain en
+performances peut facilement atteindre un facteur 3 ou 4.
+
+Le problème majeur est évidemment que si on éteint l'ordinateur
+brutalement, les données dont l'écriture a été différée sont perdues.
+Pire, parmi ces données, il est probable qu'il y ait des informations
+vitales pour le système de fichiers, ce qui fait qu'il risque fort
+d'être endommagé.
+
+L'arrêt du système est une opération qui est du ressort de
+l'administrateur.  On ne peut normalement le réaliser que sous le
+compte root, mais il est possible de déléguer ce droit à d'autres
+utilisateurs. Plusieurs commandes sont disponibles, les plus simples
+sont données ci-dessous :
+
+\begin{description}
+\item[\com{halt}] Permet d'arrêter le système,
+\item[\com{reboot}] Permet de le redémarrer le système,
+\item[\com{shutdown}] Permet de réaliser les opérations précédentes
+  avec plus de souplesse (par exemple, il est possible de différer
+  l'arrêt du système et d'envoyer préalablement un message
+  d'avertissement aux utilisateurs.).
+\end{description}
+
+Remarquez qu'un système Linux bien configuré\footnote{Et disposant
+  d'une alimentation électrique stable, c'est à dire équipée d'un
+  onduleur.} peut fonctionner en continu pendant de très longues
+périodes (plusieurs mois ou années) sans nécessiter d'être arrêter ou
+redémarré régulièrement. Dans le cadre d'une entreprise, l'arrêt d'un
+système est donc rare (normalement, uniquement pour des opérations de
+maintenance, mais il s'agit le plus souvent d'économiser de
+l'électricité).
+
+\section{Parcours du système de fichier}
+
+\input{inc_cmd_manip_rep}
+
+\subsection{Identifier le répertoire courant}
+
+La commande \com{pwd} (pour ``Print Working Directory'') permet
+d'afficher le chemin complet du répertoire courant :
+
+\begin{verbatim}
+[remi@pc1 remi]$ pwd
+/home/remi
+\end{verbatim}
+
+Vous remarquerez que le nom du répertoire courant (``remi'', ici)
+appairait dans l'invite de commande (aussi appelé le ``prompt''). Ce
+comportement est paramétrable, il serait envisageable de faire
+apparaître le chemin complet dans l'invite de commande\footnote{Ce ne
+  serait pas forcement judicieux, vu la longueur moyenne des
+  chemins.}.
+
+\subsubsection{Lister le contenu d'un répertoire}
+
+La commande \com{ls} permet de lister le contenu du répertoire
+courant.
+
+\begin{verbatim}
+[remi@pc1 remi]$ ls
+C/            GNUstep/      Lettres/  Nautilus/  remi.leblond.free.fr/
+CNAM/         guide.zip     Mail/     nohup.out  RPMS/
+Desktop/      Guide.zip     mbox      nsmail/    sciemat/
+email/        IMAGES/       memoire/  portable/  src/
+emap_264.exe  kvirc-2.0.0/  MIDI/     prog/      tmp/
+\end{verbatim}
+
+Dans la liste retournée par \com{ls}, nous distinguons les
+répertoires, dont le nom se termine par $/$, des autres fichiers. Nous
+remarquons que le nom des fichier est sensible à la case (les fichiers
+guide.zip et Guide.zip sont distincts, ce qui n'aurait pas été
+possible avec Windows). Il faudra donc prendre garde à l'utilisation
+des majuscules lors du nommage des fichiers.
+
+Il est possible de préciser en argument de la commande \com{ls} le nom
+d'un fichier ou d'un répertoire\footnote{Certains interpréteurs de
+  commandes, comme le bash, offre une fonctionnalité d'aide à la
+  saisie des noms de commande et de fichier. Ainsi, après avoir tapé
+  les premières lettres d'une commande ou d'un nom de fichier, le
+  système vous proposera la suite si vous appuyez sur la touche TAB.}
+:
+
+\begin{verbatim}
+[remi@pc1 remi]$ ls guide.zip 
+guide.zip
+[remi@pc1 remi]$ ls email/
+photo1.jpg  photo3.jpg  photo5.jpg  photo7.jpg  photo9.jpg
+photo2.jpg  photo4.jpg  photo6.jpg  photo8.jpg
+\end{verbatim}
+
+Cela permet de lister uniquement un élément du répertoire (dans le cas
+d'un fichier, il s'agit du fichier lui même, pour un répertoire, il
+s'agit des fichiers qu'il contient).
+
+Il est possible de préciser un motif de recherche
+(\voirt{tab:symb_subst}) pour faire porter la commande sur tous les
+fichiers que la commande ne retourne que les noms de fichiers
+répondant à ce motif. Par exemple, si on désire afficher les noms des
+fichiers commençants par p :
+
+\begin{verbatim}
+[remi@pc1 remi]$ ls e*
+emap_264.exe
+
+email:
+photo1.jpg  photo3.jpg  photo5.jpg  photo7.jpg  photo9.jpg
+photo2.jpg  photo4.jpg  photo6.jpg  photo8.jpg
+\end{verbatim}
+
+\begin{table}[htbp]
+  \begin{center}
+    \begin{tabular}{|c|p{8cm}|}
+\hline
+Symbole&Signification\\
+\hline
+$*$&Ensemble de caractères quelconques\\
+$?$&Un caractère quelconque\\
+$\{a,b,toto\}$&Un caractère ou un mot valant a, b ou toto\\
+$[abc]$&Un caractère valant a, b ou c\\
+$[a-c]$&Un caractère compris entre a et c\\
+\hline
+    \end{tabular}
+    \caption{Symboles de substitution}
+    \label{tab:symb_subst}
+  \end{center}
+\end{table}
+
+Exemple d'utilisation des symboles de substitution :
+\begin{verbatim}
+[remi@pc1 essai]$ ls
+bilan1999  bilan2001      prévision2000  prévision2002
+bilan2000  prévision1999  prévision2001
+[remi@pc1 essai]$ ls bilan*
+bilan1999  bilan2000  bilan2001
+[remi@pc1 essai]$ ls *2001
+bilan2001  prévision2001
+[remi@pc1 essai]$ ls bilan{1999,2001}
+bilan1999  bilan2001
+[remi@pc1 essai]$ ls prévision200[12]
+prévision2001  prévision2002
+[remi@pc1 essai]$ ls bilan200?
+bilan2000  bilan2001
+[remi@pc1 essai]$ ls prévision200[0-2]
+prévision2000  prévision2001  prévision2002
+\end{verbatim}
+
+Il est possible d'obtenir plus de renseignement de la commande
+\com{ls} en l'utilisant avec l'option -l. Cette option permet de faire
+apparaître :
+
+\begin{itemize}
+\item les droits d'accès au fichier,
+\item les nombre de liens existants sur ce fichier,
+\item le nom du propriétaire de ce fichier,
+\item le groupe de propriétaire du fichier,
+\item la taille du fichier,
+\item la date de dernière modification.
+\end{itemize}
+
+\begin{verbatim}
+[remi@pc1 remi]$ ls -l
+total 2196
+drwxrwxr-x    2 remi     remi         4096 fév 24 23:42 aide/
+...
+drwx------    2 remi     remi         4096 fév 20 22:55 tmp/
+\end{verbatim}
+
+Cet affichage présente beaucoup d'informations :
+
+\begin{itemize}
+\item Le premier caractère donne le type du fichier :
+\begin{itemize}
+\item `-` pour un fichier normal
+\item `p' pour un FIFO
+\item `b' pour un fichier spécial en mode bloc
+\item `c' pour un fichier spécial en mode caractère
+\item `d' pour un répertoire
+\end{itemize}
+
+\item Les neuf caractères suivants donnent les droits d'accès
+\item Le champ suivant donne le nombre de liens sur le fichier
+\item On trouve ensuite le nom du propriétaire et du groupe du fichier
+\item Le champ suivant donne la taille en octets du fichier
+\item La date de la dernière modification est indiquée selon deux
+  formats :
+\begin{itemize}
+\item avec l'année pour les fichiers vieux de plus de 6 mois ou de
+  plus d'une heure dans le futur,
+\item avec l'heure pour les autres cas.
+\end{itemize}
+  
+\item Enfin, le nom du fichier.
+\end{itemize}
+
+La commande \com{stat} permet d'afficher la "fiche signalétique" du
+fichier, regroupant les principales méta-données de ce dernier.
+
+\begin{verbatim}
+  bash$ stat file1
+    File: "file1"
+    Size: 3562         Filetype: Regular File
+    Mode: (0777/-rwxrwxrwx)    Uid: ( 500/ sandra)  Gid: ( 500/ sandra)
+  Device:  8,0   Inode: 2043      Links: 1
+  Access: Wed Nov 18 18:52:42 1997(00000.00:26:18)
+  Modify: Wed Nov 18 18:52:42 1997(00000.00:26:18)
+  Change: Wed Nov 18 18:52:59 1997(00000.00:26:01)
+\end{verbatim} 
+ 
+
+En plus des attributs déjà vus, cette commande affiche :
+
+\begin{itemize}
+\item le type du fichier en toutes lettres
+\item les droits d'accès en numérique (voir plus loin)
+\item la référence du périphérique physique (device)
+\item le numéro d'inode
+\item les dates de dernier accès, dernière modification et dernier
+  changement.
+\end{itemize}
+
+
+
+L'option \verb'-a' de la commande \com{ls} permet de faire apparaître
+les fichiers cachés du répertoire. Les fichiers cachés ont simplement
+un nom dont la première lettre est '.'. Ces fichiers n'ont pas d'autre
+caractéristiques que de ne pas apparaître par défaut lors de la
+consultation des répertoires. Il ne bénéficient pas de droits d'accès
+particuliers et peuvent être manipulés comme tout autre fichier. Pour
+les rendre visibles, il suffit de les renommer.
+
+\begin{verbatim}
+[remi@pc1 remi]$ ls -a
+./                                  .gimp-1.2/       
+../                                 .gnome/          
+.AbiSuite/                          .gnome-desktop/  
+aide/                               .gnome_private/ 
+.ArmageTronrc                       .gnucash/       
+.aumixrc                            .gnupg/         
+.bash_history                       GNUstep/         
+.bash_logout                        .gphoto/         
+.bash_profile                       .grip          
+.bash_profile~                      .gtkrc          
+.bashrc                             .gtoasterrc     
+C/                                  .ICEauthority   
+\end{verbatim}
+
+Enfin, l'option \verb'-R' (pour Récursif) de la commande \com{ls}
+permet de parcourir les éventuels sous répertoires.
+
+\subsection{Naviguer dans les répertoires}
+
+La commande \com{cd} permet de changer de répertoire courant. Utilisée
+seule, elle permet de revenir au répertoire de connexion de
+l'utilisateur courant. Suivi d'un nom de répertoire, elle permet de
+descendre dans ce répertoire. Suivi de '..', elle permet de remonter
+dans le répertoire précédant. Suivi de '/', elle permet de remonter à
+la racine du système de fichier (\voir{tab:symb_cd} pour les autres
+symboles utilisables).
+
+\begin{table}[htbp]
+  \begin{center}
+    \begin{tabular}{|c|p{10cm}|}
+\hline
+Symbole & Signification \\
+\hline
+\rep{..}&Répertoire précédant\\
+\rep{.}&Répertoire courant\\
+\rep{/}&Racine du système de fichier\\
+\verb'~'&Répertoire de connexion de l'utilisateur courant\\
+\verb'~util'&Répertoire de connexion de l'utilisateur "util"\\
+\hline
+    \end{tabular}
+    \caption{Symboles de définition des chemins d'accès}
+    \label{tab:symb_cd}
+  \end{center}
+\end{table}
+
+Exemple d'utilisation de la commande \com{cd} :
+\begin{verbatim}
+[remi@pc1 remi]$ pwd
+/home/remi
+[remi@pc1 remi]$ ls
+C/            essai/        latex2e.ps  MIDI/      prog/                  
+CNAM/         GNUstep/      Lettres/    Nautilus/  remi.leblond.free.fr/
+Desktop/      guide.zip     Mail/       nohup.out  RPMS/
+email/        IMAGES/       mbox        nsmail/    sciemat/
+emap_264.exe  kvirc-2.0.0/  memoire/    portable/  src/
+[remi@pc1 remi]$ cd essai 
+[remi@pc1 essai]$ pwd
+/home/remi/essai
+[remi@pc1 essai]$ cd ..
+[remi@pc1 remi]$ pwd
+/home/remi
+\end{verbatim}
+
+La commande \com{cd} peut être utilisée avec des chemins de différents
+types :
+
+\begin{description}
+\item[Des chemins absolus], c'est à dire définis depuis la racine du
+  système de fichier. Exemple :
+  
+  \verb'cd /home/remi'
+  
+\item[Des chemins relatifs] au répertoire courant. C'est à dire
+  définissant le déplacement nécessaire pour atteindre le répertoire
+  voulu depuis le répertoire courant. Exemple :
+  
+  \verb'cd ../../etc' permet d'atteindre le répertoire /etc depuis le
+  répertoire /home/remi
+\end{description}
+
+
+\subsection{Créer un nouveau répertoire}
+
+La commande \com{mkdir} (``Make Directory'') suivie d'un nom permet de
+créer un nouveau répertoire en dessous du répertoire courant.
+
+Exemple d'utilisation de la commande \com{mkdir} :
+\begin{verbatim}
+[remi@pc1 essai]$ ls
+bilan1999  bilan2001      prévision2000  prévision2002
+bilan2000  prévision1999  prévision2001
+[remi@pc1 essai]$ mkdir "Mon répertoire"
+[remi@pc1 essai]$ ls
+bilan1999  bilan2001        prévision1999  prévision2001
+bilan2000  Mon répertoire/  prévision2000  prévision2002
+[remi@pc1 essai]$ cd "Mon répertoire"
+[remi@pc1 Mon répertoire]$ ls
+[remi@pc1 Mon répertoire]$ pwd
+/home/remi/essai/Mon répertoire
+\end{verbatim}
+
+
+\subsection{Supprimer un répertoire}
+
+La commande \com{rmdir}, ou \com{rd} (``Remove Directory'') permet de
+supprimer un répertoire vide. S'ils existent, les fichiers contenus
+dans le répertoire à effacer devront être supprimés au préalable.
+
+Exemple d'utilisation de la commande \com{rmdir} :
+\begin{verbatim}
+[remi@pc1 essai]$ ls
+bilan1999  bilan2001        prévision1999  prévision2001
+bilan2000  Mon répertoire/  prévision2000  prévision2002
+[remi@pc1 essai]$ rmdir Mon\ répertoire
+[remi@pc1 essai]$ ls
+bilan1999  bilan2001      prévision2000  prévision2002
+bilan2000  prévision1999  prévision2001
+[remi@pc1 essai]$ cd ..
+[remi@pc1 remi]$ rmdir essai 
+rmdir: `essai': Le répertoire n'est pas vide.
+\end{verbatim}
+
+Comme nous avons vu que les répertoires étaient des fichier d'un type
+particulier, il est également possible d'utiliser la commande \com{rm}
+pour les supprimer, mais à condition d'utiliser l'option \verb'-R'
+afin de permettre une suppression récursive des fichiers contenus dans
+le répertoire (il y a toujours au moins \rep{.} et \rep{..}).
+
+\input{inc_cmd_manip_fich}
+
+\section{L'éditeur de texte vi}
+\index{vi: Editeur de texte}
+\label{vi}
+
+L'éditeur de texte utilisé le plus souvent sous Unix est vi, c'est un
+éditeur de texte pleine page qui, derrière ses apparences rustiques,
+est très puissant pour qui maîtrise sont utilisation.
+
+Il existe sous Unix un très grand nombre d'éditeurs de texte, dont
+certains reprennent une copie conforme de l'ergonomie Windows, mais
+aucun n'est aussi rependu que vi. vi présente l'avantage d'être
+présent sur tous les systèmes Unix et fonctionne généralement même sur
+un système en mauvaise forme\footnote{Très utile pour intervenir sur
+  un système saturé et pour rétablir rapidement une situation saine.},
+son apprentissage est donc essentiel à qui veut utiliser correctement
+un système Unix.
+
+Par contre, son ergonomie particulière risque fortement de perturber
+les habitués des éditeurs de texte sous Windows. Oubliez ici votre
+souris, elle ne vous sera que d'une faible utilité. Ne cherchez pas
+les commandes dans un quelconque menu ou une barre d'icône, il n'y en
+a pas... Après ce petit lavage de cerveau, nous allons pouvoir nous
+pencher sur la question.
+
+Utilisez la commande \com{vi} suivi éventuellement du nom du fichier à
+éditer pour entrer dans l'éditeur. Vous voyez alors apparaître le
+contenu de votre fichier et l'interface utilisateur de vi
+(\voirf{fig:interf_vi}).  En fait, l'interface utilisateur de \com{vi}
+se résume à la dernière ligne, en bas de l'écran. Austère non ?
+
+\begin{figure}[htbp]
+  \begin{center}
+\begin{verbatim}
+Ceci est le bilan de l'année 2000 :
+
+L'année 2000 a vraiment été une bonne année !!!
+~                                                        
+~                                                        
+~                                                        
+"bilan2000" 3L, 85C                    1,35         Tout
+\end{verbatim}
+    \caption{Interface utilisateur de \com{vi}}
+    \label{fig:interf_vi}
+  \end{center}
+\end{figure}
+
+L'éditeur \com{vi} permute régulièrement entre deux modes différents
+(\voirf{fig:modes_vi}) :
+\begin{itemize}
+\item Le mode édition, qui permet la saisie de texte,
+\item Le mode de commande, qui permet de faire appel aux commandes de
+  \com{vi}.
+\end{itemize}
+
+Pour passer du mode ``édition'' au mode ``commande'', il faut presser
+la touche ECHAP.  Pour passer du mode ``commande'' au mode
+``édition'', il faut entrer une commande d'édition
+(\voirt{tab:com_vi}).  Généralement, \com{vi} se lance en mode
+``édition''. Il est possible de se déplacer dans le texte à l'aide des
+touches de direction, aussi bien en mode
+``édition''\footnote{Certaines versions de \com{vi} ne permettent pas
+  les déplacements en mode ``édition''}. qu'en mode ``commande''.
+
+\image{exemple_vi}
+      {Exemple d'utilisation des commandes d'insertion de \com{vi}}
+      {fig:exemple_vi}
+
+\image{modes_vi}
+      {Basculement entre les deux modes de \com{vi}}
+      {fig:modes_vi}
+
+\input{inc_cmd_vi}
+
+Voici les commandes nécessaires pour ajouter une ligne en fin de
+fichier :
+\begin{itemize}
+\item Tapez la commande \com{vi} suivie du nom du fichiers à modifier,
+\item Passer en mode ``commande'' en frappant ECHAP (facultatif car
+  \com{vi} se trouve généralement déjà en mode ``commande'' au moment
+  du lancement),
+\item Se déplacer sur la dernière ligne du fichier à l'aide des
+  flèches de direction ou en frappant ``G'' pour y accéder
+  directement,
+\item Frappez ``O'' pour ajouter une nouvelle ligne après la ligne
+  courante, ou ``A'' suivi de la touche ``ENTRÉE'',
+\item Saisissez la nouvelle ligne,
+\item Repasser en mode ``commande'' en frappant la touche ECHAP,
+\item Entrez la commande ``:wq'' pour sauvegarder les modifications et
+  quitter l'éditeur.
+\end{itemize}
+
+\input{inc_rech_vi}
+
+Pour effectuer une recherche, il est possible d'utiliser des motifs de
+recherche (\voirt{tab:mot_rech}). Ainsi, pour rechercher toutes les
+lignes contenant les mots ``toto'' et ``tutu'' dans cet ordre, nous
+utiliserons la commande :
+\begin{verbatim}
+/toto.*tutu
+\end{verbatim}
+
+De même, pour rechercher toutes les lignes commençant par ``toto'',
+nous utilisons la commande suivante :
+\begin{verbatim}
+/^toto
+\end{verbatim}
+
+De même, pour rechercher les lignes commençant par ``toto'' et
+finissant par un numéro, nous utiliserons la commande suivante :
+\begin{verbatim}
+/^toto.*[0-9]$
+\end{verbatim}
+
+
+
+
+\section{Manipulation de fichier}
+
+\input{inc_cmd_manip_fich}
+
+\subsection{Visualiser le contenu d'un fichier}
+\label{cat}
+
+La commande \com{cat} suivi d'un nom de fichier permet d'afficher
+l'ensemble du contenu d'un fichier. Si on indique le nom de plusieurs
+fichiers, la commande \com{cat} concatène le contenu de ces fichiers
+(d'où le nom de la commande).
+
+\begin{verbatim}
+[remi@pc1 essai]$ cat bilan2000 
+Ceci est le bilan de l'année 2000 :
+
+L'année 2000 a vraiment été une bonne année !!!
+\end{verbatim}
+
+Un problème se pose lorsque l'ensemble du fichier ne peut pas
+s'afficher à l'écran : seule la fin du fichier est alors visible.
+Dans ce cas, la commande \com{more} permet d'afficher le contenu d'un
+fichier écran par écran (l'utilisateur doit appuyer sur la touche
+ESPACE pour faire défiler le texte d'un écran ou ENTRÉE pour faire
+défiler d'une ligne. La commande \com{more} s'utilise de la même façon
+que \com{cat}.
+
+Lors de l'affichage du contenu d'un fichier à l'aide de la commande
+\com{more}, l'utilisateur dispose d'outils de navigation et de
+recherche de texte comparables à ceux que propose l'éditeur de texte
+\com{vi} (\voir{vi}) :
+
+\begin{center}
+\begin{tabular}{|l|p{8cm}|}
+\hline
+Commande & Action \\
+\hline
+/<texte> & Permet de recherche le texte <texte> dans le
+  fichier affiché (/<texte>/i permet de ne pas tenir compte de
+  la différence entre les majuscules et les minuscules).\\
+'n' et 'N' & Permettent respectivement de rechercher la
+  prochaine et la précédente occurrence du texte recherché avec la
+  commande précédente.\\
+``<n>G'' & Permet d'atteindre la nême ligne du
+  fichier. Utilisé seul, \verb'G' permet d'atteindre la fin du
+  fichier.\\
+\hline
+\end{tabular}
+\end{center}
+
+
+
+\subsection{Copie de fichier}
+\label{cp}
+
+La commande \com{cp} (comme ``CoPy'') permet de copier des fichiers.
+La syntaxe à utiliser est la suivante :
+\begin{verbatim}
+cp cible destination
+\end{verbatim}
+
+La cible peut être un fichier à copier ou un ensemble de fichiers
+défini en saisissant une liste de nom séparée par des espaces ou en
+utilisant des motifs (\voirt{tab:symb_subst}).
+
+Si le dernier argument correspond à un nom de répertoire, cp copie
+dans ce répertoire chaque fichier indiqué en conservant le même nom.
+Sinon, s'il n'y a que deux fichiers indiqués, il copie le premier sur
+le second.  Une erreur se produit si le dernier argument n'est pas un
+répertoire, et si plus de deux fichiers sont indiqués.
+       
+Voici quelques exemples d'utilisation de la commande \com{cp} :
+
+\begin{itemize}
+\item \verb|cp fichier1 fichier2| : Duplication de ``fichier1'' vers
+  ``fichier2'',
+\item \verb|cp fichier1 fichier2 mon_répertoire/| : Copies des
+  fichiers ``fichier1'' et ``fichier2'' dans le répertoire
+  ``mon\_repertoire'',
+\item \verb|cp fichier[12] mon_répertoire/| : Idem, mais en utilisant
+  un motif de substitution.
+\end{itemize}
+
+Il est possible d'utiliser l'option \verb'-R' pour effectuer une copie
+récursive de fichiers (par exemple, pour recopier tous les fichiers
+d'un répertoire, avec les sous répertoires qu'il contient.
+
+L'option \verb'-i' permet d'interroger l'utilisateur avant d'écraser
+des fichiers existants.
+
+
+
+
+\subsection{Déplacement de fichier}
+\label{mv}
+
+La commande \com{mv} (comme ``MoVe'') permet de déplacer des
+fichiers. Elle utilise la même syntaxe que la commande \com{cp}. Elle
+peut être utilisée pour renommer un fichier lorsque la source et la
+cible se trouvent dans le même répertoire.
+
+Exemples d'utilisation de la commande \com{mv} :
+
+\begin{itemize} 
+\item \verb|mv fichier1 fichier2| : Renom-mage ``fichier1'' en
+  ``fichier2'',
+\item \verb|cp fichier1 fichier2 mon_répertoire/| : Déplacement des
+  fichiers ``fichier1'' et ``fichier2'' dans le répertoire
+  ``mon\_repertoire'',
+\item \verb|cp fichier[12] mon_répertoire/| : Idem, mais en utilisant
+  un motif de substitution.
+\end{itemize}
+
+
+\subsection{Suppression de fichier}
+\label{rm}
+
+La commande \com{rm} (comme ``ReMove'') suivie du nom d'un ou
+plusieurs fichier permet de supprimer des fichiers.
+
+Il est possible d'utiliser l'option \verb'-R' pour effectuer une
+suppression récursive de fichiers (par exemple, pour supprimer tous
+les fichiers d'un répertoire, avec les sous répertoires qu'il
+contient).
+
+L'option \verb'-i' permet d'interroger l'utilisateur pour confirmer
+chaque suppression.
+
+
+\subsection{Liens de fichiers}
+\label{ln}
+
+Il est possible de définir des liens pointant vers un fichier unique.
+Tous les liens sont alors manipulés comme pourraient l'être le fichier
+pointé. Pour l'utilisateur, il n'y a pas de différence entre le lien
+et le fichier pointé et il utilisera le lien comme s'il s'agissait du
+fichier original.
+
+On distingue deux types de liens :
+\begin{itemize}
+\item Les liens physiques,
+\item Les liens symboliques.
+\end{itemize}
+
+
+\subsubsection{Les liens physiques}
+
+Ils correspondent à un référencement multiple d'un même fichier du
+disque. Généralement, il n'y a qu'une seule référence par fichier du
+disque, mais Linux permet d'en créer plusieurs. Dans ce cas, aucun des
+liens n'est plus important qu'un autre, qu'il ait été créé en premier
+ou en dernier.  Il n'y a pas de notion de généalogie. Un lien physique
+ne peut être définis qu'au sein du même système de fichier. Il est
+alors impossible de distinguer le fichier original d'un autre lien.
+Lors de la suppression d'un fichier lié plusieurs fois, le fichier du
+disque n'est réellement détruit qu'après la suppression du dernier lien
+y faisant référence (\voirf{fig:lien_phys}).
+  
+La création d'un lien physique se fait à l'aide de la commande
+\com{ln} sans paramètres :
+  
+\verb'ln nom_du_fichier nom_du_lien'
+  
+L'utilisation des liens physiques peut être périlleuse, du fait qu'il
+est impossible de distinguer le fichier orignal (ou maître) de ses
+références. Elle doit donc être évitée dans la mesure du possible. On
+utilisera donc de préférence des liens symboliques.
+
+\imagel{5}{lien_physique.eps}
+       {Lien physique}
+       {fig:lien_phys}
+
+
+\subsubsection{Les liens symboliques}
+
+Un lien symbolique correspond à un pointeur vers un autre fichier.
+Contrairement aux liens physiques, on distingue ici clairement le
+fichier référencé du lien y faisant référence (\voirf{fig:lien_symb}).
+La suppression du lien n'a aucune conséquence sur le fichier
+référencé.  De même, la suppression d'un fichier n'a aucune
+conséquence sur les liens y faisant référence (les liens sont alors
+``cassés'' car ils pointent vers un fichier qui n'existe pas).  Les
+liens symboliques peuvent être comparés aux raccourcis de Windows, à
+la différence qu'il s'agit ici d'une fonction de base du système de
+fichier et non d'une verrue qu'il est facile de contourner (en éditant
+directement un fichier raccourci ``Windows'' à l'aide d'un éditeur de
+texte vous remarquerez qu'il s'agit en fait d'un fichier ASCII
+contenant, entre autre, le nom du fichier pointé).
+  
+La création d'un lien symbolique se fait à l'aide de la commande
+\com{ln} en utilisant l'option '-s' :
+  
+\verb'ln -s nom_du_fichier nom_du_lien'
+
+\imagel{6}{lien_symbolique.eps}
+       {Lien symbolique}
+       {fig:lien_symb}
+
+
+
+\subsection{Recherche de fichier}
+
+\input{inc_cmd_rech_fich}
+
+Il existe plusieurs commandes permettant de rechercher des fichiers
+dans un système Linux.  Traditionnellement, la commande \com{find}
+permet de retrouver un fichier en parcourant l'arborescence des
+répertoires. La commande \com{locate} permet d'accélérer très
+sensiblement les recherches en exploitant une base de données des
+fichiers du système.
+
+
+\subsubsection{La commande \com{find}}
+
+Il vous sera sans doute nécessaire de rechercher des fichiers selon un
+critère donné dans toute une arborescence de répertoires. Pour cela,
+vous utiliserez la commande \com{find}. Cette commande est très
+puissante, mais dispose d'une syntaxe assez compliquée, du fait des
+nombreuses possibilités qu'elle offre. Pour rechercher un fichier en
+se basant sur son nom, la syntaxe de la commande est la suivante :
+
+\verb'find répertoire -name nom'
+
+où \verb'répertoire' est le répertoire à partir duquel la recherche
+doit commencer et \verb'nom' est le nom du fichier à rechercher. Ce
+nom peut contenir des caractères génériques du shell (des espaces, par
+exemple), mais dans ce cas il doit être placé entre guillemets afin
+d'éviter que ce dernier ne les interprète.
+
+\begin{verbatim}
+[remi@pc1 remi]$ find . -name toto
+./CNAM/IA/DONNEES/toto
+./essai/toto
+\end{verbatim}
+        
+\com{find} accepte d'autre options de recherche que le nom (partie
+\verb'-name' de la ligne de commande), et peut effectuer d'autres
+actions que l'affichage du chemin des fichiers trouvés. Consultez les
+pages de manuel pour plus d'information à ce sujet \cite{GICL}.
+
+\subsubsection{La commande \com{locate}}
+
+La commande \com{locate}\footnote{En fait, il s'agit de la commande
+  \com{slocate}, version sécurisée de \com{locate}} fournit une façon
+sécurisée d'indexer et de rechercher rapidement des fichiers sur votre
+système. Elle exploite une base de données des fichiers du système
+sur laquelle elle effectue ses recherches, ce qui lui permet d'être
+beaucoup plus rapide que la commande \com{find}, qui recherche dans
+l'arborescence des fichier même. Ainsi, pour rechercher le fichier
+``toto'' dans l'arborescence des fichiers du système, nous utiliserons
+la commande suivante :
+
+\verb'locate toto'
+
+La constitution de la base de données des fichiers du système est
+réalisée à l'aide de la commande \com{slocate -c -u} (\verb'-c' pour
+lire le fichier de paramétrage \fich{/etc/updatedb.conf} et \verb'-u'
+pour créer un base de données). Cette commande doit être lancée
+régulièrement pour maintenir une base de données à jour.
+
+
+
+
+\subsection{Recherche de texte dans un fichier}
+
+\input{inc_cmd_manip_cont_fich}
+
+\subsubsection{Recherche}
+
+
+La recherche d'une chaîne de caractères dans un ou plusieurs fichiers
+peut se faire à l'aide de la commande \com{rep}. Cette commande prend
+en premier paramètre le texte à rechercher, puis la liste des fichiers
+dans lequel ce texte doit être trouvé :
+
+\begin{verbatim}
+grep texte fichiers
+grep "texte" fichiers
+\end{verbatim}
+
+                        
+Le texte peut être placé entre guillemets si nécessaire (en
+particulier, s'il contient des espaces ou des caractères interprétés
+par le shell, comme \verb'*' et \verb'?'. Utilisé sans préciser de nom
+de fichier, \com{grep} recherche le texte sur l'entrée standard (par
+défaut, le clavier).
+
+\begin{verbatim}
+[remi@pc1 essai]$ grep année *
+bilan2001:Ceci est le bilan de l'année 2001 :
+bilan2001:L'année 2001 a vraiment été une bonne année !!!
+\end{verbatim}
+
+\com{grep} accepte un grand nombre d'options, qui ne seront pas
+décrites ici. Par exemple, l'option \verb'-i' permet de ne pas
+distinguer les majuscules des minuscules lors de la recherche.
+Consulter les pages de manuel pour plus d'information à ce sujet.
+
+
+
+\subsubsection{Remplacement de texte}
+
+Le remplacement de texte dans un fichier peut être effectué de manière
+automatique, c'est-à-dire sans avoir à ouvrir le fichier dans un
+éditeur, grâce à la commande \com{sed} (abréviation de l'anglais
+``Stream Editor''). Cette commande est en fait un utilitaire de
+manipulation de flux de données, qui permet d'effectuer des
+traitements plus généraux que le simple remplacement de texte, mais
+c'est malgré tout pour cette opération qu'elle reste la plus utilisée.
+                        
+\com{sed} peut travailler à la volée sur un flux de données
+textuelles, que ce flux provienne de l'entrée standard ou d'un
+fichier. Par défaut, il écrit le résultat de son travail sur le flux
+de sortie standard. Les opérations qu'il doit effectuer sur le flux de
+données peuvent être spécifiées de différentes manières, soit en
+fournissant un fichier script à l'aide de l'option
+\verb'-f', soit directement sur la ligne de commande, avec
+l'option \verb'-e'. La syntaxe utilisée pour appeler
+\com{sed} est donc typiquement la suivante :
+
+\verb'sed -e "commandes" fichier > résultat'
+
+ou :
+
+\verb'sed -f script fichier > résultat'
+
+où \verb'fichier' est le fichier sur lequel \com{sed} doit travailler,
+et \verb'résultat' est le fichier devant recevoir le flux de données
+modifiées. Notez que cette commande utilise une redirection du flux de
+sortie standard dans un fichier.
+
+\com{sed} peut effectuer un grand nombre de commandes différentes et
+est réellement un outil très puissant. Cependant, nous ne verrons ici
+que la commande qui permet d'effectuer un remplacement de texte. Cette
+commande utilise la syntaxe suivante :
+
+\verb's/texte/remplacement/options'
+
+où \verb'texte' est le texte à rechercher, \verb'remplacement' est le
+texte de remplacement, et \verb'options' est un jeu d'options
+exprimant la manière dont le remplacement doit être fait. Les options
+sont spécifiées à l'aide de simple caractères, les plus utiles étant
+sans doute \verb'g', qui permet d'effectuer un remplacement global (au
+lieu de ne remplacer que la première occurrence sur la ligne du texte
+rencontrée), et \verb'I', qui permet d'effectuer une recherche sans
+tenir compte de la casse des caractères.
+                        
+Par exemple, la ligne de commande suivante :
+                                
+\verb'sed -e "s/bonjour/bonsoir/g" test.txt > modif.txt'
+
+permet de remplacer toutes les occurrences de la chaîne de caractères
+``bonjour'' par la chaîne de caractères ``bonsoir'' dans le texte du
+fichier \verb'test.txt', et d'enregistrer le résultat dans le fichier
+\verb'modif.txt'.
+                        
+Il ne faut pas utiliser le même nom de fichier pour le fichier source
+et le fichier de résultat. En effet, \com{sed} lit le fichier source à
+la volée, et effectuer une redirection sur ce fichier pendant son
+traitement provoquerait la perte irrémédiable de son contenu. Pour
+résoudre ce problème, on pourra utiliser un nom de fichier temporaire,
+et écraser le fichier original par ce fichier une fois la commande
+\com{sed} exécutée \cite{GICL}.
+
+
+\subsection{Compression et décompression des fichiers}
+
+Linux fournit un grand nombre de programmes de compression de
+fichiers.  Le meilleur est sans doute \com{bzip2}, et le plus
+compatible sans doute \com{compress}. Cependant, le plus utilisé et le
+plus courant, surtout pour la distribution des sources, reste
+incontestablement \com{gzip}. Nous allons décrire brièvement comment
+comprimer et décomprimer des fichiers avec \com{gzip} et \com{bzip2}
+dans ce paragraphe.
+                        
+La compression d'un fichier se fait de manière élémentaire :
+
+\verb'gzip fichier'
+
+où \verb'fichier' est le fichier à comprimer. Après avoir effectué son
+travail, \com{gzip} renomme le fichier comprimé en \verb'fichier.gz'.
+La compression d'un fichier avec \com{bzip2} utilise exactement la
+même syntaxe, à ceci près qu'il faut remplacer \com{gzip} par
+\com{bzip2}. De plus, le nom du fichier comprimé porte l'extension
+\verb'.bz2' au lieu de \verb'.gz'.  Le fichier obtenu est donc nommé
+\verb'fichier.bz2'.
+                        
+La décompression d'un fichier se fait à l'aide de la commande suivante
+:
+
+\verb'gunzip fichier.gz' qui est équivalent à \verb'gzip -d fichier.gz'
+
+ou
+
+\verb'bunzip2 fichier.bz2'
+
+selon qu'il a été comprimé avec \com{gzip} ou \com{bzip2}. Après
+décompression, l'extension complémentaire \verb'.gz' ou \verb'.bz2'
+est supprimée du nom de fichier \cite{GICL}.
+
+
+
+
+\section{Manipulation de processus}
+
+\input{inc_cmd_manip_proc}
+
+\subsection{Qu'est-ce qu'un processus}
+
+Un processus est un programme qui s'exécute. Chaque processus est
+indépendant des autres dans la mesure où il dispose d'une zone mémoire
+qui lui est propre et qui reste inaccessible aux autres. L'ensemble
+des processus actifs du sytème se dispute l'accès aux ressources
+disponibles (au moins la CPU).
+
+Chaque processus est nécessairement créé par un autre processus (son
+processus père), à l'exception du processus ``init'', lancé au
+démarrage du systéme et, de ce fait, ancêtre de tous les autres.
+
+\subsection{Lancer une commande en tâche de fond}
+
+Par défaut, lorsqu'un processus crée un processus fils, il se met en
+attente de la fin de ce dernier. Par exemple, lorsqu'on lance la
+compression d'un gros fichier à l'aide de la commande 
+\verb'gzip mon_gros_fichier', il est impossible d'utiliser l'interpréteur de
+commande avant la fin de la compression.
+
+Pour récupérer la main avant la fin du processus fils, il est possible
+de lancer ce dernier en arrière plan. Il suffit pour celà de finir la
+ligne de commande par le caractère ``\&''.
+
+Le système affiche alors le numéro du processus fils et redonne la
+main à l'utilisateur. Lorsque le processus fils se termine, le
+processus père est averti par un message.
+
+Exemple :
+\begin{verbatim}
+[remi@rapido remi]$ gzip mon_gros_fichier &
+[1] 3515
+[remi@rapido remi]$ ls
+...
+[remi@rapido remi]$ 
+[1]+  Done                    gzip mon_gros_fichier
+\end{verbatim}
+
+Il est possible de passer un traitement à l'arrière plan ou, au
+contraire, à l'avant plan, au cours de son exécution à l'aide des
+commandes \com{bg} (pour background : arrière-plan) et \com{fg} (pour
+foreground : premier plan). Pour utiliser ces commandes, vous devez
+avoir la main sur le shell. Si vous ne l'avez pas, vous devez
+interompre le processus fils qui s'exécute en premier plan à l'aide de
+la combinaison de touches CTRL + Z, qui a pour effet de mettre le
+processus courant en veille.
+
+\subsubsection{La commande \com{jobs}}
+
+La commande \com{jobs} permet d'afficher la liste des travaux pris en
+charge par l'interpréteur de commande sur lequel elle est lancée.
+
+Exemple :
+\begin{verbatim}
+[remi@rapido remi]$ gzip mon_gros_fichier    
+                  (appui sur CTRL + Z)
+[1]+  Stopped                 gzip mon_gros_fichier
+[remi@rapido remi]$ bg
+[1]+ gzip mon_gros_fichier &
+[remi@rapido remi]$ jobs
+[1]+  Running                 gzip mon_gros_fichier &
+\end{verbatim}
+
+Il est alors possible de repasser un travail donné au premier plan en
+tapant \com{fg} suivi du numéro de travail (fg 1 pour repasser le
+premier travail, par exemple).
+
+
+Autre exemple d'utilisation de la commande \com{jobs} :
+
+\begin{verbatim}
+[remi@rapido remi]$ jobs
+[1]   Running                 emacs CNAM/linux/utilisation.tex &
+[2]-  Running                 xdvi &
+[3]+  Running                 gv &
+[4]+  Stopped                 vi
+\end{verbatim}
+
+Où ou peut lire les informations suivantes :
+\begin{itemize}
+\item \verb'[1]' représente le numéro de job,
+\item \verb'Running' représente l'état du job (Running ou Stopped),
+\item Le nom de la commande correspondant au job.
+\end{itemize}
+
+Ou peut intervenir sur les jobs à l'aide des commandes suivantes :
+
+\begin{itemize}
+\item \com{fg} [numéro de jobs] permet de faire passer un jobs au
+  premier plan.
+\item \com{bg} [numéro de job] permet de faire passer un job en tâche
+  de fonds.
+\end{itemize}
+
+Comme nous venons de le voir, la notion de ``job'' est propre à chaque
+interpréteur de commande. Ainsi, il pourra y avoir un job 1 dans
+chacun d'entre eux.
+
+
+\subsubsection{La commande \com{ps}}
+
+
+
+
+
+\subsubsection{La commande \com{top}}
+
+
+
+
+
+\subsection{Interaction avec les processus}
+
+
+\subsubsection{Principes des signaux}
+
+\begin{table}[htbp]
+  \begin{center}
+    \begin{tabular}{|c|p{8cm}|}
+      \hline
+      Numéro de signal & Signification\\
+      \hline
+      15 & Terminaison ``douce
+           \footnote{En passant par la procédure normale de fin de
+             programme.}'' de processus\\
+
+      9 & Destruction ``violente
+          \footnote{Sans passer par la procédure normale de fin de 
+            programme, c'est à dire sans se poser de question.}''
+          de processus\\
+
+      19 & Suspension de processus\\
+
+      18 & Reprise d'exécution de processus suspendu\\
+
+      \hline
+    \end{tabular}
+    \caption{Principaux signaux de contrôle de processus}
+    \label{tab:sign_proc}
+  \end{center}
+\end{table}
+
+
+\subsubsection{Envoi de signal à un processus}
+
+La commande \com{kill} permet d'envoyer un signal à un processus du
+système.  La syntaxe de cette commande est la suivante :
+
+\verb#kill -<numéro de signal> <numéro du ou des processus#
+
+Ainsi, la commande \verb'kill -9 1245' permet de stopper ``violemment''
+le processus 1245.
+
+
+\subsection{Planifier l'exécution automatique de processus}
+
+Il existe plusieurs façons de programmer l'exécution automatique de
+processus. Une des plus connues est utilise la commande \com{crontab},
+qui permet de planifier le lancement d'une commande.
+
+La commande \com{crontab} est propre à chaque utilisateur. Elle
+utilise un fichier de paramétrage, couramment appelé ``crontab'', dont
+chaque ligne désigne une commande programmée. Chaque ligne est
+composée de six champs, séparés par des espaces :
+
+\begin{itemize}
+\item Les minutes (de 0 à 60\footnote{0 et 60 étant confondus.}),
+\item Les heures (de 0 à 24\footnote{0 et 24 étant confondus.}),
+\item Le jour du mois (de 0 à 31),
+\item Le mois (de 0 à 12),
+\item Le jour de la semaine (de 0 à 7, 0 et 7 désignant le dimanche).
+\item La commande à lancer.
+\end{itemize}
+
+Pour les cinq premiers champs, il est possible d'utiliser\footnote{Les
+  deux pouvant être combinés (exemple : 1,4,6-10,12).} :
+\begin{itemize}
+\item Des plages de valeurs : 1-4,
+\item Des énumérations de valeurs : 1,2,3,4,
+\item Toutes les valeurs possibles : *,
+\item Tous les multiples d'une valeur : */2 pour désigner les valeurs
+  paires.
+\end{itemize}
+
+La commande passée dans le sixième champ peut éventuellement contenir
+des valeurs à passer sur l'entrée standard (pour répondre à des
+questions, par exemple) en utilisant le caractère '\%'.
+
+Exemple : \verb'rm -i fichier%y%' permet de répondre 'y' à la demande
+de confirmation de destruction de fichier.
+
+
+\section{L'environnement utilisateur}
+
+\subsection{Les variables d'environnement}
+
+\subsection{Les alias}
+
+\subsubsection{Principe}
+
+Les alias permettent à chaque utilisateur de définir ses propres commandes 
+
+\subsubsection{Définition d'un alias}
+
+
+\begin{verbatim}
+[remi@pc1 essai]$ alias toto="ls -l"
+[remi@pc1 essai]$ toto
+total 4
+-rw-rw-r--    1 remi     remi            0 fév 22 18:27 bilan1999
+-rw-rw-r--    1 remi     remi            0 fév 22 18:26 bilan2000
+-rw-rw-r--    1 remi     remi           85 fév 22 18:54 bilan2001
+-rw-rw-r--    1 remi     remi            0 fév 22 18:27 prévision1999
+-rw-rw-r--    1 remi     remi            0 fév 22 18:27 prévision2000
+-rw-rw-r--    1 remi     remi            0 fév 22 18:27 prévision2001
+-rw-rw-r--    1 remi     remi            0 fév 22 18:26 prévision2002
+\end{verbatim}
+
+
+\subsubsection{Liste des alias existants}
+
+Utilisée seule, la commande \com{alias} permet de lister les alias
+définis pour l'utilisateur courant.
+
+\begin{verbatim}
+[remi@pc1 essai]$ alias
+alias cd..='cd ..'
+alias cp='cp -i'
+alias d='ls'
+alias df='df -h -x supermount'
+alias du='du -h'
+alias l='ls'
+alias la='ls -a'
+alias ll='ls -l -k'
+alias ls='ls -F --color=auto'
+alias lsd='ls -d */'
+alias md='mkdir'
+alias mv='mv -i'
+alias p='cd -'
+alias rd='rmdir'
+alias rm='rm -i'
+alias s='cd ..'
+alias toto='ls -l'
+\end{verbatim}
+
+\subsubsection{Suppression d'un alias}
+
+La commande \com{unalias} permet de supprimer un alias.
+
+\begin{verbatim}
+[remi@pc1 essai]$ unalias toto
+[remi@pc1 essai]$ toto
+bash: toto: command not found
+\end{verbatim}
+
+\subsection{Portée de l'environnement}
+
+
+
+\subsection{Les fichiers de définition de l'environnement}
+
+Lorsque l'on utilise le shell \com{bash}, ce qui correspond à la
+plupart des cas, l'environnement utilisateur est défini dans les deux
+fichiers suivants :
+
+\begin{description}
+\item[.bash\_profile] est un script interprété lors de la connexion de
+  l'utilisateur. Il est chargé de mettre en place l'environnement de
+  l'utilisateur (\voirf{fig:bash_profile}). Par convention, ce fichier
+  se contente de définir les variables d'environnement, les
+  définitions d'alias et de fonctions sont définies dans le fichier
+  \fich{.bashrc},
+
+  \begin{figure}[htbp]
+    \begin{center}
+\begin{verbatim}
+# .bash_profile
+
+# Get the aliases and functions
+if [ -f ~/.bashrc ]; then
+        . ~/.bashrc
+fi
+
+# User specific environment and startup programs
+
+PATH=$PATH:$HOME/bin
+CVSROOT=/home/sources
+
+export PATH
+unset USERNAME
+\end{verbatim}
+      \caption{Exemple de fichier \fich{.bash\_profile}}
+      \label{fig:bash_profile}
+    \end{center}
+  \end{figure}
+  
+\item[.bashrc] contient la définition des alias et fonctions propres à
+  l'utilisateur. Ce fichier fait souvent appel à un fichier global au
+  système (\voirf{fig:bashrc}, qui fait appel au fichier
+  \fich{/etc/bashrc}).
+
+    \begin{figure}[htbp]
+    \begin{center}
+\begin{verbatim}
+# .bashrc
+
+# User specific aliases and functions
+
+# Source global definitions
+if [ -f /etc/bashrc ]; then
+        . /etc/bashrc
+fi
+\end{verbatim}
+      \caption{Exemple de fichier \fich{.bashrc}}
+      \label{fig:bashrc}
+    \end{center}
+  \end{figure}
+
+\end{description}
+
+\section{Définition des droits d'accès}
+
+\subsection{Identification des utilisateurs}
+
+Au niveau du noyau, chaque utilisateur est identifié de manière unique
+par un numéro dans le système : son uid (User IDentifier).
+Ce numéro est utilisé pour vérifier les
+droits de l'utilisateur, ou, autrement dit, ce qu'il peut faire.  Les
+droits des utilisateurs comprennent la possibilité de lire ou écrire
+un fichier, d'accéder ou non à une ressource ou d'exécuter un
+programme.
+
+Il est possible de définir plusieurs utilisateurs ayant le même uid.
+Ceux-ci auront les mêmes droits d'accès, mais pourront bénéficier de
+mots de passe, de répertoires de départ ou d'interpréteur de commandes
+différents.
+
+
+Il est également possible de créer un ou plusieurs
+``groupes'' d'utilisateurs, et de leur donner des droits particuliers.
+Chaque groupe est aussi identifié par un numéro : gid (Group IDentifier).
+Tous les utilisateurs qui font partie de ce groupe recevront
+les droits du groupe. Ainsi, des classes d'utilisateurs peuvent être
+facilement définies, et ces classes peuvent se voir attribuer un peu
+plus de privilèges que les utilisateurs normaux selon les nécessités.
+Il existe toutefois un utilisateur spécial, qui a tous les droits :
+l'administrateur du système (``root'' en anglais).  Aucune restriction
+ne s'applique à cet utilisateur, car il doit être capable de gérer le
+système, l'installer, l'arrêter, le mettre à jour si nécessaire, et de
+définir les utilisateurs et leurs droits.
+
+Il existe plusieurs façon de gérer les utilisateurs et les groupes :
+
+\begin{description}
+\item [Les fichiers locaux] situés dans le système de fichier et
+  utilisés par les outil de connexion et de vérification de droits
+  d'accès.
+\item [Un serveur d'authentification] a qui le système s'adresse pour
+  identifier de façon centralisée les utilisateurs, groupes et leurs
+  droits.
+\end{description}
+
+L'identification par fichier locaux se base principalement sur deux
+fichiers :
+\begin{itemize}
+\item Le fichier \fich{/etc/passwd} qui contient la liste des utilisateurs
+  du système,
+\item Le fichier \fich{/etc/group} qui contient la liste des groupes
+  d'utilisateur du système.
+\end{itemize}
+
+Le rôle du serveur d'autentification est donc de fournir à ses clients
+les informations équivalentes à celles qui auraient été stockées dans
+les fichiers locaux de chacun d'eux.
+
+\subsection{Le fichier des utilisateurs du système}
+\label{sec:passwd}
+
+Par exemple, un utilisateur est représenté par une ligne du type : 
+
+\begin{verbatim}
+  remi:*:500:500:Rémi LEBLOND:/home/remi:/bin/bash
+\end{verbatim}
+ 
+
+Cette ligne comporte les champs suivants séparés par le caractère `:' : 
+
+\begin{itemize}
+\item nom de l'utilisateur pour l'identification sur le système
+  (login),
+\item mot de passe crypté,
+\item numéro d'utilisateur (uid),
+\item numéro de groupe d'utilisateur par défaut (gid). Tout
+  utilisateur est affecté à un et un seul groupe de base. Il peut, par
+  ailleurs, faire partie d'un grand nombre d'autres groupes.
+\item nom complet ; ce champ peut contenir de nombreuses informations,
+  il correspond à un champ de remarque,
+\item répertoire de base de l'utilisateur,
+\item programme à lancer au démarrage (programme de
+  base\index{Programme de base}), généralement un interpréteur de
+  commande (shell). La durée de vie de ce processus correspond à celle
+  de la session utilisateur, c'est à dire que la session de
+  l'utilisateur se terminera avec le processus. Il est possible de
+  préciser ici tout type de programme, ce qui permet de limiter le
+  champ d'action d'un utilisateur (en le connectant directement au
+  programme qu'il doit utiliser, par exemple).
+\end{itemize}
+
+
+\subsection{Le fichier des groupes d'utilisateurs}
+
+/etc/group est un fichier ASCII qui définit les groupes auxquels
+appartient chaque utilisateur.  Il y a une ligne par groupe, et chaque
+ligne a le format :
+
+\begin{verbatim}
+nom_du_groupe:mot_de_passe:GID:liste_utilisateurs
+\end{verbatim}
+
+Par exemple : 
+\begin{verbatim}
+  actrices:*:400:sandra,meg,michelle
+\end{verbatim}
+
+Une ligne de ce fichier comporte les champs suivants, séparés par des
+caractères `:' :
+
+\begin{itemize}
+\item Le nom du groupe,
+\item Le mot de passe encrypté du groupe. Si ce champ est vide
+  (presque toujours), aucun mot de passe n'est nécessaire.
+\item numéro du groupe (gid),
+\item liste des utilisateurs appartenant au groupe séparés par des virgules.
+\end{itemize}
+
+Lors de la connexion, un utilisateur est associé à tous les groupes
+dans lesquels il est inscrit. Il peut le vérifier à l'aide de la
+commande \com{id}, ou \com{groups}.
+
+\begin{verbatim}
+[remi@pc1 remi]$ id
+uid=501(remi) gid=501(remi) groupes=501(remi),100(users),
+                                    101(cvs),200(compta)
+[remi@pc1 remi]$ groups
+remi users cvs compta
+\end{verbatim}
+
+Nous voyons ici que le groupe principal de l'utilisateur ``remi'' est
+le groupe ``remi'' et qu'il fait également partie des groupes
+``users'', ``cvs'' et ``compta''.
+
+
+\subsection{Droits élémentaires sur les fichiers}
+\label{droitelem}
+
+Les droits d'accès peuvent être décomposés en droits élémentaires
+définissant les droits d'accès aux fichiers. Ces droits élémentaires
+sont décrits plus loin (\voirt{tab:droit_elem_fich} et
+\voirt{tab:droit_elem_rep}).
+
+Le droit de lecture correspond à la possibilité d'ouvrir et de
+consulter un fichier, ou de lister le contenu d'un répertoire. Le
+droit d'écriture correspond à la possibilité de modifier un fichier,
+ou de créer ou supprimer un fichier d'un répertoire. Enfin, le droit
+d'exécution correspond à la possibilité d'exécuter un fichier
+contenant un programme, ou d'entrer dans un répertoire.  On notera par
+exemple qu'il est possible d'obtenir la liste des fichiers d'un
+répertoire sans pouvoir s'y déplacer, ou encore de modifier un fichier
+sans pouvoir le lire. On prendra garde également que le fait d'avoir
+le droit d'écriture sur un fichier ne donne pas le droit de le
+supprimer (cependant, on peut le vider !). Pour cela, il faut avoir le
+droit d'écriture sur le répertoire contenant ce fichier.  Comme on le
+voit, les droits d'accès aux fichiers et aux répertoires sont très
+souples.
+        
+Ces droits sont attribués séparément pour le propriétaire, le groupe
+et les autres utilisateurs (c'est-à-dire les utilisateurs qui ne font
+pas partie du groupe auquel appartient le fichier).  Il est donc
+possible de donner par exemple tous les droits au propriétaire d'un
+fichier, et seulement le droit de lecture aux autres utilisateurs.
+Cette configuration est celle qui est choisie par défaut lors de la
+création d'un fichier, elle assure que seul le propriétaire peut
+modifier ou exécuter ce fichier, tout en laissant la possibilité aux
+autres de le lire. Ce choix privilégie la sécurité des données de
+chacun en laissant le maximum de liberté aux autres. Si plusieurs
+personnes doivent travailler sur les mêmes fichiers, il suffit de les
+regrouper dans un groupe, de donner les fichiers sur lesquels ils
+doivent travailler à ce groupe, et de donner les droits d'écriture aux
+membres de ce groupe sur ces fichiers.
+                
+
+
+\begin{table}[htbp]
+  \begin{center}
+    \begin{tabular}{|c|p{3cm}|p{6cm}|}
+\hline
+Abrév. & Nom & Signification\\
+\hline
+r & Droit de lecture (``r'' pour Read) &
+Droit de consulter le contenu d'un fichier\\
+
+w & Droit d'écriture  (``w'' pour Write)&
+Droit de modifier le contenu d'un fichier\\
+
+x & Droit d'exécution (``x'' pour eXecutable)&
+Droit d'exécuter un fichier contenant un programme\\
+\hline
+    \end{tabular}
+    \caption{Droit d'accès élémentaires aux fichiers}
+    \label{tab:droit_elem_fich}
+  \end{center}
+\end{table}
+
+\begin{table}[htbp]
+  \begin{center}
+    \begin{tabular}{|c|p{3cm}|p{6cm}|}
+\hline
+Abrév. & Nom & Signification\\
+\hline
+r & Droit de listage  &
+ Droit de consulter la liste des fichiers d'un répertoire\\
+
+w & Droit de modification  &
+ Droit de modifier la liste des fichiers d'un répertoire.
+
+ Cela signifie donc ajouter de nouveaux fichiers ou en supprimer d'anciens.\\
+
+x & Droit d'accès &
+ Droit d'accéder au contenu du répertoire.\\
+
+\hline
+    \end{tabular}
+    \caption{Droit d'accès élémentaires aux répertoires}
+    \label{tab:droit_elem_rep}
+  \end{center}
+\end{table}
+
+
+La sécurité du système est transitive, cela signifie que tout
+programme lancé par un utilisateur s'exécute en son nom et reçoit donc
+les droits de cet utilisateur. Le processus correspondant se voit donc
+attribuer les mêmes restrictions que l'utilisateur qui l'a lancé. Il
+dispose également des droits du groupe auquel le fichier du programme
+appartient. Il existe toutefois quelques exceptions à cette règle,
+pour les programmes dont le comportement est bien connu et qu'il est
+impossible de détourner de leur fonction initiale. C'est notamment le
+cas de quelques commandes systèmes (comme \com{passwd}, qui permet de
+changer de mot de passe), qui peuvent être lancées par les
+utilisateurs et qui s'exécutent toutefois au nom du système (dans le
+compte root).  Il est donc impossible à un utilisateur de violer les
+règles de sécurité du système. Pour parvenir à ce comportement, il
+faut utiliser des attributs spéciaux sur les fichiers de ces
+programmes.
+
+Le premier attribut spécial est le bit ``setuid'' (qui est
+l'abréviation de l'anglais ``SET User IDentifier''. Il ne peut être
+placé qu'au niveau des droits du propriétaire sur le fichier. Il
+permet d'indiquer que le fichier est exécutable, et que lorsque le
+programme qu'il contient est lancé par un utilisateur, le processus
+correspondant s'exécute avec les droits du propriétaire du fichier et
+non pas avec ceux de l'utilisateur qui l'a lancé. Cependant, le
+système conserve tout de même le numéro de l'utilisateur réel qui a
+lancé le processus, ce qui fait que le programme peut savoir par qui
+il a été lancé et au nom de qui il s'exécute. Un processus dispose
+donc toujours de deux numéros d'utilisateur :
+
+\begin{itemize}
+\item le numéro de l'utilisateur réel (``real user id'' en anglais),
+  qui est le numéro de l'utilisateur qui a lancé le programme,
+\item le numéro de l'utilisateur effectif (``effective user id'' en
+  anglais), qui est le numéro de l'utilisateur avec les droits duquel
+  le processus fonctionne.
+\end{itemize}
+
+Le bit setuid permet donc simplement d'affecter le numéro du
+propriétaire du fichier au numéro d'utilisateur effectif du processus
+lorsqu'il est lancé. Le fait de conserver le numéro de l'utilisateur
+réel permet au programme de réaliser des vérifications de sécurité
+additionnelles. Par exemple, la commande \com{passwd}, qui permet de
+changer le mot de passe d'un utilisateur, a besoin des droits de
+l'utilisateur root pour enregistrer le nouveau mot de passe. Il
+dispose donc du bit setuid pour que tous les utilisateurs puissent
+l'utiliser. Cependant, même s'il s'exécute au nom de l'utilisateur
+root, il ne doit pas permettre à n'importe qui de changer le mot de
+passe des autres utilisateurs : seul l'utilisateur root a le droit de
+faire cette opération. Il utilise donc le numéro de l'utilisateur réel
+qui a lancé la commande pour savoir si c'est bien l'utilisateur root
+qui l'a lancé.
+                
+Le bit setuid est l'attribut le plus couramment utilisé,
+essentiellement pour certaines commandes systèmes. Il est représenté
+par la lettre 's' (comme ``Setuid''), et il remplace le droit
+d'exécution ('x') des fichiers pour le propriétaire des fichiers
+(rappelons que le bit setuid implique que le fichier est exécutable).
+Il n'a aucune signification pour les répertoires.
+                
+Le deuxième attribut spécial est le bit ``setgid'' (qui est
+l'abréviation de l'anglais ``SET Group IDentifier''). Ce bit
+fonctionne un peu de la même manière que le bit setuid, à ceci près
+qu'il fixe le numéro de groupe effectif du processus lancé à celui de
+son fichier exécutable. Cet attribut est également représenté par la
+lettre 's', et remplace le droit d'exécution ('x') pour les
+utilisateurs du groupe auquel appartient le fichier exécutable.
+Contrairement au bit setuid cependant, il a une signification pour les
+répertoires. Un répertoire disposant du bit setgid permet de faire en
+sorte que tous les fichiers qui sont créés dans ce répertoire se
+voient automatiquement attribués le même groupe que le répertoire. Ce
+bit est relativement peu utilisé.
+                
+Enfin, le troisième et dernier attribut spécial est le bit
+``sticky''.  Cet attribut remplace l'attribut exécutable
+pour les autres utilisateurs que le propriétaire du fichier ou du
+répertoire et les membres du groupe auquel il appartient.
+Contrairement aux bits setuid et setgid, il est représenté par la
+lettre 't' (pour ``sTickky''). Sa signification est assez
+spéciale : elle permet de faire en sorte que les programmes
+restent chargés en mémoire après leur terminaison, ce qui permet de
+les relancer plus rapidement. Afin de ne pas consommer la mémoire de
+manière permanente, le code du programme est placé automatiquement
+dans le swap s'il n'est toujours pas relancé après un certain temps,
+mais même dans ce cas, tous les calculs de chargement sont déjà
+effectués. Le lancement des programmes marqués de ce bit sera donc
+toujours accéléré. Sachez cependant ne pas abuser du bit sticky car la
+mémoire (même virtuelle) est encore une ressource rare.
+
+Pour les répertoires, sa signification est totalement différente :
+elle permet de restreindre les droits des utilisateurs sur les
+répertoires ayant ce bit positionné. Ce bit fait en sorte que même si
+un utilisateur dispose des droits d'écriture sur le répertoire, il ne
+peut pas supprimer tous les fichiers de ce répertoire. Les seuls
+fichiers qu'il est autorisé à supprimer sont ses propres fichiers.
+Bien entendu, il est toujours possible d'ajouter des fichiers dans le
+répertoire en question.
+
+
+En résumé, on a donc deux symboles supplémentaires, `s' et `t',
+pouvant prendre la place du `x' dans la liste des droits. Ces symboles
+signifient :
+
+\begin{description}
+\item [`s'] : dans le cas d'un fichier exécutable, celui-ci sera
+  exécuté avec les droits du propriétaire ou du groupe en fonction de
+  la place du symbole. Dans le cas d'un répertoire, tous les fichiers
+  créés dans ce répertoire appartiendront au même groupe que celui du
+  répertoire.
+\item [`t'] (sticky bit) : pour les fichiers exécutables, demande de
+  garder le code en mémoire après l'exécution. Pour les répertoires,
+  permet de limiter la destruction des fichiers au propriétaire du
+  répertoire, du fichier ou au super utilisateur .
+\end{description}
+
+
+\subsection{Définition des droits d'accès}
+
+
+\subsubsection{Changement de propriétaire}
+
+Les commandes \com{chown} et \com{chgrp} permettent de changer,
+respectivement le propriétaire et le groupe d'un fichier.
+
+
+\subsubsection{Changement de la matrice des droits}
+
+La commande \com{chmod} permet de modifier les droits d'un ou
+plusieurs fichiers en utilisant le mode numérique ou le mode littéral.
+
+La commande \com{umask} permet de fixer les droits qui seront enlevés
+par défaut pour la création de nouveaux fichiers. Cette commande est
+généralement lancée une fois lors de l'ouverture de session, elle est
+intégrée à l'interpréteur de commandes et sa syntaxe varie en fonction
+de celui que l'on utilise. Il est conseillé de positionner le masque
+en numérique pour s'affranchir des différences syntaxiques.
+

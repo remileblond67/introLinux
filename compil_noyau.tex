@@ -1,0 +1,355 @@
+\chapter{Compilation du noyau}
+
+\resumchap{Le but de ce chapitre est de confectionner un noyau adapté au
+  mieux à nos besoins afin de remplacer celui qui a été installé par
+  la distribution. Nous nous basons pour cela sur l'installation qui a
+  été réalisée lors du précédant chapitre, en partant du principe que
+  le compilateur \com{gcc} et l'outil \com{make} fonctionnent
+  correctement.}
+
+
+\section{Principe}
+
+Le noyau de Linux qui est fourni avec votre distribution est un noyau
+qui a été spécialement conçu pour démarrer correctement sur le plus
+grand nombre de machines possibles. Il ne s'agit donc pas d'un noyau
+optimal, d'où l'intérêt de compiler un noyau plus adapté.
+
+La compilation du noyau est une spécificité des systèmes libres, qui
+n'est possible que parce que l'on dispose des sources du noyau.
+Cependant, même pour certains Unix commerciaux, il est possible
+d'effectuer une édition de liens, les modules du noyau étant fournis
+sous la forme de fichiers objets. La compilation ou l'édition de liens
+du noyau est une opération technique qui peut surprendre un habitué
+des systèmes fermés que sont par exemple Windows ou OS/2. Cependant,
+elle permet d'obtenir un noyau très petit, optimisé pour la machine
+sur laquelle il tourne, et donc à la fois économe en mémoire et
+performant. Il est donc recommandé d'effectuer cette
+compilation : pourquoi conserver un monstre capable de gérer des
+périphériques qui ne sont pas et ne seront jamais installé sur votre
+système ?
+
+La compilation du noyau de Linux nécessite de disposer des dernières
+sources du noyau (version 2.4.17. au 22/10/2001) et d'un compilateur.
+Il est évident que le compilateur idéal est le compilateur GNU C/C++
+GCC. On utilisera la version la plus stable actuellement, à savoir la
+version 2.95.3. Je supposerai dans la suite de ce document que vous
+disposez de la dernière version du noyau, à savoir la version 2.4.17
+\cite{GICL}.
+
+La compilation du noyau n'est pas très difficile, cependant, elle
+nécessite de répondre correctement aux questions de configuration. Les
+erreurs peuvent être multiples, et seront fatales.  Il est donc
+fortement conseillé de disposer d'une disquette de démarrage afin de
+réparer le système en cas d'erreur. Par ailleurs, il faut toujours
+conserver le dernier noyau utilisable en sauvegarde dans le répertoire
+\rep{/boot/}. Il faut également ajouter une entrée spécifiant ce
+noyau dans le programme de démarrage (\com{lilo}), afin de pouvoir
+sélectionner l'ancien noyau en cas d'erreur. Ces opérations seront
+également décrites en détail plus loin \cite{GICL}.
+        
+La compilation du noyau se passe en quatre étapes :
+
+\begin{itemize}
+\item installation des fichiers sources,
+\item réponse aux questions de configuration,
+\item compilation du nouveau noyau,
+\item installation du nouveau noyau,
+\item compilation des modules,
+\item installation des modules.
+\end{itemize}
+        
+
+\section{Installation des fichiers sources}
+
+Les sources les plus récentes du noyau peuvent être trouvées sur le
+site ``http://www.kernel.org''. Il est possible de récupérer les
+sources complètes, sous la forme d'une archive comprimée d'environ 24
+Mo.  Toutefois, dans un soucis de commodité, nous utiliserons dans ce
+chapitre les sources fournies avec notre distribution.
+
+Généralement, les sources du noyaux Linux sont installés dans le
+répertoire \rep{/usr/src/linux/}. On devra donc renommer
+temporairement le répertoire originel avant d'installer les sources du
+nouveau noyau, ou au moins en faire une sauvegarde.  Une autre
+solution est d'installer les fichiers du noyau dans un répertoire
+\rep{/usr/src/linux\_version/} et d'utiliser un lien symbolique
+\rep{/usr/src/linux/} pour sélectionner la version que l'on veut
+compiler.  Cela permet de conserver plusieurs jeux de sources de
+versions différentes, et de travailler sur la version courante dans le
+répertoire \rep{/usr/src/linux/} facilement. Les commandes suivantes
+permettront d'extraire les sources dans le répertoire dédié au sources
+de Linux. Elles supposent qu'il existe déjà un lien symbolique
+\rep{/usr/src/linux/} vers le répertoire des fichiers sources actuels
+de Linux :
+
+\begin{verbatim}
+cd /usr/src
+rm linux
+mkdir linux-2.4.17
+ln -s linux-2.4.17 linux
+tar xvfz linux-2.4.17.tar.gz
+\end{verbatim}
+
+\cite{GICL}
+
+\section{Paramétrage de la compilation}
+
+Pour pouvoir paramétrer votre compilation, il est nécessaire de ce
+placer dans le répertoire contenant les sources du noyau. Pour cela,
+utilisez la commande :
+
+\verb$cd /usr/src/linux$
+
+La configuration du noyau peut se faire ``à l'ancienne'' avec la
+commande suivante :
+
+\com{make config}
+
+Cette commande pose une série de questions auxquelles il faut pouvoir
+répondre correctement du premier coup. On n'a pas le droit à l'erreur
+ici, faute de quoi il faut tout reprendre à zéro.
+
+Il est nettement plus convivial d'utiliser la version Tcl/Tk sous X11.
+Cette version donne l'accès aux différentes options sans un ordre
+quelconque, et ne présente que les options réalisables étant données
+celles déjà fixées. Cette méthode est évidemment la méthode conseillée
+(\voirf{fig:xconfig}). Pour l'utiliser, il suffit de taper la commande
+suivante :
+
+\com{make xconfig}
+
+\imagelarg{xconfig.eps}
+          {Le résultat de la commande \com{make xconfig} sous XWindow}
+          {fig:xconfig}
+
+Si l'on ne dispose pas encore de X11 on peut utiliser la version texte
+avec menu en tapant la commande suivante :
+
+\com{make menuconfig}
+
+Quelle que soit la méthode utilisée, il faut répondre par ``Y'' (pour
+``Yes''), ``N'' (pour ``No'') ou ``M'' (pour ``Module'') lorsque c'est
+possible. ``Y'' et ``M'' incluent la fonctionnalité courante dans le
+noyau ou sous la forme d'un module, ``N'' la supprime.  ``M'' permet
+d'utiliser la fonctionnalité en tant que module du noyau. En général,
+l'utilisation des modules permet d'alléger le noyau car les
+fonctionnalités sont chargées et déchargées dynamiquement. Cependant,
+les fonctionnalités nécessaires au démarrage de Linux, comme les
+gestionnaires de disques et systèmes de fichiers par exemple, ne
+doivent en aucun cas être placées dans des modules, car alors le
+système ne pourrait pas démarrer.
+
+Quand vous avez configuré votre compilation, sortez de l'utilitaire en
+sauvegardant vos modifications (``Save and Exit'').
+
+\cite{GICL}
+
+Remarque : Si vous voulez retrouver le paramétrage initial, vous
+pouvez utiliser la commande \com{make mrproper}. Il est possible de
+sauvegarder un état de configuration à l'aide de la commande \com{make
+  backup}.
+
+\section{Compilation et installation du noyau}
+
+Une fois la configuration du noyau réalisée, la compilation peut être lancée.
+Pour cela, il suffit de lancer les trois commandes suivantes dans le répertoire
+\rep{/usr/src/linux} :
+
+\begin{verbatim}
+make dep
+make clean
+make bzImage
+\end{verbatim}
+
+La première commande génère les dépendances entre les fichiers du
+noyau. Ces dépendances sont utilisées par les fichiers makefile. La
+deuxième commande effectue le ménage nécessaire pour supprimer tous
+les fichiers objets pouvant résulter d'une précédente compilation.
+Cette opération est nécessaire afin d'éviter de mélanger des fichiers
+ayant été compilés avec des options de configuration différentes.
+Enfin, la troisième commande lance la compilation et l'édition de lien
+proprement dite.
+
+Une fois la compilation achevée, il faut installer le nouveau noyau.
+Cette opération nécessite beaucoup de prudence, car si le noyau
+nouvellement créé n'est pas bon, le système ne redémarrera plus. C'est
+pour cela qu'il est conseillé de conserver toujours deux versions du
+noyau, dont on est sûr que l'une d'entre elle fonctionne parfaitement.
+En pratique, cela revient à conserver la version originale du noyau
+installé par votre distribution. Pour cela, il faut en faire une copie
+de sauvegarde.
+
+En général, le noyau est installé dans le répertoire
+\rep{/boot/}. Il porte souvent le nom de ``vmlinuz'', pour le sauvegarder, il suffit
+donc de taper par exemple la commande suivante :
+
+\verb$cp vmlinuz vmlinuz.old$
+
+Il faut également indiquer au gestionnaire d'amorçage qu'il faut qu'il
+donne maintenant la possibilité de démarrer l'ancienne version du
+noyau sous ce nouveau nom. Pour LILO, il suffit d'éditer le fichier
+\fich{/etc/lilo.conf} et d'y ajouter une nouvelle configuration. En
+pratique, cela revient à dupliquer la configuration du noyau actuel et
+à changer simplement le nom du noyau à charger (paramètre ``image'' de
+la configuration dans \fich{/etc/lilo.conf}) et le nom de la
+configuration (paramètre ``label''). Vous devrez aussi rajouter
+l'option ``prompt'' si elle n'y est pas déjà, afin que LILO vous
+demande la configuration à lancer à chaque démarrage. Dans notre
+exemple, le nom du noyau à utiliser pour la configuration de
+sauvegarde sera ``vmlinuz.old''. De même, si la configuration initiale
+de Linux porte le nom ``linux'', vous pouvez utiliser le nom
+``VieuxLinux'' pour la configuration de sauvegarde
+(\voirf{fig:lilo.conf}).
+                
+\begin{figure}[htbp]
+  \begin{center}
+\begin{verbatim}
+boot=/dev/hda
+map=/boot/map
+install=/boot/boot.b
+default=linux
+keytable=/boot/fr-latin1.klt
+lba32
+prompt
+timeout=50
+message=/boot/message
+menu-scheme=wb:bw:wb:bw
+image=/boot/vmlinuz
+        label=Linux
+        root=/dev/hdb1
+        append=" devfs=mount"
+        read-only
+image=/boot/vmlinuz.old
+        label=VieuxLinux
+        root=/dev/hdb1
+        append=" devfs=mount"
+        read-only
+other=/dev/hda1
+        label=Windows
+        table=/dev/hda
+\end{verbatim}
+    \caption{Exemple de fichier \fich{lilo.conf}}
+    \label{fig:lilo.conf}
+  \end{center}
+\end{figure}
+
+Une fois le fichier \fich{/etc/lilo.conf} mis à jour, il faut réinstaller
+LILO, ce qui se fait simplement en invoquant la commande \com{lilo}.
+
+\begin{verbatim}
+[root@pc1 linux]# lilo
+Added Linux *
+Added VieuxLinux
+Added Windows
+\end{verbatim}
+
+Si l'on otient un message différent, il faut corriger son fichier
+\fich{/etc/lilo.conf} et ne sourtout pas tenter de redémarrer le
+système avant la résolution du problème (il ne redemarrerait
+probablement pas et il faudrait utiliser la disquette de secour).
+
+L'image du nouveau noyau a été créée dans le répertoire
+\rep{/usr/src/linux/arch/i386/boot/}, sous le nom \fich{bzImage}.
+L'installation se fait donc simplement par une copie dans
+\rep{/boot/} en écrasant le noyau actuel \fich{vmlinuz} :
+
+\verb$cp /usr/src/linux/arch/i386/boot/bzImage /boot/vmlinuz$
+
+Il faut également copier le fichier \fich{System.map} du répertoire
+\rep{/usr/src/linux/} dans le répertoire \rep{/boot/} :
+        
+\verb$cp System.map /boot$
+
+Ce fichier contient la liste de tous les symboles du nouveau noyau, il
+est utilisé par quelques utilitaires systèmes.
+                
+Si vous utiliser LILO, il vous faudra le réinstaller à nouveau pour
+qu'il prennent en compte le nouveau noyau. Cela se fait avec la même
+commande que celle utilisée précédemment : \com{lilo}.
+
+Il faut ensuite redémarrer la machine avec la commande \com{reboot} et
+vérifier que le nouveau noyau fonctionne bien. S'il ne se charge pas
+correctement, c'est que les options de configuration choisies ne sont
+pas correctes. Il faut donc utiliser le noyau sauvegardé, vérifier ses
+choix et tout recommencer. Attention cependant, cette fois, il ne faut
+pas recommencer la sauvegarde du noyau, puisque cette opération
+écraserait le bon noyau avec un noyau défectueux.
+
+Si le nouveau noyau démarre correctement, il ne reste plus qu'à installer
+les modules \cite{GICL}.
+
+\section{Compilation et installation des modules}
+
+Si le système a redémarré correctement, on peut compiler les modules
+et les installer. Il n'est pas nécessaire de prendre les mêmes
+précautions pour les modules que pour le noyau. Il suffit donc ici de
+lancer la commande suivante dans le répertoire \rep{/usr/src/linux/}
+:
+                        
+\verb$make modules$
+
+Les modules sélectionnés lors de la configuration sont alors compilés,
+il ne reste plus qu'à les installer.
+        
+Avant toute installation de nouveaux modules, il est recommandé de
+décharger tous les modules présents en mémoire. Cette opération peut
+être réalisée à l'aide de la commande \com{modprobe -ar}, qui va
+tenter de décharger les modules non utilisés. Vous pouvez consulter la
+liste des modules chargés à l'aide de la commande \com{lsmod}. S'il
+reste des modules chargés, vous pouvez les supprimer à l'aide de la
+commande \com{rmmod} suivie du nom du module à supprimer. Pour pouvoir
+supprimer un module, il faut que ce dernier ne soit plus utilisé par
+le système. Par exemple, pour pouvoir supprimer le module
+\verb$isofs$, chargé de la gestion du système de fichier ISO9660
+utilisé pour les CD-ROM, il faut démonter préalablement tous les
+CD-ROM du système.
+
+\begin{figure}[htbp]
+  \begin{center}
+    \begin{verbatim}
+[root@pc1 linux]# lsmod
+Module                  Size  Used by
+es1371                 26528   0 
+ac97_codec              9248   0  [es1371]
+soundcore               3440   4  [es1371]
+af_packet              11984   0  (autoclean)
+nls_iso8859-15          3392   3  (autoclean)
+nls_cp850               3632   3  (autoclean)
+vfat                    9744   3  (autoclean)
+fat                    30240   0  (autoclean) [vfat]
+floppy                 46608   1  (autoclean)
+nls_iso8859-1           2880   1  (autoclean)
+isofs                  17104   1  (autoclean)
+\end{verbatim}
+    \caption{Exemple d'utilisation de la commande \com{lsmod}}
+    \label{fig:lsmod}
+  \end{center}
+\end{figure}
+                        
+Une fois que tous les modules sont déchargés (la commande \com{lsmod}
+retourne une liste vide), l'installation des modules est alors très
+simple, puisqu'il suffit de lancer la commande \com{make
+  modules\_install} suivante dans le répertoire
+\rep{/usr/src/linux/}.
+
+Les modules sont installés dans le répertoire
+\rep{/lib/module/version/}, où \verb$version$ est le
+numéro de version du noyau courant.  Il est possible que des modules
+d'autres versions du noyau existent dans leurs répertoires respectifs.
+Si vous n'en avez plus besoin, vous pouvez les effacer. Attention
+cependant si vous avez installé des modules additionnels non fournis
+avec le noyau dans ces répertoires, vous pourriez encore en avoir
+besoin.
+                
+Les modules sont utilisés par le chargeur de module du noyau, grâce à
+la commande \com{modprobe}. Cette commande a besoin de connaître les
+dépendances entre les modules afin de les charger dans le bon ordre.
+Il faut donc impérativement mettre à jour le fichier
+\fich{/lib/modules/version/modules.dep} à chaque fois que l'on
+installe les modules, à l'aide de la commande \com{depmod -a}.
+
+Les modules doivent être installés après avoir installé le noyau et
+redémarré le système, faute de quoi la commande \com{depmod} peut ne
+pas trouver trouver tous les symboles utilisés par les modules dans le
+noyau en court d'exécution \cite{GICL}.

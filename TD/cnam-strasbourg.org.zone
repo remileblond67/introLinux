@@ -1,0 +1,27 @@
+; TTL (Time To Live) par défaut.
+$TTL 86400
+
+; ENREGISTREMENT "SOA" (Start Of a zone of Authority).
+@ IN SOA master.cnam-strasbourg.org. root.dns.cnam-strasbourg.org. (
+  2004060902 ; Serial (ou "Numéro de série") de la zone.
+  86400 ; Refresh.
+  300 ; Retry.
+  2592000 ; Expire.
+  86400 ; TTL (Time To Live) minimum.
+)
+
+; ENREGISTREMENTS "NS"
+cnam-strasbourg.org.	IN	NS	debian1
+
+; ENREGISTREMENTS "A"
+debian1		IN	A	1.1.168.192
+debian2		IN	A	2.1.168.192
+debian3		IN	A	3.1.168.192
+
+; ENREGISTREMENTS "CNAME" : Alias DNS
+nfs		IN	CNAME	debian1
+mailhost	IN	CNAME	debian1
+nis		IN	CNAME	debian1
+
+; ENREGISTREMENTS "MX" : Serveur de messagerie
+cnam-strasbourg.org.	IN	MX	10	debian1

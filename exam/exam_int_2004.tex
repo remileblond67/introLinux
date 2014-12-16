@@ -1,0 +1,305 @@
+% CNAM Strasbourg
+% Rémi LEBLOND
+% ----------------------------
+% Premier examen Linux TMRI 1
+% ----------------------------
+\documentclass[french,12pt,a4paper]{exam} \usepackage[T1]{fontenc}
+\usepackage{babel, indentfirst} \usepackage[xdvi]{graphicx}
+\usepackage{latexsym} \usepackage{tabularx} \usepackage{amsmath}
+\usepackage{times}
+
+\newcommand{\ouinon}{$\Box$ Oui, $\Box$ Non}
+\newcommand{\choix}[1]{$\Box$ #1}
+\newcommand{\choixrep}{\\
+  \choix{/bin}, \choix{/boot}, \choix{/dev}, \choix{/etc},
+  \choix{/home}, \choix{/lib}, \choix{/mnt}, \choix{/opt},
+  \choix{/proc}, \choix{/sbin}, \choix{/tmp}, \choix{/root},
+  \choix{/usr}, \choix{/var} } \newcommand{\lignesoul}{\hbox to
+  \linewidth {\enspace\hrulefill}} \newcommand{\ligne}[2]{\hbox to
+  #1cm {#2 \enspace\hrulefill}}
+
+%\boxedpoints
+\pointsinmargin
+
+\title{
+  \textsl{UV TMRI-1 - Systèmes en réseaux}\\
+  \textsl{1 valeur, 100 heures}\\
+  \textbf{Introduction au système Linux}\\
+  --- \\
+  Examen intermédiaire}
+
+\date{5 juin 2004} \author{Rémi LEBLOND}
+
+\header{TMRI Systèmes en réseau} {Examen intermédiaire} {5 juin 2004}
+\runningheadrule \firstpagefooter{} {Attention, document sur
+  \numpages\ pages} {} \runningfooter{Rémi LEBLOND} {Page \thepage\ 
+  sur \numpages} {CNAM Strasbourg} \pointname{pt} \marginpointname{pt}
+
+\begin{document}
+\maketitle
+
+\ligne{10}{Nom : } \ligne{10}{Prénom : }
+
+\begin{center}
+  \fbox{\parbox{\textwidth}{\textit{Principe de notation :}
+      
+      Ce questionnaire est composé de \numquestions\ questions
+      représentant \numpoints\ points ramenés à 20. Les points
+      affectés à chaque réponse sont indiqués dans la marge gauche.
+    
+      Pour les questions à choix multiples, une réponse juste rapporte
+      les points de la question, une réponse fausse les fait perdre.
+      Donc, si vous n'êtes pas sûr de votre réponse, il est préférable
+      de la laisser en blanc plutôt que de répondre au hasard.}  }
+\end{center}
+
+\begin{questions}
+  \addpoints
+
+  \section{Principales différences entre logiciel
+    libre et freeware}
+  
+  \question[1] Peut-on utiliser gratuitement un freeware ?\\
+  \ouinon
+
+  \question[1] Peut-on utiliser gratuitement un logiciel libre ?\\
+  \ouinon
+ 
+  \question[1] Peut-on modifier un freeware ?\\
+  \ouinon
+ 
+  \question[1] Peut-on modifier un logiciel libre ?\\
+  \ouinon
+
+  \question[1] Est-il possible de commercialiser un freeware développé 
+  par un tiers ?\\
+  \ouinon
+
+  \question[1] Est-il possible de commercialiser un logiciel libre
+  développé par un tiers ?\\
+  \ouinon
+ 
+
+  \section{Caractéristiques générales de Linux}
+ 
+  \question[1] Linux représente :\\
+  \choix{Un système d'exploitation complet},\\
+  \choix{Un noyau inutilisable seul}, \\
+  \choix{Un ensemble d'outils dont l'assemblage permet la réalisation
+    de systèmes informatiques divers (bases de données, serveur Web...
+    )}
+ 
+
+  \question[1] Pourquoi utilise-t-on souvent GNU/Linux pour désigner 
+  le système Linux ?\\\
+  \choix{Linux est issu du projet GNU},\\
+  \choix{Linux a été à l'origine du projet GNU},\\
+  \choix{C'est quand il est associé aux outils GNU que Linux est
+    réellement utilisable}.
+ 
+
+  \question[1] Linux a été écrit à partir :\\
+  \choix{Des sources initiales d'AT\&T, communes à tous les Unix},\\
+  \choix{D'une feuille blanche, en ne se référant à aucun système connu},\\
+  \choix{Des spécifications d'Unix, mais sans s'appuyer sur les
+    sources initiales d'AT\&T}.
+
+  \section{Arborescence des répertoires de Linux}
+  
+  \question[1] Dans quel répertoire sont regroupés les fichiers de
+  paramétrage du système ?  \choixrep
+  
+  \question[1] Dans quel répertoire sont regroupés les répertoires
+  personnels des utilisateurs du système ?  \choixrep
+  
+  \question[1] Dans quel répertoire sont généralement stockés les
+  fichiers de paramétrage des applications ?  \choixrep
+  
+  \question[1] Dans quel répertoire sont généralement stockées les
+  données manipulées (modifiées) par les applications ?  \choixrep
+  
+  \question[1] Dans quel répertoire sont représentés les différents
+  périphériques du système (CD-ROM, ports série... ) ?  \choixrep
+  
+  \question[1] Dans quel répertoire peut-on obtenir des informations
+  sur l'état courant du système (utilisation mémoire, de la CPU, liste
+  et caractéristiques des processus en cours d'exécution... ) ?
+  \choixrep
+  
+  \question[1] Par convention, dans quel répertoire monte-t-on les
+  systèmes de fichiers utilisés occasionnellement (périphériques
+  amovibles - lecteur de disquette, de CD-ROM - ou systèmes de
+  fichiers d'autres systèmes).  \choixrep
+  
+
+  \question[1] Quelle commande utiliseriez-vous pour monter, pour la 
+  première fois, un système de fichier ISO9660, situé sur un CD-ROM 
+  (/dev/cdrom), dans le répertoire /mnt/cdrom ?\\
+  \lignesoul
+  
+  
+  \question[1] Quelle commande utiliseriez-vous pour démonter ce 
+  CD-ROM et pouvoir l'éjecter ?\\
+  \lignesoul
+  
+  \question[2] Dans quel fichier sont déclarés les systèmes de fichier
+  couramment utilisés ?\\
+  \lignesoul
+
+  
+  \question[2] Écrivez les lignes à ajouter dans ce fichier pour
+  déclarer les systèmes de fichier suivants :
+
+  \begin{itemize}
+  \item /dev/hda1 de type ext2 monté sur /,
+  \item /dev/hda2 de type ext3 monté sur /home,
+  \item /dev/hda5 de type ext3 monté sur /var,
+  \item /dev/hda6 de type ext2 monté en lecture seule sur /usr,
+  \item /dev/cdrom de type iso9660 monté à la demande des utilisateurs
+    sur /mnt/cdrom.
+  \end{itemize}
+  
+  \lignesoul \lignesoul \lignesoul \lignesoul \lignesoul
+
+  
+  \question[1] Après avoir modifié ce fichier, quelle précaution
+  est-il fortement recommandé de prendre avant de tout redémarrage du
+  système ?  Expliquez rapidement les risques encourus si ce fichier
+  comporte une erreur.
+  
+  \lignesoul \lignesoul \lignesoul \lignesoul
+
+  \question[1] Une fois ce paramétrage défini, quelle commande 
+  utiliseriez-vous pour monter le CD-ROM ?\\
+  \lignesoul
+  
+  \section{La sécurité dans Linux}
+
+  \question[2] Dans quel fichier sont définis les utilisateurs du système ?\\
+  \lignesoul
+  
+  
+  
+
+  \question[2] Dans quel fichier sont définis les groupes d'utilisateurs ?\\
+  \lignesoul
+
+  
+  
+  
+
+  \question[3] Citez les droits élémentaires pouvant être affectés aux 
+  fichiers de Linux (avec leur abréviation et leur signification pour
+  les fichiers normaux et les répertoires) ?\\
+  \ligne{1}{} \ligne{3}{} \ligne{5}{} \ligne{5}{}\\
+  \ligne{1}{} \ligne{3}{} \ligne{5}{} \ligne{5}{}\\
+  \ligne{1}{} \ligne{3}{} \ligne{5}{} \ligne{5}{}\\
+  \ligne{1}{} \ligne{3}{} \ligne{5}{} \ligne{5}{}\\
+  \ligne{1}{} \ligne{3}{} \ligne{5}{} \ligne{5}{}\\
+  
+  \question[1] Comment peut-on affecter des droits d'accès aux
+  fichiers ?
+ 
+  \choix{En définissant, au niveau du fichier, la liste des utilisateurs 
+  autorisés},\\
+  \choix{En définissant individuellement, pour chaque utilisateur, ses
+  droits d'accès au fichier},\\
+  \choix{En définissant le propriétaire et le groupe de chaque fichier}
+  
+  \question En considérant le résultat de la commande suivante,
+  répondez\footnote{Il peut y avoir plusieurs réponses par question} :
+\begin{verbatim}
+[util1@localhost tmri]$ ls -al
+total 4
+drwxrwx---    2 root      tmri         4096 avr 26 16:00 ./
+drwxrwx---   76 root      tmri         4096 jun  2 08:39 ../
+-rwxrwx---    1 util1     tmri            0 mai 11 09:56 fichier1
+-rwxrwx---    1 util1     tmri            0 mai 11 09:56 fichier2
+-rwxrwx--x    1 util1     tmri            0 mai 11 09:56 fichier3
+-rwxrwx---    1 util1     tmri            0 mai 11 09:56 fichier4
+drwxr-x--x    2 util3     util3        4096 mai 11 09:57 repertoire/
+\end{verbatim}
+  
+  Composition des groupes :
+
+\begin{tabular}{|c|c|c|}
+\hline
+Nom utilisateur & groupe 'tmri' & groupe 'util3' \\ 
+\hline
+util1 & X &   \\
+util2 & X &   \\
+util3 &   & X \\
+\hline
+\end{tabular}
+
+  \begin{parts}
+  \part[1] Que peut faire l'utilisateur 'util1' sur le fichier 'fichier2' ?
+
+  \choix{Visualiser son contenu},\\
+  \choix{Modifier son contenu},\\
+  \choix{Le supprimer}.\\
+
+
+  \part[1] Que peut faire l'utilisateur 'util2', du groupe 'tmri', sur
+  le fichier 'fichier1' ?
+  
+  \choix{Visualiser son contenu},\\
+  \choix{Modifier son contenu},\\
+  \choix{Le supprimer}.\\
+
+
+  \part[1] Que peut faire l'utilisateur 'util3', ne faisant par partie du
+  groupe 'tmri', sur le fichier 'fichier3' ?
+ 
+  \choix{Visualiser son contenu},\\
+  \choix{Modifier son contenu},\\
+  \choix{Le supprimer}.\\
+
+
+  \part[1] Que peut faire l'utilisateur 'util1' dans le répertoire 
+  'repertoire1' ?
+ 
+  \choix{Entrer dans le répertoire},\\
+  \choix{Lister les fichiers du répertoire},\\
+  \choix{Supprimer un fichier du répertoire},\\
+  \choix{Y ajouter un nouveau fichier}.
+
+
+  \part[1] Que peut faire l'utilisateur 'util3' dans le répertoire
+   'repertoire1' ?
+
+  \choix{Entrer dans le répertoire},\\
+  \choix{Lister les fichiers du répertoire},\\
+  \choix{Supprimer un fichier du répertoire},\\
+  \choix{Y ajouter un nouveau fichier}.
+  \end{parts}
+ 
+
+  \question[2] Quelle commande permet d'affecter le fichier 'fichier1'
+  au propriétaire 'util3' ?\\
+  \lignesoul
+  
+
+  \question[2] Quelle commande permet d'affecter le fichier 'fichier1'
+  au groupe 'util3' ?\\
+  \lignesoul
+ 
+ 
+  \question[4] On désire créer un répertoire \verb'/var/tmri' dans
+  lequel tous les membres du groupe 'tmri' devront pouvoir stocker des
+  informations. Les autres utilisateurs ne devront pas pouvoir accéder
+  à ce répertoire. Indiquez les différentes opérations nécessaires, en
+  indiquant la syntaxe complète des commandes utilisées.
+  
+  \lignesoul \lignesoul \lignesoul \lignesoul \lignesoul \lignesoul
+  \lignesoul \lignesoul \lignesoul \lignesoul \lignesoul \lignesoul
+
+
+\end{questions}
+
+
+\center{\fbox{\parbox{14cm}{\center{Ce questionnaire est composé de
+        \numquestions\ questions, pour un total de \numpoints\ points.
+      }}}}
+\end{document}
+

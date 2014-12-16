@@ -1,0 +1,16 @@
+\begin{table}[htbp]
+  \begin{center}
+  \begin{tabular}{|c|l|p{6cm}|}
+  \hline
+  Commande & Syntaxe & Description\\
+  \hline
+  \com{cp} & \com{cp} sources destination & Copie les fichiers source vers la destination. Il peut y avoir plusieurs sources, mais il n'y a toujours qu'une seule destination. S'il y a plusieurs sources, la destination est nécessairement un répertoire.\\
+  \com{mv} & \com{mv} sources destination & Déplace les fichiers source vers la destination. \\
+  \com{rm} & \com{rm} fichier(s) & Supprime un ou plusieurs fichier(s). L'option '-R' permet de parcourir le contenu des éventuels répertoires.\\
+  \com{ln} & \com{ln} -s fichier nom\_lien & Crée un lien vers un fichier existant. L'option '-s', qui permet de créer un lien symbolique au lieu d'un lien physique, est a privilégier car la gestion des liens physiques peut très vite devenir complexe.\\
+  \hline
+  \end{tabular}
+  \caption{Commandes de manipulation de fichiers}
+  \label{tab:cmd_manip_fich}
+  \end{center}
+\end{table}
